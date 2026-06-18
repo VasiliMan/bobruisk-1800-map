@@ -249,7 +249,7 @@ function openPopup(poly, f) {
   const owners = ownersOfFeature(f);
   let html = `<div class="popup-head">Участок № ${pr.num}</div>`;
   if (owners.length > 1)
-    html += `<div class="popup-coowners-h">Совладельцы — равные доли (${owners.length}):</div>` +
+    html += `<div class="popup-coowners-h">Несколько владельцев (${owners.length}):</div>` +
             owners.map(coItem).join('');
   else
     html += ownerCard(owners[0] || null);
@@ -401,7 +401,7 @@ function renderEditSel() {
   box.innerHTML = `
     <label>№ участка<input id="ed-num" value="${pr.num}"></label>
     <label>Владелец<select id="ed-owner"><option value="">— по номеру —</option>${optsFor(primary)}</select></label>
-    <div class="ed-co">Совладельцы (равные доли):${coRows || '<span class="ed-co-none">— нет —</span>'}
+    <div class="ed-co">Несколько владельцев:${coRows || '<span class="ed-co-none">— нет —</span>'}
       <div class="ed-co-add"><select id="ed-co-sel"><option value="">+ добавить совладельца…</option>${optsFor('')}</select></div></div>
     <label>Место/подпись<input id="ed-place" value="${pr.place||''}"></label>
     <label><input type="checkbox" id="ed-draft" ${pr.status==='draft'?'checked':''}> черновик</label>
