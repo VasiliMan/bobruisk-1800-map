@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Бобруйский уезд (ок. 1800) — карта землевладений</title>
+<link rel="stylesheet" href="vendor/leaflet.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div id="sidebar">
+  <header>
+    <h1>Бобруйский уезд<br><small>Генеральный план, ок. 1800 · землевладения</small></h1>
+  </header>
+  <div class="controls">
+    <input id="search" type="search" placeholder="Поиск владельца…" autocomplete="off" />
+    <div class="row">
+      <label><input type="checkbox" id="toggle-fill" checked> заливка</label>
+      <label><input type="checkbox" id="toggle-labels" checked> номера</label>
+      <label><input type="checkbox" id="toggle-arms" checked> гербы</label>
+      <label><input type="checkbox" id="toggle-edit"> правка</label>
+    </div>
+  </div>
+  <div id="owner-list"></div>
+  <div id="edit-panel" class="hidden">
+    <h2>Режим правки</h2>
+    <p class="hint">Клик по участку — выбрать. Тяните <b>сплошные</b> узлы, чтобы двигать их. Тяните <b>пунктирный</b> узел на середине ребра — добавится новый узел. Правый клик по узлу — удалить.</p>
+    <div id="edit-sel"></div>
+    <button id="btn-newparcel">+ новый участок</button>
+    <button id="btn-export">⬇ Экспорт parcels.geojson</button>
+  </div>
+  <div id="saveind"></div>
+  <footer id="stat"></footer>
+</div>
+<div id="map"></div>
+<script src="vendor/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

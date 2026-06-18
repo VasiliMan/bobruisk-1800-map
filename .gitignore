@@ -1,0 +1,6 @@
+.DS_Store
+tracer/
+verify.html
+data/parcels_held.geojson
+data/verify_decisions.json
+data/parts.json
