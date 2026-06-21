@@ -7,7 +7,7 @@
  * Until a key is set, the form shows a polite "not configured yet" notice.
  * Submissions are emailed to the address tied to the key.
  * ─────────────────────────────────────────────────────────────────────────── */
-const WEB3FORMS_KEY = ""; // <-- paste your Web3Forms access key here
+const WEB3FORMS_KEY = "a6762f84-fd1d-422b-94bf-1481e419ac9d"; // public Web3Forms key (safe client-side)
 
 // POST a set of fields to Web3Forms. Returns {ok:true} or {ok:false,error}.
 async function sendFeedback(fields) {
