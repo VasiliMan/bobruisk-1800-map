@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Проверка транскрипции — Бобруйский уезд (ок. 1800)</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #2c2415; }
+  body { display: flex; flex-direction: column; height: 100vh; background: #f6f3ea; }
+  header { display: flex; align-items: center; gap: 14px; padding: 8px 14px; background: #efe9d6;
+    border-bottom: 1px solid #d8d2c0; flex-wrap: wrap; }
+  header h1 { font-size: 15px; margin: 0; color: #4a3f2a; }
+  header a.back { font-size: 13px; color: #2c6b8a; text-decoration: none; }
+  .tabs button, .tool button { border: 1px solid #cdc6b0; background: #fff; border-radius: 6px;
+    padding: 5px 10px; cursor: pointer; font-size: 13px; margin-right: 4px; }
+  .tabs button.active { background: #c9a14a; color: #fff; border-color: #c9a14a; }
+  .spacer { flex: 1; }
+  #progress { font-size: 12px; color: #7a6f50; }
+  #btn-send { background: #c9a14a; color: #fff; border: 1px solid #c9a14a; font-weight: 600;
+    border-radius: 6px; padding: 6px 14px; cursor: pointer; font-size: 13px; }
+  #btn-send:disabled { opacity: .55; cursor: default; }
+  .intro { padding: 8px 14px; font-size: 13px; color: #6a5f40; background: #faf6ea; border-bottom: 1px solid #ece6d5; }
+  main { flex: 1; display: flex; min-height: 0; }
+  #imgpane { width: 44%; min-width: 300px; overflow: auto; background: #3a3329; border-right: 2px solid #c9a14a;
+    display: flex; justify-content: center; align-items: flex-start; }
+  #imgpane img { display: block; }
+  #tablepane { flex: 1; overflow: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th { position: sticky; top: 0; background: #e8e1cd; text-align: left; padding: 6px 8px;
+    border-bottom: 2px solid #cdc6b0; font-size: 12px; color: #5b5135; z-index: 2; }
+  td { padding: 6px 8px; border-bottom: 1px solid #ece6d5; vertical-align: top; }
+  tr.fixed { background: #f2f7ec; box-shadow: inset 3px 0 #6aa83a; }
+  tr:hover { background: #f3eedd; }
+  .pc { color: #9a8d6a; font-size: 11px; white-space: nowrap; }
+  .mine { color: #3c3322; }
+  .alt { color: #2c6b8a; font-size: 12px; display: block; margin-top: 2px; }
+  .title { color: #8a7d5e; font-size: 11px; }
+  .choices label { display: block; font-size: 12px; margin: 1px 0; cursor: pointer; }
+  .fixwrap { margin-top: 3px; }
+  .fixwrap input { width: 100%; margin-top: 3px; padding: 4px; border: 1px solid #cdc6b0; border-radius: 4px; font-size: 12px; }
+  .q { color: #c0392b; font-weight: 700; }
+  #who { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  #who input { padding: 5px 7px; border: 1px solid #cdc6b0; border-radius: 6px; font-size: 13px; }
+  #sendstatus { font-size: 12px; }
+  #sendstatus.err { color: #b5651d; } #sendstatus.ok { color: #3c7a2a; }
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="index.html">← к карте</a>
+  <h1>Проверка транскрипции</h1>
+  <span class="tabs" id="tabs"></span>
+  <span class="tool">масштаб:
+    <button id="zoom-out">−</button><button id="zoom-in">+</button>
+  </span>
+  <label class="tool" style="font-size:13px;cursor:pointer">
+    <input type="checkbox" id="only-prob"> только спорные (⚠)
+  </label>
+  <span class="spacer"></span>
+  <span id="progress"></span>
+</header>
+<div class="intro">
+  Сверьте моё прочтение имён владельцев со сканом указателя слева. Где ошибка — выберите
+  «исправить» и впишите правильный вариант (по желанию — источник). Затем нажмите «Отправить правки».
+  Регистрация не нужна. Замеченную ошибку в одном владельце можно также сообщить прямо из всплывающего
+  окна на <a href="index.html">карте</a>.
+</div>
+<div class="intro" id="who">
+  <span>Подписать правки (необязательно):</span>
+  <input id="who-name" type="text" placeholder="имя — для благодарностей">
+  <input id="who-email" type="text" placeholder="e-mail — для ответа">
+  <span class="spacer"></span>
+  <span id="sendstatus"></span>
+  <button id="btn-send">Отправить правки</button>
+</div>
+<main>
+  <div id="imgpane">
+    <div id="scanwrap"><img id="scan" src="verify_img/p1.jpg" alt="скан указателя"></div>
+  </div>
+  <div id="tablepane">
+    <table>
+      <thead><tr>
+        <th>№ / часть</th><th>Прочтение</th><th>Ваша оценка</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+</main>
+<script src="feedback.js"></script>
+<script>
+const LS = 'review_public_v1';
+let OWNERS = [], page = 1, imgW = 1000;
+let decisions = JSON.parse(localStorage.getItem(LS) || '{}');
+
+const scan = document.getElementById('scan');
+function setImg() { scan.src = `verify_img/p${page}.jpg`; scan.style.width = imgW + 'px'; }
+document.getElementById('zoom-in').onclick = () => { imgW = Math.min(3000, imgW + 250); setImg(); };
+document.getElementById('zoom-out').onclick = () => { imgW = Math.max(500, imgW - 250); setImg(); };
+
+const tabs = document.getElementById('tabs');
+[[1,'Стр.1 · А–З'],[2,'Стр.2 · К–Р'],[3,'Стр.3 · С–Ю']].forEach(([p,label]) => {
+  const b = document.createElement('button'); b.textContent = label;
+  b.onclick = () => { page = p; setImg(); render(); updateTabs(); };
+  b.dataset.page = p; tabs.appendChild(b);
+});
+function updateTabs() { [...tabs.children].forEach(b => b.classList.toggle('active', +b.dataset.page === page)); }
+document.getElementById('only-prob').addEventListener('change', render);
+
+fetch('data/owners.json').then(r => r.json()).then(d => {
+  OWNERS = d.owners; setImg(); updateTabs(); render();
+});
+
+function render() {
+  const tb = document.getElementById('rows'); tb.innerHTML = '';
+  const onlyProb = document.getElementById('only-prob').checked;
+  const list = OWNERS.filter(o => o.page === page && (!onlyProb || o.uncertain || o.flag));
+  list.forEach(o => {
+    const dec = decisions[o.id] || {};
+    const tr = document.createElement('tr');
+    if (dec.choice === 'fix') tr.classList.add('fixed');
+    const pcs = o.parcels.map(p => `${p.num}/${p.chast}`).join(', ');
+    const alt = o.alt ? `<span class="alt">иной вариант чтения: ${o.alt}</span>` : '';
+    const q = o.uncertain ? ' <span class="q" title="чтение требует проверки">⚠</span>' : '';
+    tr.innerHTML = `
+      <td class="pc">${pcs}<div class="title">${o.title || ''}</div></td>
+      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}</td>
+      <td class="choices">
+        <label><input type="radio" name="r-${o.id}" value="ok" ${dec.choice==='ok'?'checked':''}> ✓ верно</label>
+        <label><input type="radio" name="r-${o.id}" value="fix" ${dec.choice==='fix'?'checked':''}> ✏ исправить:</label>
+        <div class="fixwrap">
+          <input class="fix-val" type="text" placeholder="правильное чтение…" value="${dec.choice==='fix'?(dec.value||'').replace(/"/g,'&quot;'):''}">
+          <input class="fix-src" type="text" placeholder="источник / ссылка (необязательно)" value="${(dec.src||'').replace(/"/g,'&quot;')}">
+        </div>
+      </td>`;
+    const radios = tr.querySelectorAll(`input[name="r-${o.id}"]`);
+    const fixVal = tr.querySelector('.fix-val'), fixSrc = tr.querySelector('.fix-src');
+    const save = () => {
+      const choice = tr.querySelector(`input[name="r-${o.id}"]:checked`)?.value;
+      if (!choice) { delete decisions[o.id]; }
+      else decisions[o.id] = { choice, value: fixVal.value, src: fixSrc.value,
+        num: o.parcels.map(p=>p.num).join(','), reading: o.name_ru || o.name };
+      localStorage.setItem(LS, JSON.stringify(decisions));
+      tr.classList.toggle('fixed', choice === 'fix');
+      updateProgress();
+    };
+    radios.forEach(r => r.addEventListener('change', save));
+    fixVal.addEventListener('focus', () => { tr.querySelector('input[value="fix"]').checked = true; save(); });
+    fixVal.addEventListener('input', save);
+    fixSrc.addEventListener('input', save);
+    tb.appendChild(tr);
+  });
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = Object.values(decisions);
+  const fixes = all.filter(d => d.choice === 'fix').length;
+  const ok = all.filter(d => d.choice === 'ok').length;
+  document.getElementById('progress').textContent =
+    `отмечено: ✓ ${ok} · ✏ ${fixes}` + ` / ${OWNERS.length}`;
+}
+
+document.getElementById('btn-send').onclick = async () => {
+  const fixes = OWNERS
+    .map(o => ({ o, d: decisions[o.id] }))
+    .filter(x => x.d && x.d.choice === 'fix' && (x.d.value || '').trim());
+  const st = document.getElementById('sendstatus');
+  if (!fixes.length) { st.className = 'err'; st.textContent = 'Нет исправлений для отправки.'; return; }
+  const lines = fixes.map(({ o, d }) =>
+    `• уч. ${o.parcels.map(p=>p.num+'/'+p.chast).join(', ')} | было: «${o.name_ru || o.name}» → стало: «${d.value.trim()}»`
+    + (d.src && d.src.trim() ? ` | источник: ${d.src.trim()}` : '') + ` [id:${o.id}]`).join('\n');
+  const btn = document.getElementById('btn-send');
+  btn.disabled = true; st.className = ''; st.textContent = 'Отправка…';
+  const res = await sendFeedback({
+    subject: `Карта 1800: пакет правок транскрипции (${fixes.length})`,
+    Тип: 'транскрипция (пакет)',
+    Имя: document.getElementById('who-name').value.trim() || '—',
+    Email_для_ответа: document.getElementById('who-email').value.trim() || '—',
+    Количество_правок: String(fixes.length),
+    Правки: lines,
+  });
+  if (res.ok) {
+    st.className = 'ok'; st.textContent = `Спасибо! Отправлено правок: ${fixes.length}.`;
+    btn.textContent = 'Отправлено ✓';
+  } else if (res.error === 'no-key') {
+    st.className = 'err'; st.textContent = 'Форма ещё не настроена (нет ключа Web3Forms).';
+    btn.disabled = false;
+  } else {
+    st.className = 'err'; st.textContent = 'Не удалось отправить: ' + res.error;
+    btn.disabled = false;
+  }
+};
+</script>
+</body>
+</html>

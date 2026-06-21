@@ -244,6 +244,7 @@ function coItem(owner) {
   return `<div class="co-item"><div class="co-toggle"><span class="co-caret">▸</span>${nameHead(owner)}</div>` +
     `<div class="co-body">${cardBody(owner)}</div></div>`;
 }
+let currentPopupCtx = null;   // context for the "сообщить об ошибке" button in the open popup
 function openPopup(poly, f) {
   const pr = f.properties;
   const owners = ownersOfFeature(f);
@@ -254,12 +255,20 @@ function openPopup(poly, f) {
   else
     html += ownerCard(owners[0] || null);
   if (pr.place) html += `<div class="popup-meta">${pr.place}</div>`;
+  html += `<button class="popup-fb" type="button">✎ Сообщить об ошибке</button>`;
+  currentPopupCtx = {
+    num: pr.num, chast: pr.chast,
+    owners: owners.map(o => o.name).join(', ') || '—',
+    owner_ids: owners.map(o => o.id).join(','),
+  };
   poly.bindPopup(html, { maxWidth: 325 }).openPopup();
 }
 // expand/collapse a co-owner row (delegated so it works for any popup)
 document.addEventListener('click', e => {
   const t = e.target.closest('.co-toggle');
   if (t) t.parentElement.classList.toggle('open');
+  if (e.target.closest('.popup-fb') && typeof openFeedbackModal === 'function')
+    openFeedbackModal(currentPopupCtx);
 });
 
 // ---- sidebar ----

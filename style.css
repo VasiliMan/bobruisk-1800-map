@@ -56,6 +56,12 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 .popup-links a { display: block; font-size: 16px; color: #2c6b8a; text-decoration: none; margin-top: 3px; }
 .popup-links a:hover { text-decoration: underline; }
 .q-badge { color: #c0392b; font-size: 11px; }
+.popup-fb { display: block; margin-top: 10px; width: 100%; padding: 6px; font-size: 13px; cursor: pointer;
+  border: 1px solid #cdc6b0; background: #efe9d6; color: #6a5a30; border-radius: 6px; }
+.popup-fb:hover { background: #e6dcbf; }
+.side-links { padding: 6px 14px 0; font-size: 12px; }
+.side-links a { color: #2c6b8a; text-decoration: none; margin-right: 12px; }
+.side-links a:hover { text-decoration: underline; }
 /* co-owners (shared parcel) */
 .popup-head { font-size: 13px; font-weight: 700; color: #5b3a10; letter-spacing: .03em; margin-bottom: 4px; }
 .owner-card { padding: 2px 0; }
