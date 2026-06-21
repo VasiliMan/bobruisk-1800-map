@@ -261,7 +261,15 @@ function openPopup(poly, f) {
     owners: owners.map(o => o.name).join(', ') || '—',
     owner_ids: owners.map(o => o.id).join(','),
   };
-  poly.bindPopup(html, { maxWidth: 325 }).openPopup();
+  // ensure the popup is at least as wide as the widest crop image (crops can be
+  // hidden in collapsed co-owner rows, so size for them up front to avoid overflow)
+  let cropW = 0;
+  owners.forEach(o => {
+    if (o.crop) cropW = Math.max(cropW, o.crop.w * Math.min(300 / o.crop.w, 156 / o.crop.h));
+  });
+  const opts = { maxWidth: 340 };
+  if (cropW) opts.minWidth = Math.min(340, Math.ceil(cropW) + 12);
+  poly.bindPopup(html, opts).openPopup();
 }
 // expand/collapse a co-owner row (delegated so it works for any popup)
 document.addEventListener('click', e => {
