@@ -19,6 +19,7 @@
       <label><input type="checkbox" id="toggle-labels" checked> номера</label>
       <label><input type="checkbox" id="toggle-arms" checked> гербы</label>
       <label><input type="checkbox" id="toggle-edit"> правка</label>
+      <label class="towns-toggle"><input type="checkbox" id="toggle-towns" checked> Буйныя шляхецкія паселішча</label>
     </div>
   </div>
   <div id="owner-list"></div>
@@ -28,6 +29,12 @@
     <div id="edit-sel"></div>
     <button id="btn-newparcel">+ новый участок</button>
     <button id="btn-export">⬇ Экспорт parcels.geojson</button>
+  </div>
+  <div id="town-panel" class="hidden">
+    <h2>Буйныя шляхецкія паселішча (правка)</h2>
+    <p class="hint">Клик по карте — поставить паселішча и ввести название. Тяните маркер — переместить. Правый клик по маркеру — удалить. Двойной клик — переименовать.</p>
+    <button id="btn-export-towns">⬇ Экспорт towns.json</button>
+    <button id="btn-towns-fromfile">↺ загрузить из файла</button>
   </div>
   <div id="saveind"></div>
   <div class="side-links">

@@ -40,12 +40,22 @@ let layersByOwner = {}, layerByFid = {};
 let parcelLayerGroup = L.layerGroup().addTo(map);
 let labelGroup = L.layerGroup().addTo(map);
 let armsGroup = L.layerGroup().addTo(map);
+let townGroup = L.layerGroup().addTo(map);   // town dots+labels, always visible
 let editMode = false, selectedFid = null;
+let TOWNS = [], townsVisible = true;
+// placement/editing of settlements is a local-only tool, off on the public page;
+// open the map with #edit in the URL (e.g. localhost:8000/#edit) to turn it on.
+let townEdit = /edit/i.test(location.hash);
 
 Promise.all([
   fetch('data/owners.json').then(r => r.json()),
-  fetch('data/parcels.geojson').then(r => r.ok ? r.json() : { type:'FeatureCollection', features:[] }).catch(() => ({ type:'FeatureCollection', features:[] }))
-]).then(([od, pd]) => {
+  fetch('data/parcels.geojson').then(r => r.ok ? r.json() : { type:'FeatureCollection', features:[] }).catch(() => ({ type:'FeatureCollection', features:[] })),
+  fetch('data/towns.json').then(r => r.ok ? r.json() : { towns: [] }).catch(() => ({ towns: [] }))
+]).then(([od, pd, td]) => {
+  const localT = loadLocalTowns();
+  TOWNS = (localT && localT.length) ? localT : (td.towns || []);
+  window._fileTowns = td.towns || [];
+  renderTowns();
   OWNERS = od.owners;
   OWNERS.forEach(o => { o.color = ownerColor(o.id, o); OWNER_BY_ID[o.id] = o;
     o.parcels.forEach(p => { const k = p.chast + ':' + p.num;
@@ -461,4 +471,68 @@ document.getElementById('btn-export').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(PARCELS, null, 1)], { type:'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob); a.download = 'parcels.geojson'; a.click();
+});
+
+// ================= TOWNS =================
+// Town markers always render (so they show on the published page). The "города"
+// checkbox enters a local placement mode; Export writes data/towns.json to commit.
+const LS_KEY_T = 'bobruisk_towns_v1';
+let saveTimerT = null;
+function markDirtyTowns() {
+  clearTimeout(saveTimerT);
+  saveTimerT = setTimeout(() => {
+    try { localStorage.setItem(LS_KEY_T, JSON.stringify(TOWNS)); } catch (e) { console.warn('towns autosave failed', e); }
+  }, 400);
+}
+function loadLocalTowns() {
+  try { const s = localStorage.getItem(LS_KEY_T); return s ? JSON.parse(s) : null; }
+  catch (e) { return null; }
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+}
+function renderTowns() {
+  townGroup.clearLayers();
+  if (!townsVisible) return;
+  TOWNS.forEach((t, idx) => {
+    const m = L.marker(px(t.x, t.y), {
+      draggable: townEdit, interactive: townEdit, keyboard: false,
+      icon: L.divIcon({ className: 'town-marker', iconSize: [9, 9], iconAnchor: [4, 4],
+        html: `<span class="town-dot"></span><span class="town-name">${escapeHtml(t.name)}</span>` })
+    });
+    if (townEdit) {
+      m.on('dragend', () => { const xy = toXY(m.getLatLng()); t.x = xy[0]; t.y = xy[1]; markDirtyTowns(); });
+      m.on('contextmenu', () => { if (confirm(`Удалить «${t.name}»?`)) { TOWNS.splice(idx, 1); markDirtyTowns(); renderTowns(); } });
+      m.on('dblclick', () => { const nn = prompt('Название паселішча:', t.name);
+        if (nn !== null && nn.trim()) { t.name = nn.trim(); markDirtyTowns(); renderTowns(); } });
+    }
+    m.addTo(townGroup);
+  });
+}
+// public sidebar control = show/hide the settlements layer
+document.getElementById('toggle-towns').addEventListener('change', e => {
+  townsVisible = e.target.checked; renderTowns();
+});
+// local placement tool (only when the page was opened with #edit)
+if (townEdit) {
+  document.getElementById('town-panel').classList.remove('hidden');
+  document.getElementById('map').classList.add('town-edit');
+}
+map.on('click', e => {
+  if (!townEdit || editMode) return;
+  const name = prompt('Название паселішча:');
+  if (name === null || !name.trim()) return;
+  const [x, y] = toXY(e.latlng);
+  TOWNS.push({ name: name.trim(), x, y });
+  markDirtyTowns(); renderTowns();
+});
+document.getElementById('btn-export-towns').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify({ towns: TOWNS }, null, 1)], { type:'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = 'towns.json'; a.click();
+});
+document.getElementById('btn-towns-fromfile').addEventListener('click', () => {
+  if (!confirm('Отбросить локальные правки и загрузить data/towns.json?')) return;
+  TOWNS = JSON.parse(JSON.stringify(window._fileTowns || []));
+  localStorage.removeItem(LS_KEY_T); renderTowns();
 });

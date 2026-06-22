@@ -30,10 +30,10 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 #saveind { padding: 4px 14px 0; font-size: 11px; color: #2e7d32; }
 #restore-banner { padding: 8px 12px; background: #fbf0cf; border-bottom: 1px solid #e0c873; font-size: 12px; color: #6b5410; }
 #restore-banner button { margin-left: 4px; font-size: 11px; padding: 2px 7px; border: 1px solid #c9a14a; background: #fff; border-radius: 4px; cursor: pointer; }
-#edit-panel { padding: 10px 14px; border-top: 2px solid #c9a14a; background: #fbf6e8; }
-#edit-panel h2 { font-size: 13px; margin: 0 0 6px; color: #8a6d20; }
+#edit-panel, #town-panel { padding: 10px 14px; border-top: 2px solid #c9a14a; background: #fbf6e8; }
+#edit-panel h2, #town-panel h2 { font-size: 13px; margin: 0 0 6px; color: #8a6d20; }
 .hint { font-size: 11px; color: #8a7d5e; margin: 0 0 8px; }
-#edit-panel button { display: block; width: 100%; margin-top: 6px; padding: 7px; border: 1px solid #c9a14a;
+#edit-panel button, #town-panel button { display: block; width: 100%; margin-top: 6px; padding: 7px; border: 1px solid #c9a14a;
   background: #f2e6c4; border-radius: 6px; cursor: pointer; font-size: 13px; }
 #edit-sel { font-size: 12px; }
 #edit-sel input, #edit-sel select { width: 100%; margin: 2px 0 6px; padding: 4px; border: 1px solid #cdc6b0; border-radius: 4px; }
@@ -104,6 +104,15 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
   text-shadow: 0 0 2px #fff,0 0 3px #fff,0 0 4px #fff; }
 .vtx { background: #fff; border: 2px solid #c0392b; border-radius: 50%; cursor: move; box-shadow: 0 0 2px rgba(0,0,0,.4); }
 .vtx-mid { background: rgba(255,255,255,.5); border: 1.5px dashed #c0392b; border-radius: 50%; cursor: copy; }
+/* settlement markers: filled dot + name in a white box to the right */
+.town-marker { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.town-dot { width: 9px; height: 9px; border-radius: 50%; background: #7a3030; flex: none;
+  border: 1.5px solid #fff; box-shadow: 0 0 2px rgba(0,0,0,.55); }
+.town-name { font-size: 13px; font-weight: 600; color: #2a2018; letter-spacing: .01em;
+  background: rgba(255,255,255,.95); padding: 1px 5px; border-radius: 3px;
+  border: 1px solid #b9ad8a; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+.towns-toggle { flex-basis: 100%; }
+.town-edit .town-marker { cursor: move; }
 #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 1000;
   background: rgba(40,34,20,.92); color: #fbf3df; padding: 8px 16px; border-radius: 18px;
   font-size: 13px; transition: opacity .4s; pointer-events: none; max-width: 70vw; text-align: center; }
