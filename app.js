@@ -231,8 +231,8 @@ function cardBody(owner) {
     ${cropBlock(owner)}${flag}${armsBlock(owner)}${linksBlock(owner)}`;
 }
 function nameHead(owner) {
-  const q = owner.uncertain ? ' <span class="q-badge">⚠ чтение требует проверки</span>' : '';
-  return `<span class="co-sw" style="background:${owner.color}"></span>${owner.name}${q}`;
+  // "⚠ чтение требует проверки" badge hidden for now (uncertain flag kept in data)
+  return `<span class="co-sw" style="background:${owner.color}"></span>${owner.name}`;
 }
 // sole owner: full card, always expanded
 function ownerCard(owner) {
@@ -290,7 +290,7 @@ function buildSidebar() {
     el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'')).toLowerCase();
     const pcs = [...new Set(o.parcels.map(p => p.num))].join(', ');
     el.innerHTML = `<span class="sw" style="background:${o.color}"></span>
-      <span class="nm">${o.name}${o.uncertain?' <span class="q">⚠</span>':''}</span>
+      <span class="nm">${o.name}</span>
       <span class="pc">${pcs}</span>`;
     el.addEventListener('click', () => focusOwner(o.id));
     list.appendChild(el);
