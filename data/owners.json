@@ -381,8 +381,15 @@
         "w": 719,
         "h": 119
       },
-      "uncertain": true,
-      "fix": "правка пользователя (предв.): Вищинский"
+      "fix": "Вішчынскія (Wiszczyński) герба «Корвін»; Гербоўнік беларускай шляхты, т.3, с.372–373",
+      "arms": "korwin.png",
+      "arms_cap": "Герб «Корвін» (Вішчынскія / Wiszczyński)",
+      "links": [
+        {
+          "label": "Korwin (герб) — Wikipedia",
+          "url": "https://be.wikipedia.org/wiki/Корвін_(герб)"
+        }
+      ]
     },
     {
       "id": "wolodko",
