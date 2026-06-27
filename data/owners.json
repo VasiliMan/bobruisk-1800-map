@@ -409,7 +409,16 @@
         "y": 2777,
         "w": 720,
         "h": 74
-      }
+      },
+      "arms": "leliwa.png",
+      "arms_cap": "Герб «Ляліва» (Валодзькі / Wołodźko)",
+      "fix": "Валодзькі, Косцічы-Валодзькі (Wołodźko, Kostycz-Wołodźko) герба «Ляліва»; Гербоўнік беларускай шляхты, т.3",
+      "links": [
+        {
+          "label": "Ляліва (герб) — Wikipedia",
+          "url": "https://be.wikipedia.org/wiki/Ляліва_(герб)"
+        }
+      ]
     },
     {
       "id": "wlazmiatinow",
