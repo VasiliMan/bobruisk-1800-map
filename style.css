@@ -110,9 +110,12 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 .town-marker { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 .town-dot { width: 9px; height: 9px; border-radius: 50%; background: #7a3030; flex: none;
   border: 1.5px solid #fff; box-shadow: 0 0 2px rgba(0,0,0,.55); }
-.town-name { font-size: 13px; font-weight: 600; color: #2a2018; letter-spacing: .01em;
+.town-name { font-size: 9px; font-weight: 600; color: #2a2018; letter-spacing: .01em;
   background: rgba(255,255,255,.95); padding: 1px 5px; border-radius: 3px;
   border: 1px solid #b9ad8a; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+/* Бобруйск — a bit larger than the gentry settlements */
+.city-marker .town-name { font-size: 14px; font-weight: 700; }
+.city-marker .town-dot { width: 11px; height: 11px; background: #5a2020; }
 .towns-toggle { flex-basis: 100%; }
 .town-edit .town-marker { cursor: move; }
 #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 1000;

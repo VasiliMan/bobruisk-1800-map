@@ -41,6 +41,9 @@ let parcelLayerGroup = L.layerGroup().addTo(map);
 let labelGroup = L.layerGroup().addTo(map);
 let armsGroup = L.layerGroup().addTo(map);
 let townGroup = L.layerGroup().addTo(map);   // town dots+labels, always visible
+let cityGroup = L.layerGroup().addTo(map);   // Бобруйск town label — always on, not toggled
+// the town of Бобруйск, at parcel № А (часть 1)
+const CITY = { name: 'Бобруйск', x: 10555, y: 5612 };
 let editMode = false, selectedFid = null;
 let TOWNS = [], townsVisible = true;
 // placement/editing of settlements is a local-only tool, off on the public page;
@@ -56,6 +59,7 @@ Promise.all([
   TOWNS = (localT && localT.length) ? localT : (td.towns || []);
   window._fileTowns = td.towns || [];
   renderTowns();
+  renderCity();
   OWNERS = od.owners;
   OWNERS.forEach(o => { o.color = ownerColor(o.id, o); OWNER_BY_ID[o.id] = o;
     o.parcels.forEach(p => { const k = p.chast + ':' + p.num;
@@ -512,6 +516,15 @@ function renderTowns() {
     }
     m.addTo(townGroup);
   });
+}
+// Бобруйск — always-visible town label (independent of the settlements toggle)
+function renderCity() {
+  cityGroup.clearLayers();
+  L.marker(px(CITY.x, CITY.y), {
+    interactive: false, keyboard: false,
+    icon: L.divIcon({ className: 'town-marker city-marker', iconSize: [11, 11], iconAnchor: [5, 5],
+      html: `<span class="town-dot"></span><span class="town-name">${escapeHtml(CITY.name)}</span>` })
+  }).addTo(cityGroup);
 }
 // public sidebar control = show/hide the settlements layer
 document.getElementById('toggle-towns').addEventListener('change', e => {
