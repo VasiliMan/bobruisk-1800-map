@@ -550,7 +550,16 @@
         "y": 969,
         "w": 644,
         "h": 68
-      }
+      },
+      "arms": "korczak.png",
+      "arms_cap": "Герб «Корчак» (Вольскія / Wolski)",
+      "fix": "ВОЛЬСКІЯ (Wolski) герба «Корчак»; Гербоўнік беларускай шляхты, т.3 (арт. 194)",
+      "links": [
+        {
+          "label": "Корчак (герб) — Wikipedia",
+          "url": "https://be.wikipedia.org/wiki/Корчак_(герб)"
+        }
+      ]
     },
     {
       "id": "volsky_wladimir",
