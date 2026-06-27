@@ -54,6 +54,9 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 .arms-cap { font-size: 13px; color: #7a6f50; margin-top: 3px; }
 .popup-arms.inst { display: flex; align-items: center; gap: 10px; text-align: left; color: #5b5135; }
 .inst-sym { font-size: 34px; color: #7a3030; line-height: 1; }
+.popup-ref { margin-top: 8px; font-size: 13px; line-height: 1.35; color: #5a5135;
+  font-style: italic; background: #f6f1e1; padding: 5px 8px; border-radius: 4px;
+  border-left: 3px solid #b9ad8a; }
 .popup-links { margin-top: 8px; }
 .popup-links a { display: block; font-size: 16px; color: #2c6b8a; text-decoration: none; margin-top: 3px; }
 .popup-links a:hover { text-decoration: underline; }

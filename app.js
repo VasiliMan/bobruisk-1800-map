@@ -237,12 +237,17 @@ function linksBlock(owner) {
     owner.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${l.label} ↗</a>`).join('') +
     `</div>`;
 }
+// a literature reference (book chapter), shown as plain text — not a link
+function refBlock(owner) {
+  if (!owner || !owner.ref) return '';
+  return `<div class="popup-ref">📖 ${owner.ref}</div>`;
+}
 // the detail body for one owner (no name heading): original spelling, title, crop, arms, links
 function cardBody(owner) {
   const flag = owner.flag ? `<div class="popup-flag">⚠ ${owner.flag}</div>` : '';
   return `${owner.name_ru ? `<div class="popup-orig">${owner.name_ru}</div>` : ''}
     ${owner.title ? `<div class="popup-meta">${owner.title}</div>` : ''}
-    ${cropBlock(owner)}${flag}${armsBlock(owner)}${linksBlock(owner)}`;
+    ${cropBlock(owner)}${flag}${armsBlock(owner)}${refBlock(owner)}${linksBlock(owner)}`;
 }
 function nameHead(owner) {
   // "⚠ чтение требует проверки" badge hidden for now (uncertain flag kept in data)
