@@ -25,6 +25,8 @@ h1 small { font-size: 11px; color: #8a7d5e; font-weight: 400; }
 .sw { width: 14px; height: 14px; border-radius: 3px; flex: none; border: 1px solid rgba(0,0,0,.25); }
 .owner .nm { flex: 1; color: #3c3322; }
 .owner .pc { color: #9a8d6a; font-size: 11px; }
+.owner .side-arms { height: 22px; width: auto; flex: none; object-fit: contain; }
+.owner .side-cross { font-size: 16px; line-height: 1; flex: none; color: #6b5a2a; }
 .owner .q { color: #c0392b; font-weight: 700; }
 footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1px solid #e2dcc9; }
 #saveind { padding: 4px 14px 0; font-size: 11px; color: #2e7d32; }

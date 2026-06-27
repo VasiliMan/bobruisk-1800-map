@@ -299,8 +299,12 @@ function buildSidebar() {
     el.className = 'owner'; el.dataset.id = o.id;
     el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'')).toLowerCase();
     const pcs = [...new Set(o.parcels.map(p => p.num))].join(', ');
+    const sym = o.arms ? `<img class="side-arms" src="arms/${o.arms}" alt="" title="${o.arms_cap || ''}">`
+              : o.inst ? `<span class="side-cross" title="${INST_LBL[o.inst] || ''}">${INST_SYM[o.inst] || '✟'}</span>`
+              : '';
     el.innerHTML = `<span class="sw" style="background:${o.color}"></span>
       <span class="nm">${o.name}</span>
+      ${sym}
       <span class="pc">${pcs}</span>`;
     el.addEventListener('click', () => focusOwner(o.id));
     list.appendChild(el);
