@@ -4,3 +4,7 @@ verify.html
 data/parcels_held.geojson
 data/verify_decisions.json
 data/parts.json
+tiles_rechitsa/
+preview_hq.png
+*_preview.png
+align*.png

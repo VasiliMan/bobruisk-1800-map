@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Обводка границы уезда</title>
+<link rel="stylesheet" href="vendor/leaflet.css">
+<style>
+  html,body{margin:0;height:100%;font:14px/1.4 system-ui,sans-serif;background:#e8e4d0}
+  #map{position:absolute;top:0;left:0;right:0;bottom:0}
+  #bar{position:absolute;z-index:1000;top:10px;left:10px;right:10px;display:flex;gap:8px;
+    align-items:center;flex-wrap:wrap;background:rgba(40,34,20,.92);color:#f3ecd6;
+    padding:8px 12px;border-radius:8px}
+  #bar b{color:#ffd}
+  #bar button,#bar select{font:13px system-ui;padding:4px 10px;border-radius:5px;border:1px solid #8a7c54;
+    background:#f3ecd6;color:#28220f;cursor:pointer}
+  #bar button:hover{background:#fff}
+  #bar .sp{flex:1}
+  #hint{font-size:12px;color:#d8cfa8}
+  .vtx{background:#c0392b;border:2px solid #fff;border-radius:50%;box-shadow:0 0 2px #000}
+  #count{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="bar">
+  <b>Обводка:</b>
+  <select id="uezd">
+    <option value="rechitsa">Речицкий уезд</option>
+    <option value="bobruisk">Бобруйский уезд</option>
+  </select>
+  <span id="hint">клик — добавить точку · перетащить — двигать · правый клик по точке — удалить</span>
+  <span class="sp"></span>
+  <span id="count">0 точек</span>
+  <button id="undo">↶ отменить</button>
+  <button id="clear">очистить</button>
+  <button id="export">💾 Экспорт</button>
+</div>
+<div id="map"></div>
+<script src="vendor/leaflet.js"></script>
+<script>
+const CFG = {
+  rechitsa: { tiles:'tiles_rechitsa', W:14838, H:20547, maxZ:7 },
+  bobruisk: { tiles:'tiles',          W:15039, H:14407, maxZ:6 },
+};
+const params = new URLSearchParams(location.search);
+let uezd = params.get('uezd') || 'rechitsa';
+document.getElementById('uezd').value = uezd;
+
+let map, base, poly, pts = [], markers = [];
+const LSK = () => 'trace_outline_' + uezd;
+
+function init() {
+  const c = CFG[uezd];
+  if (map) map.remove();
+  map = L.map('map', { crs:L.CRS.Simple, minZoom:0, maxZoom:c.maxZ+2, zoomSnap:0.25, attributionControl:false });
+  const px = (x,y) => map.unproject([x,y], c.maxZ);
+  map._px = px;
+  const bounds = L.latLngBounds(px(0,0), px(c.W,c.H));
+  base = L.tileLayer(c.tiles+'/{z}/{x}/{y}.jpg', { tileSize:256, minNativeZoom:0, maxNativeZoom:c.maxZ, bounds, noWrap:true }).addTo(map);
+  map.fitBounds(bounds);
+  poly = L.polygon([], { color:'#c0392b', weight:2, fillOpacity:.12 }).addTo(map);
+  // restore saved outline for this uezd
+  pts = []; markers.forEach(m=>map.removeLayer(m)); markers = [];
+  const saved = localStorage.getItem(LSK());
+  if (saved) { try { JSON.parse(saved).forEach(p => addPoint(p[0],p[1],false)); } catch(e){} }
+  redraw();
+  map.on('click', e => { const p = map.project(e.latlng, c.maxZ); addPoint(Math.round(p.x), Math.round(p.y)); });
+}
+
+function addPoint(x, y, save=true) {
+  const c = CFG[uezd];
+  const i = pts.length; pts.push([x,y]);
+  const m = L.marker(map._px(x,y), { draggable:true,
+    icon:L.divIcon({ className:'vtx', iconSize:[12,12] }) }).addTo(map);
+  m.idx = i;
+  m.on('drag', () => { const p = map.project(m.getLatLng(), c.maxZ); pts[m.idx] = [Math.round(p.x),Math.round(p.y)]; redraw(); });
+  m.on('dragend', persist);
+  m.on('contextmenu', () => { pts.splice(m.idx,1); reindex(); redraw(); persist(); });
+  markers.push(m);
+  if (save) persist();
+  redraw();
+}
+function reindex(){ markers.forEach(m=>map.removeLayer(m)); markers=[]; const cur=pts.slice(); pts=[]; cur.forEach(p=>addPoint(p[0],p[1],false)); }
+function redraw(){ poly.setLatLngs(pts.map(p=>map._px(p[0],p[1]))); document.getElementById('count').textContent = pts.length+' точек'; }
+function persist(){ localStorage.setItem(LSK(), JSON.stringify(pts)); }
+
+document.getElementById('undo').onclick = () => { pts.pop(); reindex(); redraw(); persist(); };
+document.getElementById('clear').onclick = () => { if(confirm('Очистить обводку?')){ pts=[]; reindex(); redraw(); persist(); } };
+document.getElementById('export').onclick = () => {
+  const blob = new Blob([JSON.stringify({ uezd, points: pts }, null, 0)], { type:'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = uezd + '_outline.json'; a.click();
+};
+document.getElementById('uezd').onchange = e => { uezd = e.target.value; init(); };
+init();
+</script>
+</body>
+</html>

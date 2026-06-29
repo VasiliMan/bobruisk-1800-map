@@ -721,7 +721,15 @@
         "y": 1903,
         "w": 644,
         "h": 108
-      }
+      },
+      "arms": "lubicz.png",
+      "arms_cap": "герб «Любич» (Дерналовічы / Dernałowicz)",
+      "links": [
+        {
+          "label": "Leon Józef Dernałowicz (pl.wikipedia)",
+          "url": "https://pl.wikipedia.org/wiki/Leon_J%C3%B3zef_Derna%C5%82owicz"
+        }
+      ]
     },
     {
       "id": "durnow",

@@ -28,6 +28,13 @@ h1 small { font-size: 11px; color: #8a7d5e; font-weight: 400; }
 .owner .side-arms { height: 22px; width: auto; flex: none; object-fit: contain; }
 .owner .side-cross { font-size: 16px; line-height: 1; flex: none; color: #6b5a2a; }
 .owner .q { color: #c0392b; font-weight: 700; }
+.uezd-head { padding: 8px 14px 4px; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase; color: #8a7c54; background: #efe9d6; border-bottom: 1px solid #e2dcc9;
+  position: sticky; top: 0; z-index: 1; }
+.ed-uezd { font-size: 11px; font-weight: 700; color: #8a7c54; text-transform: uppercase;
+  letter-spacing: .04em; margin-bottom: 4px; }
+.coord-readout { background: rgba(40,34,20,.82); color: #f3ecd6; font: 11px/1.4 monospace;
+  padding: 3px 8px; border-radius: 4px; pointer-events: none; }
 footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1px solid #e2dcc9; }
 #saveind { padding: 4px 14px 0; font-size: 11px; color: #2e7d32; }
 #restore-banner { padding: 8px 12px; background: #fbf0cf; border-bottom: 1px solid #e0c873; font-size: 12px; color: #6b5410; }

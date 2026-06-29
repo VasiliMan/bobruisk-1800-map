@@ -1,11 +1,43 @@
-/* Bobruisk uezd land-ownership map.
-   Base = scanned General Survey plan, tiled for Leaflet CRS.Simple.
-   Parcels are stored in pixel coordinates of the source scan (15039x14407).
-   parcels.geojson: GeoJSON FeatureCollection; each Polygon's coordinates are
-   [x, y] PIXEL positions (not lon/lat). app converts via map.unproject(...,MAX_Z). */
+/* Bobruisk + Rechitsa uezd land-ownership map.
+   Base = several scanned General Survey plans baked into ONE stitched tile
+   pyramid (Leaflet CRS.Simple).  Бобруйск sits at origin (0,0); other uezds are
+   pasted at an offset by build_combined.py.  Parcels are stored in GLOBAL pixel
+   coordinates of the combined canvas; each feature carries properties.uezd so
+   owner lookups (numbers restart per uezd) stay scoped to the right uezd.
+   parcels.geojson coords are [x,y] PIXELS (not lon/lat); app converts via
+   map.unproject(...,MAX_Z). */
 
-const IMG_W = 15039, IMG_H = 14407, MAX_Z = 6, TILE = 256;
+const IMG_W = 20606, IMG_H = 31110, MAX_Z = 7, TILE = 256;  // combined canvas
 const PAGE_W = 2400, PAGE_H = 3200;          // natural size of the owner-index page scans
+
+// Each uezd: where its scan sits in the combined canvas (ox,oy) and its source
+// size (w,h).  Offsets MUST match LAYOUT in build_combined.py.  A parcel feature
+// is assigned to a uezd by where its centroid falls (see uezdOfXY).
+const UEZDS = [
+  { id: 'bobruisk', name: 'Бобруйский уезд', owners: 'data/owners.json',
+    parcels: 'data/parcels.geojson',           ox: 0,   oy: 0,     w: 15039, h: 14407 },
+  { id: 'rechitsa', name: 'Речицкий уезд',   owners: 'data/rechitsa/owners.json',
+    parcels: 'data/rechitsa/parcels.geojson',  ox: 5768, oy: 10563, w: 14838, h: 20547 },
+];
+const UEZD_BY_ID = {}; UEZDS.forEach(u => UEZD_BY_ID[u.id] = u);
+// which uezd a global pixel (x,y) belongs to: containing rect, else nearest centre
+function uezdOfXY(x, y) {
+  for (const u of UEZDS)
+    if (x >= u.ox && x <= u.ox + u.w && y >= u.oy && y <= u.oy + u.h) return u.id;
+  let best = UEZDS[0], bd = Infinity;
+  for (const u of UEZDS) {
+    const dx = x - (u.ox + u.w / 2), dy = y - (u.oy + u.h / 2), d = dx*dx + dy*dy;
+    if (d < bd) { bd = d; best = u; }
+  }
+  return best.id;
+}
+function uezdOfFeature(f) {
+  if (f.properties.uezd) return f.properties.uezd;
+  const r = f.geometry.coordinates[0]; let cx = 0, cy = 0;
+  for (let i = 0; i < r.length - 1; i++) { cx += r[i][0]; cy += r[i][1]; }
+  const n = r.length - 1;
+  return uezdOfXY(cx / n, cy / n);
+}
 
 const map = L.map('map', {
   crs: L.CRS.Simple, minZoom: 0, maxZoom: 9, zoomSnap: 0.25, zoomControl: true,
@@ -17,11 +49,31 @@ const px = (x, y) => map.unproject([x, y], MAX_Z);
 const toXY = (latlng) => { const p = map.project(latlng, MAX_Z); return [p.x, p.y]; };
 
 const imgBounds = L.latLngBounds(px(0, 0), px(IMG_W, IMG_H));
+// stitched combined pyramid: Бобруйск + Речица, masked & baked by build_combined.py
 L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
   tileSize: TILE, minNativeZoom: 0, maxNativeZoom: MAX_Z, bounds: imgBounds, noWrap: true
 }).addTo(map);
-map.fitBounds(imgBounds);
+// open framed on Бобруйск (Речица is reachable by panning/zooming out)
+const bobr = UEZD_BY_ID['bobruisk'];
+const bobrBounds = L.latLngBounds(px(bobr.ox, bobr.oy), px(bobr.ox + bobr.w, bobr.oy + bobr.h));
+map.fitBounds(bobrBounds);
 map.setMaxBounds(imgBounds.pad(0.4));
+
+// ---- coordinate readout (alignment/placement helper; #edit only) ----
+// shows global combined-pixel [x,y] plus the uezd-LOCAL [x,y] under the cursor —
+// use it to read matching landmark points on the shared border for re-baking.
+if (/edit/i.test(location.hash)) {
+  const box = L.control({ position: 'bottomleft' });
+  box.onAdd = () => { const d = L.DomUtil.create('div', 'coord-readout'); d.id = 'coord-readout';
+    d.textContent = 'наведите курсор…'; return d; };
+  box.addTo(map);
+  map.on('mousemove', e => {
+    const [x, y] = toXY(e.latlng); const u = UEZD_BY_ID[uezdOfXY(x, y)];
+    const lx = Math.round(x - (u ? u.ox : 0)), ly = Math.round(y - (u ? u.oy : 0));
+    const el = document.getElementById('coord-readout');
+    if (el) el.textContent = `глоб [${Math.round(x)}, ${Math.round(y)}] · ${u ? u.name : '—'} лок [${lx}, ${ly}]`;
+  });
+}
 
 // ---- color per owner (stable from id hash) ----
 function ownerColor(id, owner) {
@@ -34,7 +86,9 @@ function ownerColor(id, owner) {
   return `hsl(${hue} ${sat}% ${lig}%)`;
 }
 
-let OWNERS = [], OWNER_BY_ID = {}, KEY2OWNER = {}, KEY2OWNERS = {}, NUM2OWNERS = {};
+let OWNERS = [], OWNER_BY_ID = {};
+// owner lookups are scoped per uezd, because parcel numbers restart in each uezd
+let NUM2OWNERS = {};                 // { uezdId: { num: [{id,major}] } }
 let PARCELS = { type: 'FeatureCollection', features: [] };
 let layersByOwner = {}, layerByFid = {};
 let parcelLayerGroup = L.layerGroup().addTo(map);
@@ -50,23 +104,36 @@ let TOWNS = [], townsVisible = true;
 // open the map with #edit in the URL (e.g. localhost:8000/#edit) to turn it on.
 let townEdit = /edit/i.test(location.hash);
 
+const fetchJson = (url, fb) => fetch(url).then(r => r.ok ? r.json() : fb).catch(() => fb);
+const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
+
 Promise.all([
-  fetch('data/owners.json').then(r => r.json()),
-  fetch('data/parcels.geojson').then(r => r.ok ? r.json() : { type:'FeatureCollection', features:[] }).catch(() => ({ type:'FeatureCollection', features:[] })),
-  fetch('data/towns.json').then(r => r.ok ? r.json() : { towns: [] }).catch(() => ({ towns: [] }))
-]).then(([od, pd, td]) => {
+  fetchJson('data/towns.json', { towns: [] }),
+  Promise.all(UEZDS.map(u => fetchJson(u.owners, { owners: [] }))),
+  Promise.all(UEZDS.map(u => fetchJson(u.parcels, emptyFC()))),
+]).then(([td, ownerDocs, parcelDocs]) => {
   const localT = loadLocalTowns();
   TOWNS = (localT && localT.length) ? localT : (td.towns || []);
   window._fileTowns = td.towns || [];
   renderTowns();
   renderCity();
-  OWNERS = od.owners;
-  OWNERS.forEach(o => { o.color = ownerColor(o.id, o); OWNER_BY_ID[o.id] = o;
-    o.parcels.forEach(p => { const k = p.chast + ':' + p.num;
-      KEY2OWNER[k] = o.id; (KEY2OWNERS[k] = KEY2OWNERS[k] || []).push(o.id);
-      // parcels are now keyed by NUMBER alone (часть ignored); a number may be co-owned
-      const n = String(p.num); (NUM2OWNERS[n] = NUM2OWNERS[n] || []).push({ id: o.id, major: !!p.major }); }); });
-  const fileParcels = pd && pd.features ? pd : PARCELS;
+
+  // owners: tag each with its uezd; build per-uezd number -> owners index
+  OWNERS = [];
+  UEZDS.forEach((u, i) => {
+    NUM2OWNERS[u.id] = NUM2OWNERS[u.id] || {};
+    (ownerDocs[i].owners || []).forEach(o => {
+      o.uezd = u.id; o.color = ownerColor(o.id, o); OWNER_BY_ID[o.id] = o; OWNERS.push(o);
+      o.parcels.forEach(p => { const n = String(p.num);
+        (NUM2OWNERS[u.id][n] = NUM2OWNERS[u.id][n] || []).push({ id: o.id, major: !!p.major }); });
+    });
+  });
+
+  // parcels: merge all uezds into one collection, tag each feature with its uezd
+  const fileParcels = emptyFC();
+  UEZDS.forEach((u, i) => (parcelDocs[i].features || []).forEach(f => {
+    f.properties.uezd = u.id; fileParcels.features.push(f);
+  }));
   const local = loadLocal();
   if (local && local.features) { PARCELS = local; showRestoreBanner(); }
   else PARCELS = fileParcels;
@@ -113,13 +180,13 @@ function showRestoreBanner() {
 // ---- render parcels ----
 // All owners of a parcel NUMBER (часть ignored). Co-owners are treated as EQUAL
 // shares — no major/minor; listing order is just owners.json order.
-function ownersOfNum(num) {
-  const entries = NUM2OWNERS[String(num)] || [];
+function ownersOfNum(num, uezd) {
+  const entries = (NUM2OWNERS[uezd] || {})[String(num)] || [];
   const seen = new Set(), list = [];
   entries.forEach(e => { if (OWNER_BY_ID[e.id] && !seen.has(e.id)) { seen.add(e.id); list.push(OWNER_BY_ID[e.id]); } });
   return list;
 }
-function ownersOfFeature(f) { return ownersOfNum(f.properties.num); }
+function ownersOfFeature(f) { return ownersOfNum(f.properties.num, uezdOfFeature(f)); }
 function ownerOfFeature(f) { return ownersOfFeature(f)[0] || null; }
 
 // ---- geometry helpers (pixel space) ----
@@ -302,11 +369,20 @@ document.addEventListener('click', e => {
 function buildSidebar() {
   const list = document.getElementById('owner-list');
   list.innerHTML = '';
-  const sorted = [...OWNERS].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-  sorted.forEach(o => {
+  // group owners by uezd; show a header only when more than one uezd has owners
+  const withOwners = UEZDS.filter(u => OWNERS.some(o => o.uezd === u.id));
+  const showHeaders = withOwners.length > 1;
+  withOwners.forEach(u => {
+    if (showHeaders) {
+      const h = document.createElement('div');
+      h.className = 'uezd-head'; h.textContent = u.name;
+      list.appendChild(h);
+    }
+    const sorted = OWNERS.filter(o => o.uezd === u.id).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+    sorted.forEach(o => {
     const el = document.createElement('div');
     el.className = 'owner'; el.dataset.id = o.id;
-    el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'')).toLowerCase();
+    el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'') + ' ' + u.name).toLowerCase();
     const pcs = [...new Set(o.parcels.map(p => p.num))].join(', ');
     const sym = o.arms ? `<img class="side-arms" src="arms/${o.arms}" alt="" title="${o.arms_cap || ''}">`
               : o.inst ? `<span class="side-cross" title="${INST_LBL[o.inst] || ''}">${INST_SYM[o.inst] || '✟'}</span>`
@@ -317,6 +393,7 @@ function buildSidebar() {
       <span class="pc">${pcs}</span>`;
     el.addEventListener('click', () => focusOwner(o.id));
     list.appendChild(el);
+    });
   });
 }
 
@@ -434,11 +511,14 @@ function renderEditSel() {
   const pr = f.properties;
   const primary = (pr.owner_ids && pr.owner_ids[0]) || pr.owner_id || '';
   const extras = pr.owner_ids ? pr.owner_ids.slice(1) : [];
-  const optsFor = (sel) => OWNERS.map(o => `<option value="${o.id}" ${o.id===sel?'selected':''}>${o.name}</option>`).join('');
+  const fu = uezdOfFeature(f);   // owners are uezd-scoped — only offer this uezd's owners
+  const uOwners = OWNERS.filter(o => o.uezd === fu);
+  const optsFor = (sel) => uOwners.map(o => `<option value="${o.id}" ${o.id===sel?'selected':''}>${o.name}</option>`).join('');
   const coRows = extras.map((id, i) =>
     `<div class="ed-co-row"><span>${(OWNER_BY_ID[id]||{}).name || id}</span>` +
     `<button class="ed-co-del" data-i="${i}" title="убрать совладельца">✕</button></div>`).join('');
   box.innerHTML = `
+    <div class="ed-uezd">${(UEZD_BY_ID[fu]||{}).name || fu}</div>
     <label>№ участка<input id="ed-num" value="${pr.num}"></label>
     <label>Владелец<select id="ed-owner"><option value="">— по номеру —</option>${optsFor(primary)}</select></label>
     <div class="ed-co">Несколько владельцев:${coRows || '<span class="ed-co-none">— нет —</span>'}
@@ -475,15 +555,27 @@ document.getElementById('btn-newparcel').addEventListener('click', () => {
   const c = map.getCenter(); const [x, y] = toXY(c); const s = 120;
   const ring = [[x-s,y-s],[x+s,y-s],[x+s,y+s],[x-s,y+s],[x-s,y-s]];
   const fid = 'p' + Date.now();
-  PARCELS.features.push({ type:'Feature', properties:{ fid, chast:3, num:'?', status:'draft' },
+  PARCELS.features.push({ type:'Feature', properties:{ fid, uezd: uezdOfXY(x, y), num:'?', status:'draft' },
     geometry:{ type:'Polygon', coordinates:[ring] } });
   renderParcels(); selectParcel(fid); updateStat(); markDirty();
 });
 
+// Export splits the merged collection back into one geojson per uezd (the `uezd`
+// property is internal — stripped on the way out). Downloads filename hints where
+// each file belongs: bobruisk -> data/parcels.geojson, others -> <id>.parcels.geojson.
 document.getElementById('btn-export').addEventListener('click', () => {
-  const blob = new Blob([JSON.stringify(PARCELS, null, 1)], { type:'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'parcels.geojson'; a.click();
+  UEZDS.forEach(u => {
+    const feats = PARCELS.features
+      .filter(f => uezdOfFeature(f) === u.id)
+      .map(f => { const g = JSON.parse(JSON.stringify(f)); delete g.properties.uezd; return g; });
+    if (!feats.length) return;
+    const fc = { type: 'FeatureCollection', features: feats };
+    const blob = new Blob([JSON.stringify(fc, null, 1)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = u.id === 'bobruisk' ? 'parcels.geojson' : u.id + '.parcels.geojson';
+    a.click();
+  });
 });
 
 // ================= TOWNS =================
