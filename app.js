@@ -111,7 +111,11 @@ let TOWNS = [], townsVisible = true, mestVisible = true;
 // open the map with #edit in the URL (e.g. localhost:8000/#edit) to turn it on.
 let townEdit = /edit/i.test(location.hash);
 
-const fetchJson = (url, fb) => fetch(url).then(r => r.ok ? r.json() : fb).catch(() => fb);
+// `cache: no-cache` = always revalidate (cheap 304 when unchanged). Without it a
+// data file can sit in cache for max-age while a freshly deployed app.js runs
+// against it — e.g. towns.json without `kind` silently drops every tier.
+const fetchJson = (url, fb) =>
+  fetch(url, { cache: 'no-cache' }).then(r => r.ok ? r.json() : fb).catch(() => fb);
 const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
 
 Promise.all([

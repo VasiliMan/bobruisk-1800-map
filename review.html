@@ -107,7 +107,7 @@ const tabs = document.getElementById('tabs');
 function updateTabs() { [...tabs.children].forEach(b => b.classList.toggle('active', +b.dataset.page === page)); }
 document.getElementById('only-prob').addEventListener('change', render);
 
-fetch('data/owners.json').then(r => r.json()).then(d => {
+fetch('data/owners.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
   OWNERS = d.owners; setImg(); updateTabs(); render();
 });
 
