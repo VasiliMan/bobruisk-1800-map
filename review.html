@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Проверка транскрипции — Бобруйский уезд (ок. 1800)</title>
+<title>Проверка транскрипции — землевладельцы, ок. 1800</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #2c2415; }
@@ -35,6 +35,8 @@
   .pc { color: #9a8d6a; font-size: 11px; white-space: nowrap; }
   .mine { color: #3c3322; }
   .alt { color: #2c6b8a; font-size: 12px; display: block; margin-top: 2px; }
+  .flagnote { display: block; margin-top: 3px; font-size: 12px; color: #8a4a10;
+    background: #fbf1e0; border-left: 3px solid #d79a4a; border-radius: 3px; padding: 3px 6px; }
   .title { color: #8a7d5e; font-size: 11px; }
   .choices label { display: block; font-size: 12px; margin: 1px 0; cursor: pointer; }
   .fixwrap { margin-top: 3px; }
@@ -50,6 +52,7 @@
 <header>
   <a class="back" href="index.html">← к карте</a>
   <h1>Проверка транскрипции</h1>
+  <span class="tabs" id="uezd-tabs"></span>
   <span class="tabs" id="tabs"></span>
   <span class="tool">масштаб:
     <button id="zoom-out">−</button><button id="zoom-in">+</button>
@@ -61,10 +64,12 @@
   <span id="progress"></span>
 </header>
 <div class="intro">
-  Сверьте моё прочтение имён владельцев со сканом указателя слева. Где ошибка — выберите
-  «исправить» и впишите правильный вариант (по желанию — источник). Затем нажмите «Отправить правки».
-  Регистрация не нужна. Замеченную ошибку в одном владельце можно также сообщить прямо из всплывающего
-  окна на <a href="index.html">карте</a>.
+  Сверьте моё прочтение со сканом указателя слева. Где ошибка — выберите «исправить» и впишите
+  правильный вариант (по желанию — источник). Затем нажмите «Отправить правки». Регистрация не нужна.
+  <b>Особенно важны номера участков:</b> в указателе они сведены фигурными скобками сразу к нескольким
+  строкам, поэтому номер и часть легко отнести не к тому владельцу — если номер неверен, впишите его
+  во второе поле (например «69/6, 70/6»). Ошибку в одном владельце можно также сообщить прямо из
+  всплывающего окна на <a href="index.html">карте</a>.
 </div>
 <div class="intro" id="who">
   <span>Подписать правки (необязательно):</span>
@@ -89,64 +94,109 @@
 </main>
 <script src="feedback.js"></script>
 <script>
-const LS = 'review_public_v1';
+// Each uezd has its own owner index and its own set of алфавит scans; the
+// `page` field on an owner selects which scan of that uezd it was read from.
+const UEZDS = {
+  bobruisk: { name: 'Бобруйский', owners: 'data/owners.json', img: p => `verify_img/p${p}.jpg`,
+              pages: [[1,'Стр.1 · А–З'],[2,'Стр.2 · К–Р'],[3,'Стр.3 · С–Ю']] },
+  rechitsa: { name: 'Речицкий', owners: 'data/rechitsa/owners.json', img: p => `verify_img/r${p}.jpg`,
+              pages: [[1,'Стр.1 · А–О'],[2,'Стр.2 · О–Т'],[3,'Стр.3 · Х–Я']] },
+};
+// deep-link: review.html#rechitsa opens straight on that uezd
+let uezd = (location.hash.replace('#','') in UEZDS) ? location.hash.replace('#','') : 'bobruisk';
+// v2 keys decisions as "<uezd>:<ownerId>"; v1 was bare ids, all Бобруйский.
+const LS = 'review_public_v2';
 let OWNERS = [], page = 1, imgW = 1000;
-let decisions = JSON.parse(localStorage.getItem(LS) || '{}');
+let decisions = JSON.parse(localStorage.getItem(LS) || 'null');
+if (!decisions) {
+  const old = JSON.parse(localStorage.getItem('review_public_v1') || '{}');
+  decisions = {};
+  for (const [id, d] of Object.entries(old)) decisions[`bobruisk:${id}`] = d;
+  if (Object.keys(decisions).length) localStorage.setItem(LS, JSON.stringify(decisions));
+}
 
 const scan = document.getElementById('scan');
-function setImg() { scan.src = `verify_img/p${page}.jpg`; scan.style.width = imgW + 'px'; }
+function setImg() { scan.src = UEZDS[uezd].img(page); scan.style.width = imgW + 'px'; }
 document.getElementById('zoom-in').onclick = () => { imgW = Math.min(3000, imgW + 250); setImg(); };
 document.getElementById('zoom-out').onclick = () => { imgW = Math.max(500, imgW - 250); setImg(); };
 
-const tabs = document.getElementById('tabs');
-[[1,'Стр.1 · А–З'],[2,'Стр.2 · К–Р'],[3,'Стр.3 · С–Ю']].forEach(([p,label]) => {
-  const b = document.createElement('button'); b.textContent = label;
-  b.onclick = () => { page = p; setImg(); render(); updateTabs(); };
-  b.dataset.page = p; tabs.appendChild(b);
+const uezdTabs = document.getElementById('uezd-tabs');
+Object.entries(UEZDS).forEach(([id, u]) => {
+  const b = document.createElement('button'); b.textContent = u.name;
+  b.onclick = () => { uezd = id; page = 1; location.hash = id; load(); };
+  b.dataset.uezd = id; uezdTabs.appendChild(b);
 });
-function updateTabs() { [...tabs.children].forEach(b => b.classList.toggle('active', +b.dataset.page === page)); }
+
+const tabs = document.getElementById('tabs');
+function buildPageTabs() {
+  tabs.innerHTML = '';
+  UEZDS[uezd].pages.forEach(([p, label]) => {
+    const b = document.createElement('button'); b.textContent = label;
+    b.onclick = () => { page = p; setImg(); render(); updateTabs(); };
+    b.dataset.page = p; tabs.appendChild(b);
+  });
+}
+function updateTabs() {
+  [...tabs.children].forEach(b => b.classList.toggle('active', +b.dataset.page === page));
+  [...uezdTabs.children].forEach(b => b.classList.toggle('active', b.dataset.uezd === uezd));
+}
 document.getElementById('only-prob').addEventListener('change', render);
 
-fetch('data/owners.json', { cache: 'no-cache' }).then(r => r.json()).then(d => {
-  OWNERS = d.owners; setImg(); updateTabs(); render();
-});
+// decisions are keyed by owner id, which is only unique within a uezd
+const key = o => `${uezd}:${o.id}`;
+
+function load() {
+  fetch(UEZDS[uezd].owners, { cache: 'no-cache' }).then(r => r.json()).then(d => {
+    OWNERS = d.owners || []; buildPageTabs(); setImg(); updateTabs(); render();
+  });
+}
+load();
 
 function render() {
   const tb = document.getElementById('rows'); tb.innerHTML = '';
   const onlyProb = document.getElementById('only-prob').checked;
   const list = OWNERS.filter(o => o.page === page && (!onlyProb || o.uncertain || o.flag));
   list.forEach(o => {
-    const dec = decisions[o.id] || {};
+    const k = key(o);
+    const dec = decisions[k] || {};
     const tr = document.createElement('tr');
     if (dec.choice === 'fix') tr.classList.add('fixed');
     const pcs = o.parcels.map(p => `${p.num}/${p.chast}`).join(', ');
     const alt = o.alt ? `<span class="alt">иной вариант чтения: ${o.alt}</span>` : '';
-    const q = o.uncertain ? ' <span class="q" title="чтение требует проверки">⚠</span>' : '';
+    const q = (o.uncertain || o.flag) ? ' <span class="q" title="чтение требует проверки">⚠</span>' : '';
+    // `flag` = the two model readings disagree on the parcel number/часть — say so,
+    // otherwise the ⚠ tells the helper nothing about where to look
+    const flag = o.flag ? `<span class="flagnote">⚠ ${o.flag}</span>` : '';
     tr.innerHTML = `
       <td class="pc">${pcs}<div class="title">${o.title || ''}</div></td>
-      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}</td>
+      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}${flag}</td>
       <td class="choices">
         <label><input type="radio" name="r-${o.id}" value="ok" ${dec.choice==='ok'?'checked':''}> ✓ верно</label>
         <label><input type="radio" name="r-${o.id}" value="fix" ${dec.choice==='fix'?'checked':''}> ✏ исправить:</label>
         <div class="fixwrap">
           <input class="fix-val" type="text" placeholder="правильное чтение…" value="${dec.choice==='fix'?(dec.value||'').replace(/"/g,'&quot;'):''}">
+          <input class="fix-pc" type="text" placeholder="участки № / часть — если номер неверен" value="${(dec.pc||'').replace(/"/g,'&quot;')}">
           <input class="fix-src" type="text" placeholder="источник / ссылка (необязательно)" value="${(dec.src||'').replace(/"/g,'&quot;')}">
         </div>
       </td>`;
     const radios = tr.querySelectorAll(`input[name="r-${o.id}"]`);
     const fixVal = tr.querySelector('.fix-val'), fixSrc = tr.querySelector('.fix-src');
+    const fixPc = tr.querySelector('.fix-pc');
     const save = () => {
       const choice = tr.querySelector(`input[name="r-${o.id}"]:checked`)?.value;
-      if (!choice) { delete decisions[o.id]; }
-      else decisions[o.id] = { choice, value: fixVal.value, src: fixSrc.value,
-        num: o.parcels.map(p=>p.num).join(','), reading: o.name_ru || o.name };
+      if (!choice) { delete decisions[k]; }
+      else decisions[k] = { choice, value: fixVal.value, pc: fixPc.value, src: fixSrc.value,
+        num: o.parcels.map(p=>p.num).join(','), pcWas: pcs, reading: o.name_ru || o.name };
       localStorage.setItem(LS, JSON.stringify(decisions));
       tr.classList.toggle('fixed', choice === 'fix');
       updateProgress();
     };
     radios.forEach(r => r.addEventListener('change', save));
-    fixVal.addEventListener('focus', () => { tr.querySelector('input[value="fix"]').checked = true; save(); });
+    const markFix = () => { tr.querySelector('input[value="fix"]').checked = true; save(); };
+    fixVal.addEventListener('focus', markFix);
+    fixPc.addEventListener('focus', markFix);
     fixVal.addEventListener('input', save);
+    fixPc.addEventListener('input', save);
     fixSrc.addEventListener('input', save);
     tb.appendChild(tr);
   });
@@ -154,27 +204,35 @@ function render() {
 }
 
 function updateProgress() {
-  const all = Object.values(decisions);
-  const fixes = all.filter(d => d.choice === 'fix').length;
-  const ok = all.filter(d => d.choice === 'ok').length;
+  // count only the uezd on screen, so the tally matches the table below it
+  const mine = OWNERS.map(o => decisions[key(o)]).filter(Boolean);
+  const fixes = mine.filter(d => d.choice === 'fix').length;
+  const ok = mine.filter(d => d.choice === 'ok').length;
   document.getElementById('progress').textContent =
     `отмечено: ✓ ${ok} · ✏ ${fixes}` + ` / ${OWNERS.length}`;
 }
 
 document.getElementById('btn-send').onclick = async () => {
+  // a correction may touch the reading, the parcel numbers, or both
   const fixes = OWNERS
-    .map(o => ({ o, d: decisions[o.id] }))
-    .filter(x => x.d && x.d.choice === 'fix' && (x.d.value || '').trim());
+    .map(o => ({ o, d: decisions[key(o)] }))
+    .filter(x => x.d && x.d.choice === 'fix' && ((x.d.value || '').trim() || (x.d.pc || '').trim()));
   const st = document.getElementById('sendstatus');
   if (!fixes.length) { st.className = 'err'; st.textContent = 'Нет исправлений для отправки.'; return; }
-  const lines = fixes.map(({ o, d }) =>
-    `• уч. ${o.parcels.map(p=>p.num+'/'+p.chast).join(', ')} | было: «${o.name_ru || o.name}» → стало: «${d.value.trim()}»`
-    + (d.src && d.src.trim() ? ` | источник: ${d.src.trim()}` : '') + ` [id:${o.id}]`).join('\n');
+  const lines = fixes.map(({ o, d }) => {
+    const was = o.parcels.map(p => p.num + '/' + p.chast).join(', ');
+    let s = `• уч. ${was}`;
+    if ((d.value || '').trim()) s += ` | было: «${o.name_ru || o.name}» → стало: «${d.value.trim()}»`;
+    if ((d.pc || '').trim()) s += ` | УЧАСТКИ: было «${was}» → стало «${d.pc.trim()}»`;
+    if ((d.src || '').trim()) s += ` | источник: ${d.src.trim()}`;
+    return s + ` [id:${o.id}]`;
+  }).join('\n');
   const btn = document.getElementById('btn-send');
   btn.disabled = true; st.className = ''; st.textContent = 'Отправка…';
   const res = await sendFeedback({
-    subject: `Карта 1800: пакет правок транскрипции (${fixes.length})`,
+    subject: `Карта 1800: пакет правок транскрипции — ${UEZDS[uezd].name} уезд (${fixes.length})`,
     Тип: 'транскрипция (пакет)',
+    Уезд: `${UEZDS[uezd].name} (${uezd})`,
     Имя: document.getElementById('who-name').value.trim() || '—',
     Email_для_ответа: document.getElementById('who-email').value.trim() || '—',
     Количество_правок: String(fixes.length),

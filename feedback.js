@@ -14,7 +14,7 @@ async function sendFeedback(fields) {
   if (!WEB3FORMS_KEY) return { ok: false, error: 'no-key' };
   const payload = Object.assign({
     access_key: WEB3FORMS_KEY,
-    from_name: 'Карта Бобруйск 1800',
+    from_name: 'Карта землевладельцев 1800',
   }, fields);
   try {
     const r = await fetch('https://api.web3forms.com/submit', {
@@ -72,6 +72,7 @@ function openFeedbackModal(ctx) {
         <label>Тип</label>
         <select id="fb-type">
           <option value="транскрипция">Транскрипция (имя / чтение)</option>
+          <option value="номер участка">Номер участка / часть (не тот владелец)</option>
           <option value="ссылка/источник">Ссылка / источник о владельце</option>
           <option value="герб">Герб (изображение / название)</option>
           <option value="другое">Другое</option>

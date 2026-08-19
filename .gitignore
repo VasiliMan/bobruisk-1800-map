@@ -8,3 +8,6 @@ tiles_rechitsa/
 preview_hq.png
 *_preview.png
 align*.png
+
+# local scan archive: only the алфавит pages are published (verify_img/r*.jpg)
+data/Речицкий уезд/
