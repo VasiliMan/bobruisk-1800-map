@@ -37,6 +37,9 @@
   .alt { color: #2c6b8a; font-size: 12px; display: block; margin-top: 2px; }
   .flagnote { display: block; margin-top: 3px; font-size: 12px; color: #8a4a10;
     background: #fbf1e0; border-left: 3px solid #d79a4a; border-radius: 3px; padding: 3px 6px; }
+  .vernote { display: block; margin-top: 3px; font-size: 12px; color: #35651f;
+    background: #eef6e6; border-left: 3px solid #6aa83a; border-radius: 3px; padding: 3px 6px; }
+  tr.verified { background: #f7fbf3; }
   .title { color: #8a7d5e; font-size: 11px; }
   .choices label { display: block; font-size: 12px; margin: 1px 0; cursor: pointer; }
   .fixwrap { margin-top: 3px; }
@@ -70,6 +73,10 @@
   строкам, поэтому номер и часть легко отнести не к тому владельцу — если номер неверен, впишите его
   во второе поле (например «69/6, 70/6»). Ошибку в одном владельце можно также сообщить прямо из
   всплывающего окна на <a href="index.html">карте</a>.
+  <br>
+  <b>Отсутствие ⚠ ничего не гарантирует:</b> прочтение сверялось со второй моделью, но на фигурных
+  скобках обе ошибаются одинаково — в блоке «П» обе сдвинули номера ровно на одну строку, и расхождения
+  не возникло. Надёжны только записи с зелёной пометкой «номер сверен со сканом» — их проверил человек.
 </div>
 <div class="intro" id="who">
   <span>Подписать правки (необязательно):</span>
@@ -161,15 +168,19 @@ function render() {
     const dec = decisions[k] || {};
     const tr = document.createElement('tr');
     if (dec.choice === 'fix') tr.classList.add('fixed');
+    if (o.verified) tr.classList.add('verified');
     const pcs = o.parcels.map(p => `${p.num}/${p.chast}`).join(', ');
     const alt = o.alt ? `<span class="alt">иной вариант чтения: ${o.alt}</span>` : '';
     const q = (o.uncertain || o.flag) ? ' <span class="q" title="чтение требует проверки">⚠</span>' : '';
     // `flag` = the two model readings disagree on the parcel number/часть — say so,
     // otherwise the ⚠ tells the helper nothing about where to look
     const flag = o.flag ? `<span class="flagnote">⚠ ${o.flag}</span>` : '';
+    // only a human check counts as verification: both model readings share the same
+    // brace-alignment bias, so their agreeing proves nothing about the number
+    const ver = o.verified ? `<span class="vernote">✓ ${o.fix || 'номер сверен со сканом'}</span>` : '';
     tr.innerHTML = `
       <td class="pc">${pcs}<div class="title">${o.title || ''}</div></td>
-      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}${flag}</td>
+      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}${flag}${ver}</td>
       <td class="choices">
         <label><input type="radio" name="r-${o.id}" value="ok" ${dec.choice==='ok'?'checked':''}> ✓ верно</label>
         <label><input type="radio" name="r-${o.id}" value="fix" ${dec.choice==='fix'?'checked':''}> ✏ исправить:</label>
@@ -208,8 +219,10 @@ function updateProgress() {
   const mine = OWNERS.map(o => decisions[key(o)]).filter(Boolean);
   const fixes = mine.filter(d => d.choice === 'fix').length;
   const ok = mine.filter(d => d.choice === 'ok').length;
+  const ver = OWNERS.filter(o => o.verified).length;
   document.getElementById('progress').textContent =
-    `отмечено: ✓ ${ok} · ✏ ${fixes}` + ` / ${OWNERS.length}`;
+    `отмечено: ✓ ${ok} · ✏ ${fixes} / ${OWNERS.length}` +
+    ` · сверено человеком: ${ver}/${OWNERS.length}`;
 }
 
 document.getElementById('btn-send').onclick = async () => {
