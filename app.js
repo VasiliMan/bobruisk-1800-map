@@ -133,7 +133,10 @@ Promise.all([
   UEZDS.forEach((u, i) => {
     NUM2OWNERS[u.id] = NUM2OWNERS[u.id] || {};
     (ownerDocs[i].owners || []).forEach(o => {
-      o.uezd = u.id; o.color = ownerColor(o.id, o); OWNER_BY_ID[o.id] = o; OWNERS.push(o);
+      o.uezd = u.id; o.color = ownerColor(o.id, o);
+      // ids are only unique WITHIN a uezd (e.g. `judycki` exists in both), so the
+      // lookup key must carry the uezd or one owner silently shadows the other
+      o.key = u.id + ':' + o.id; OWNER_BY_ID[o.key] = o; OWNERS.push(o);
       o.parcels.forEach(p => { const n = String(p.num);
         (NUM2OWNERS[u.id][n] = NUM2OWNERS[u.id][n] || []).push({ id: o.id, major: !!p.major, chast: p.chast }); });
     });
@@ -200,7 +203,8 @@ function ownersOfNum(num, uezd, chast) {
   const exact = (chast == null) ? entries : entries.filter(e => e.chast === chast);
   const use = exact.length ? exact : entries;
   const seen = new Set(), list = [];
-  use.forEach(e => { if (OWNER_BY_ID[e.id] && !seen.has(e.id)) { seen.add(e.id); list.push(OWNER_BY_ID[e.id]); } });
+  use.forEach(e => { const k = uezd + ':' + e.id;
+    if (OWNER_BY_ID[k] && !seen.has(k)) { seen.add(k); list.push(OWNER_BY_ID[k]); } });
   return list;
 }
 function ownersOfFeature(f) {
@@ -266,7 +270,7 @@ function renderParcels() {
     poly.on('click', () => editMode ? selectParcel(f.properties.fid) : openPopup(poly, f));
     poly.addTo(parcelLayerGroup);
     layerByFid[pr.fid] = poly;
-    owners.forEach(o => (layersByOwner[o.id] = layersByOwner[o.id] || []).push(poly));
+    owners.forEach(o => (layersByOwner[o.key] = layersByOwner[o.key] || []).push(poly));
 
     // outer-ring centroid (used for number + arms; avoids landing inside a hole)
     const r = f.geometry.coordinates[0];
@@ -394,13 +398,13 @@ function buildSidebar() {
   withOwners.forEach(u => {
     if (showHeaders) {
       const h = document.createElement('div');
-      h.className = 'uezd-head'; h.textContent = u.name;
+      h.className = 'uezd-head'; h.textContent = u.name; h.dataset.uezd = u.id;
       list.appendChild(h);
     }
     const sorted = OWNERS.filter(o => o.uezd === u.id).sort((a, b) => a.name.localeCompare(b.name, 'ru'));
     sorted.forEach(o => {
     const el = document.createElement('div');
-    el.className = 'owner'; el.dataset.id = o.id;
+    el.className = 'owner'; el.dataset.id = o.id; el.dataset.uezd = u.id;
     el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'') + ' ' + u.name).toLowerCase();
     const pcs = [...new Set(o.parcels.map(p => p.num))].join(', ');
     const sym = o.arms ? `<img class="side-arms" src="arms/${o.arms}" alt="" title="${o.arms_cap || ''}">`
@@ -410,16 +414,16 @@ function buildSidebar() {
       <span class="nm">${o.name}</span>
       ${sym}
       <span class="pc">${pcs}</span>`;
-    el.addEventListener('click', () => focusOwner(o.id));
+    el.addEventListener('click', () => focusOwner(o.key));
     list.appendChild(el);
     });
   });
 }
 
-function focusOwner(id) {
-  const polys = layersByOwner[id];
+function focusOwner(key) {
+  const polys = layersByOwner[key];
   if (!polys || !polys.length) {
-    const o = OWNER_BY_ID[id];
+    const o = OWNER_BY_ID[key];
     alert(`«${o.name}»: участок(и) ${[...new Set(o.parcels.map(p=>p.num))].join(', ')} ещё не оцифрованы.`);
     return;
   }
@@ -434,6 +438,11 @@ document.getElementById('search').addEventListener('input', e => {
   const q = e.target.value.trim().toLowerCase();
   document.querySelectorAll('.owner').forEach(el =>
     el.classList.toggle('hidden', q && !el.dataset.search.includes(q)));
+  // a uezd heading with every row filtered out would otherwise sit there empty
+  document.querySelectorAll('.uezd-head').forEach(h => {
+    const any = document.querySelector(`.owner[data-uezd="${h.dataset.uezd}"]:not(.hidden)`);
+    h.classList.toggle('hidden', !any);
+  });
 });
 document.getElementById('toggle-fill').addEventListener('change', renderParcels);
 document.getElementById('toggle-labels').addEventListener('change', renderParcels);
@@ -534,7 +543,7 @@ function renderEditSel() {
   const uOwners = OWNERS.filter(o => o.uezd === fu);
   const optsFor = (sel) => uOwners.map(o => `<option value="${o.id}" ${o.id===sel?'selected':''}>${o.name}</option>`).join('');
   const coRows = extras.map((id, i) =>
-    `<div class="ed-co-row"><span>${(OWNER_BY_ID[id]||{}).name || id}</span>` +
+    `<div class="ed-co-row"><span>${(OWNER_BY_ID[fu + ':' + id]||{}).name || id}</span>` +
     `<button class="ed-co-del" data-i="${i}" title="убрать совладельца">✕</button></div>`).join('');
   box.innerHTML = `
     <div class="ed-uezd">${(UEZD_BY_ID[fu]||{}).name || fu}</div>
