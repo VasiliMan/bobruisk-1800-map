@@ -94,12 +94,19 @@ let layersByOwner = {}, layerByFid = {};
 let parcelLayerGroup = L.layerGroup().addTo(map);
 let labelGroup = L.layerGroup().addTo(map);
 let armsGroup = L.layerGroup().addTo(map);
-let townGroup = L.layerGroup().addTo(map);   // town dots+labels, always visible
-let cityGroup = L.layerGroup().addTo(map);   // Бобруйск town label — always on, not toggled
-// the town of Бобруйск, at parcel № А (часть 1)
-const CITY = { name: 'Бобруйск', x: 10555, y: 5612 };
+let townGroup = L.layerGroup().addTo(map);   // gentry settlements — toggled
+let mestGroup = L.layerGroup().addTo(map);   // мястэчкі — toggled separately
+let cityGroup = L.layerGroup().addTo(map);   // города (Бобруйск, Речица) — always on
+// Settlement tiers, from data/towns.json `kind`: "city" (городъ) and "mestechko"
+// (мѣстечко) as written on the plans; no kind = ordinary gentry settlement.
+const TIERS = {
+  city:      { group: () => cityGroup, cls: 'city-marker', size: 11 },
+  mestechko: { group: () => mestGroup, cls: 'mest-marker', size: 10 },
+  '':        { group: () => townGroup, cls: '',            size: 9  },
+};
+const tierOf = t => TIERS[t.kind] ? t.kind : '';
 let editMode = false, selectedFid = null;
-let TOWNS = [], townsVisible = true;
+let TOWNS = [], townsVisible = true, mestVisible = true;
 // placement/editing of settlements is a local-only tool, off on the public page;
 // open the map with #edit in the URL (e.g. localhost:8000/#edit) to turn it on.
 let townEdit = /edit/i.test(location.hash);
@@ -116,7 +123,6 @@ Promise.all([
   TOWNS = (localT && localT.length) ? localT : (td.towns || []);
   window._fileTowns = td.towns || [];
   renderTowns();
-  renderCity();
 
   // owners: tag each with its uezd; build per-uezd number -> owners index
   OWNERS = [];
@@ -581,7 +587,9 @@ document.getElementById('btn-export').addEventListener('click', () => {
 // ================= TOWNS =================
 // Town markers always render (so they show on the published page). The "города"
 // checkbox enters a local placement mode; Export writes data/towns.json to commit.
-const LS_KEY_T = 'bobruisk_towns_v1';
+// v2: entries gained a `kind` tier (city/mestechko); v1 autosaves predate it and
+// would hide the tiers if replayed over the file, so the key is versioned.
+const LS_KEY_T = 'bobruisk_towns_v2';
 let saveTimerT = null;
 function markDirtyTowns() {
   clearTimeout(saveTimerT);
@@ -597,12 +605,16 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
 }
 function renderTowns() {
-  townGroup.clearLayers();
-  if (!townsVisible) return;
+  townGroup.clearLayers(); mestGroup.clearLayers(); cityGroup.clearLayers();
   TOWNS.forEach((t, idx) => {
+    const kind = tierOf(t), tier = TIERS[kind];
+    // города are always shown; the other two tiers follow their own checkbox
+    if (kind === '' && !townsVisible) return;
+    if (kind === 'mestechko' && !mestVisible) return;
+    const s = tier.size, a = Math.round(s / 2);
     const m = L.marker(px(t.x, t.y), {
       draggable: townEdit, interactive: townEdit, keyboard: false,
-      icon: L.divIcon({ className: 'town-marker', iconSize: [9, 9], iconAnchor: [4, 4],
+      icon: L.divIcon({ className: `town-marker ${tier.cls}`, iconSize: [s, s], iconAnchor: [a, a],
         html: `<span class="town-dot"></span><span class="town-name">${escapeHtml(t.name)}</span>` })
     });
     if (townEdit) {
@@ -611,21 +623,15 @@ function renderTowns() {
       m.on('dblclick', () => { const nn = prompt('Название паселішча:', t.name);
         if (nn !== null && nn.trim()) { t.name = nn.trim(); markDirtyTowns(); renderTowns(); } });
     }
-    m.addTo(townGroup);
+    m.addTo(tier.group());
   });
 }
-// Бобруйск — always-visible town label (independent of the settlements toggle)
-function renderCity() {
-  cityGroup.clearLayers();
-  L.marker(px(CITY.x, CITY.y), {
-    interactive: false, keyboard: false,
-    icon: L.divIcon({ className: 'town-marker city-marker', iconSize: [11, 11], iconAnchor: [5, 5],
-      html: `<span class="town-dot"></span><span class="town-name">${escapeHtml(CITY.name)}</span>` })
-  }).addTo(cityGroup);
-}
-// public sidebar control = show/hide the settlements layer
+// public sidebar controls = show/hide each toggleable settlement tier
 document.getElementById('toggle-towns').addEventListener('change', e => {
   townsVisible = e.target.checked; renderTowns();
+});
+document.getElementById('toggle-mest').addEventListener('change', e => {
+  mestVisible = e.target.checked; renderTowns();
 });
 // local placement tool (only when the page was opened with #edit)
 if (townEdit) {
