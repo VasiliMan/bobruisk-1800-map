@@ -680,7 +680,9 @@
         "y": 1713,
         "w": 540,
         "h": 84
-      }
+      },
+      "arms": "ligne.png",
+      "arms_cap": "герб дома де Линь (de Ligne)"
     },
     {
       "id": "daszkiewicz",

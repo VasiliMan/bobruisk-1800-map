@@ -135,7 +135,7 @@ Promise.all([
     (ownerDocs[i].owners || []).forEach(o => {
       o.uezd = u.id; o.color = ownerColor(o.id, o); OWNER_BY_ID[o.id] = o; OWNERS.push(o);
       o.parcels.forEach(p => { const n = String(p.num);
-        (NUM2OWNERS[u.id][n] = NUM2OWNERS[u.id][n] || []).push({ id: o.id, major: !!p.major }); });
+        (NUM2OWNERS[u.id][n] = NUM2OWNERS[u.id][n] || []).push({ id: o.id, major: !!p.major, chast: p.chast }); });
     });
   });
 
@@ -188,15 +188,24 @@ function showRestoreBanner() {
 }
 
 // ---- render parcels ----
-// All owners of a parcel NUMBER (часть ignored). Co-owners are treated as EQUAL
-// shares — no major/minor; listing order is just owners.json order.
-function ownersOfNum(num, uezd) {
+// All owners of a parcel. Numbers restart per часть, so a holding is (chast,num)
+// and matching on the number alone pulls in owners of the SAME number in a
+// DIFFERENT часть — e.g. Бобруйск №47/4 listed Бонша, whose 47 is in часть 6.
+// When the caller knows the часть we filter by it, falling back to number-only
+// if that leaves nothing (a feature with a missing//wrong chast still shows its
+// owners rather than silently going blank).
+// Co-owners are EQUAL shares — no major/minor; order is owners.json order.
+function ownersOfNum(num, uezd, chast) {
   const entries = (NUM2OWNERS[uezd] || {})[String(num)] || [];
+  const exact = (chast == null) ? entries : entries.filter(e => e.chast === chast);
+  const use = exact.length ? exact : entries;
   const seen = new Set(), list = [];
-  entries.forEach(e => { if (OWNER_BY_ID[e.id] && !seen.has(e.id)) { seen.add(e.id); list.push(OWNER_BY_ID[e.id]); } });
+  use.forEach(e => { if (OWNER_BY_ID[e.id] && !seen.has(e.id)) { seen.add(e.id); list.push(OWNER_BY_ID[e.id]); } });
   return list;
 }
-function ownersOfFeature(f) { return ownersOfNum(f.properties.num, uezdOfFeature(f)); }
+function ownersOfFeature(f) {
+  return ownersOfNum(f.properties.num, uezdOfFeature(f), f.properties.chast);
+}
 function ownerOfFeature(f) { return ownersOfFeature(f)[0] || null; }
 
 // ---- geometry helpers (pixel space) ----
