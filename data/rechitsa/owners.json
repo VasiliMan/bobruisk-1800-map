@@ -76,7 +76,15 @@
           "num": "22"
         }
       ],
-      "page": 1
+      "page": 1,
+      "arms": "bogoria.png",
+      "arms_cap": "герб «Богория» (Bogoria)",
+      "links": [
+        {
+          "label": "Валовічы — Вікіпедыя (be)",
+          "url": "https://be.wikipedia.org/wiki/Валовічы"
+        }
+      ]
     },
     {
       "id": "wolski_walerian",
