@@ -280,7 +280,7 @@ function renderParcels() {
     // show every co-owner's arms/cross, fanned out side by side at the parcel centre
     // (an institution may carry both, e.g. a monastery with its order's arms + its cross)
     const syms = owners.flatMap(o => [
-      ...(o.arms ? [`<img class="map-arms" src="arms/${o.arms}" alt="">`] : []),
+      ...armsList(o).map(a => `<img class="map-arms" src="arms/${a.file}" alt="">`),
       ...(o.inst ? [`<span class="map-cross">${INST_SYM[o.inst] || '✟'}</span>`] : [])]);
     if (showArms && syms.length) {
       const html = syms.join('');
@@ -300,15 +300,17 @@ function renderParcels() {
 const INST_SYM = { orthodox: '☦', catholic: '✝', uniate: '✠', monastery: '✟' };
 const INST_LBL = { orthodox: 'праваслаўны храм / манастыр', catholic: 'каталіцкі касцёл',
                    uniate: 'уніяцкі храм / манастыр', monastery: 'манастыр' };
+// an owner's arms: `arms` plus an optional `arms2` (e.g. a married couple from two families)
+function armsList(o) {
+  return [[o.arms, o.arms_cap], [o.arms2, o.arms2_cap]].filter(a => a[0]).map(([file, cap]) => ({ file, cap }));
+}
 function armsBlock(owner) {
   if (!owner) return '';
   const inst = owner.inst
     ? `<div class="popup-arms inst"><span class="inst-sym">${INST_SYM[owner.inst] || '✟'}</span>` +
       `<span>${INST_LBL[owner.inst] || ''}</span></div>` : '';
-  if (owner.arms)
-    return `<div class="popup-arms"><img src="arms/${owner.arms}" alt="герб">` +
-           (owner.arms_cap ? `<div class="arms-cap">${owner.arms_cap}</div>` : '') + `</div>` + inst;
-  return inst;
+  return armsList(owner).map(a => `<div class="popup-arms"><img src="arms/${a.file}" alt="герб">` +
+           (a.cap ? `<div class="arms-cap">${a.cap}</div>` : '') + `</div>`).join('') + inst;
 }
 // inline style that shows just the cropped name region of an index page (no image files)
 function cropImgStyle(c, maxW, maxH) {
@@ -425,7 +427,7 @@ function buildSidebar() {
     el.className = 'owner'; el.dataset.id = o.id; el.dataset.uezd = u.id;
     el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'') + ' ' + u.name).toLowerCase();
     const pcs = [...new Set(o.parcels.map(p => p.num))].join(', ');
-    const sym = (o.arms ? `<img class="side-arms" src="arms/${o.arms}" alt="" title="${o.arms_cap || ''}">` : '')
+    const sym = armsList(o).map(a => `<img class="side-arms" src="arms/${a.file}" alt="" title="${a.cap || ''}">`).join('')
               + (o.inst ? `<span class="side-cross" title="${INST_LBL[o.inst] || ''}">${INST_SYM[o.inst] || '✟'}</span>` : '');
     el.innerHTML = `<span class="sw" style="background:${o.color}"></span>
       <span class="nm">${o.name}</span>
@@ -441,8 +443,16 @@ function focusOwner(key) {
   setSidebarShown(false);
   const polys = layersByOwner[key];
   if (!polys || !polys.length) {
+    // parcel not traced yet: still show the owner's card (arms, links) in a popup at the map centre
     const o = OWNER_BY_ID[key];
-    alert(`«${o.name}»: участак(кі) ${[...new Set(o.parcels.map(p=>p.num))].join(', ')} яшчэ не алічбаваныя.`);
+    const nums = [...new Set(o.parcels.map(p => p.chast ? `${p.num}/${p.chast}` : p.num))].join(', ');
+    currentPopupCtx = { num: null, owners: o.name, owner_ids: o.id };
+    L.popup({ maxWidth: Math.min(340, window.innerWidth - 60) })
+      .setLatLng(map.getCenter())
+      .setContent(ownerCard(o) +
+        `<div class="popup-flag">Участак(кі) ${nums} яшчэ не алічбаваныя на карце.</div>` +
+        `<button class="popup-fb" type="button">✎ Паведаміць пра памылку</button>`)
+      .openOn(map);
     return;
   }
   const b = polys.reduce((acc, p) => acc.extend(p.getBounds()), L.latLngBounds(polys[0].getBounds()));
