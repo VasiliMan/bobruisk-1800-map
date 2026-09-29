@@ -50,7 +50,7 @@ const toXY = (latlng) => { const p = map.project(latlng, MAX_Z); return [p.x, p.
 
 const imgBounds = L.latLngBounds(px(0, 0), px(IMG_W, IMG_H));
 // stitched combined pyramid: Бобруйск + Речица, masked & baked by build_combined.py
-L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
+const baseLayer = L.tileLayer('tiles/{z}/{x}/{y}.jpg', {
   tileSize: TILE, minNativeZoom: 0, maxNativeZoom: MAX_Z, bounds: imgBounds, noWrap: true
 }).addTo(map);
 // open framed on Бобруйск (Речица is reachable by panning/zooming out)
@@ -461,6 +461,9 @@ document.getElementById('search').addEventListener('input', e => {
     h.classList.toggle('hidden', !any);
   });
 });
+// the scanned plan underneath; off leaves just the coloured parcels
+document.getElementById('toggle-base').addEventListener('change', e =>
+  e.target.checked ? baseLayer.addTo(map) : map.removeLayer(baseLayer));
 document.getElementById('toggle-fill').addEventListener('change', renderParcels);
 document.getElementById('toggle-labels').addEventListener('change', renderParcels);
 document.getElementById('toggle-arms').addEventListener('change', renderParcels);
