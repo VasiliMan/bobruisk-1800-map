@@ -1,49 +1,49 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="be">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Землевладельцы, ок. 1800 — Бобруйский и Речицкий уезды</title>
+<title>Землеўладальнікі, каля 1800 — Бабруйскі і Рэчыцкі паветы</title>
 <link rel="stylesheet" href="vendor/leaflet.css" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<button id="sidebar-open" type="button" aria-label="Список владельцев">☰ Владельцы</button>
+<button id="sidebar-open" type="button" aria-label="Спіс уладальнікаў">☰ Уладальнікі</button>
 <div id="sidebar-backdrop"></div>
 <div id="sidebar">
   <header>
-    <button id="sidebar-close" type="button" aria-label="Закрыть">✕</button>
-    <h1>Землевладельцы ок. 1800<br><small>Генеральный план · Бобруйский и Речицкий уезды</small></h1>
+    <button id="sidebar-close" type="button" aria-label="Закрыць">✕</button>
+    <h1>Землеўладальнікі каля 1800<br><small>Генеральны план · Бабруйскі і Рэчыцкі паветы</small></h1>
   </header>
   <div class="controls">
-    <input id="search" type="search" placeholder="Поиск владельца…" autocomplete="off" />
+    <input id="search" type="search" placeholder="Пошук уладальніка…" autocomplete="off" />
     <div class="row">
-      <label><input type="checkbox" id="toggle-fill" checked> заливка</label>
-      <label><input type="checkbox" id="toggle-labels" checked> номера</label>
+      <label><input type="checkbox" id="toggle-fill" checked> заліўка</label>
+      <label><input type="checkbox" id="toggle-labels" checked> нумары</label>
       <label><input type="checkbox" id="toggle-arms" checked> гербы</label>
-      <label class="edit-toggle"><input type="checkbox" id="toggle-edit"> правка</label>
+      <label class="edit-toggle"><input type="checkbox" id="toggle-edit"> праўка</label>
       <label class="towns-toggle"><input type="checkbox" id="toggle-mest" checked> мястэчкі</label>
-      <label class="towns-toggle"><input type="checkbox" id="toggle-towns" checked> Буйныя шляхецкія паселішча</label>
+      <label class="towns-toggle"><input type="checkbox" id="toggle-towns" checked> Буйныя шляхецкія паселішчы</label>
     </div>
   </div>
   <div id="owner-list"></div>
   <div id="edit-panel" class="hidden">
-    <h2>Режим правки</h2>
-    <p class="hint">Клик по участку — выбрать. Тяните <b>сплошные</b> узлы, чтобы двигать их. Тяните <b>пунктирный</b> узел на середине ребра — добавится новый узел. Правый клик по узлу — удалить.</p>
+    <h2>Рэжым праўкі</h2>
+    <p class="hint">Клік па ўчастку — выбраць. Цягніце <b>суцэльныя</b> вузлы, каб рухаць іх. Цягніце <b>пункцірны</b> вузел пасярэдзіне рабра — дадасца новы вузел. Правы клік па вузле — выдаліць.</p>
     <div id="edit-sel"></div>
-    <button id="btn-newparcel">+ новый участок</button>
-    <button id="btn-export">⬇ Экспорт parcels.geojson</button>
+    <button id="btn-newparcel">+ новы ўчастак</button>
+    <button id="btn-export">⬇ Экспарт parcels.geojson</button>
   </div>
   <div id="town-panel" class="hidden">
-    <h2>Буйныя шляхецкія паселішча (правка)</h2>
-    <p class="hint">Клик по карте — поставить паселішча и ввести название. Тяните маркер — переместить. Правый клик по маркеру — удалить. Двойной клик — переименовать.</p>
-    <button id="btn-export-towns">⬇ Экспорт towns.json</button>
-    <button id="btn-towns-fromfile">↺ загрузить из файла</button>
+    <h2>Буйныя шляхецкія паселішчы (праўка)</h2>
+    <p class="hint">Клік па карце — паставіць паселішча і ўвесці назву. Цягніце маркер — перамясціць. Правы клік па маркеры — выдаліць. Двайны клік — перайменаваць.</p>
+    <button id="btn-export-towns">⬇ Экспарт towns.json</button>
+    <button id="btn-towns-fromfile">↺ загрузіць з файла</button>
   </div>
   <div id="saveind"></div>
   <div class="side-links">
-    <a href="review.html">📝 Проверить транскрипцию</a>
-    <a href="about.html">ℹ️ Об источниках</a>
+    <a href="review.html">📝 Праверыць транскрыпцыю</a>
+    <a href="about.html">ℹ️ Пра крыніцы</a>
   </div>
   <footer id="stat"></footer>
 </div>

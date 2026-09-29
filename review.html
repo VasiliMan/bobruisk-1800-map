@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="be">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Проверка транскрипции — землевладельцы, ок. 1800</title>
+<title>Праверка транскрыпцыі — землеўладальнікі, каля 1800</title>
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #2c2415; }
@@ -53,47 +53,47 @@
 </head>
 <body>
 <header>
-  <a class="back" href="index.html">← к карте</a>
-  <h1>Проверка транскрипции</h1>
+  <a class="back" href="index.html">← да карты</a>
+  <h1>Праверка транскрыпцыі</h1>
   <span class="tabs" id="uezd-tabs"></span>
   <span class="tabs" id="tabs"></span>
-  <span class="tool">масштаб:
+  <span class="tool">маштаб:
     <button id="zoom-out">−</button><button id="zoom-in">+</button>
   </span>
   <label class="tool" style="font-size:13px;cursor:pointer">
-    <input type="checkbox" id="only-prob"> только спорные (⚠)
+    <input type="checkbox" id="only-prob"> толькі спрэчныя (⚠)
   </label>
   <span class="spacer"></span>
   <span id="progress"></span>
 </header>
 <div class="intro">
-  Сверьте моё прочтение со сканом указателя слева. Где ошибка — выберите «исправить» и впишите
-  правильный вариант (по желанию — источник). Затем нажмите «Отправить правки». Регистрация не нужна.
-  <b>Особенно важны номера участков:</b> в указателе они сведены фигурными скобками сразу к нескольким
-  строкам, поэтому номер и часть легко отнести не к тому владельцу — если номер неверен, впишите его
-  во второе поле (например «69/6, 70/6»). Ошибку в одном владельце можно также сообщить прямо из
-  всплывающего окна на <a href="index.html">карте</a>.
+  Звярыце маё прачытанне са сканам паказальніка злева. Дзе памылка — выберыце «выправіць» і ўпішыце
+  правільны варыянт (па жаданні — крыніцу). Потым націсніце «Адправіць праўкі». Рэгістрацыя не патрэбная.
+  <b>Асабліва важныя нумары ўчасткаў:</b> у паказальніку яны зведзеныя фігурнымі дужкамі адразу да некалькіх
+  радкоў, таму нумар і частку лёгка аднесці не да таго ўладальніка — калі нумар няправільны, упішыце яго
+  ў другое поле (напрыклад «69/6, 70/6»). Памылку ў адным уладальніку можна таксама паведаміць проста з
+  выплыўнога акна на <a href="index.html">карце</a>.
   <br>
-  <b>Отсутствие ⚠ ничего не гарантирует:</b> прочтение сверялось со второй моделью, но на фигурных
-  скобках обе ошибаются одинаково — в блоке «П» обе сдвинули номера ровно на одну строку, и расхождения
-  не возникло. Надёжны только записи с зелёной пометкой «номер сверен со сканом» — их проверил человек.
+  <b>Адсутнасць ⚠ нічога не гарантуе:</b> прачытанне звяралася з другой мадэллю, але на фігурных
+  дужках абедзве памыляюцца аднолькава — у блоку «П» абедзве зрушылі нумары роўна на адзін радок, і разыходжання
+  не ўзнікла. Надзейныя толькі запісы з зялёнай пазнакай «нумар звераны са сканам» — іх праверыў чалавек.
 </div>
 <div class="intro" id="who">
-  <span>Подписать правки (необязательно):</span>
-  <input id="who-name" type="text" placeholder="имя — для благодарностей">
-  <input id="who-email" type="text" placeholder="e-mail — для ответа">
+  <span>Падпісаць праўкі (неабавязкова):</span>
+  <input id="who-name" type="text" placeholder="імя — для падзяк">
+  <input id="who-email" type="text" placeholder="e-mail — для адказу">
   <span class="spacer"></span>
   <span id="sendstatus"></span>
-  <button id="btn-send">Отправить правки</button>
+  <button id="btn-send">Адправіць праўкі</button>
 </div>
 <main>
   <div id="imgpane">
-    <div id="scanwrap"><img id="scan" src="verify_img/p1.jpg" alt="скан указателя"></div>
+    <div id="scanwrap"><img id="scan" src="verify_img/p1.jpg" alt="скан паказальніка"></div>
   </div>
   <div id="tablepane">
     <table>
       <thead><tr>
-        <th>№ / часть</th><th>Прочтение</th><th>Ваша оценка</th>
+        <th>№ / частка</th><th>Прачытанне</th><th>Ваша ацэнка</th>
       </tr></thead>
       <tbody id="rows"></tbody>
     </table>
@@ -104,10 +104,10 @@
 // Each uezd has its own owner index and its own set of алфавит scans; the
 // `page` field on an owner selects which scan of that uezd it was read from.
 const UEZDS = {
-  bobruisk: { name: 'Бобруйский', owners: 'data/owners.json', img: p => `verify_img/p${p}.jpg`,
-              pages: [[1,'Стр.1 · А–З'],[2,'Стр.2 · К–Р'],[3,'Стр.3 · С–Ю']] },
-  rechitsa: { name: 'Речицкий', owners: 'data/rechitsa/owners.json', img: p => `verify_img/r${p}.jpg`,
-              pages: [[1,'Стр.1 · А–О'],[2,'Стр.2 · О–Т'],[3,'Стр.3 · Х–Я']] },
+  bobruisk: { name: 'Бабруйскі', owners: 'data/owners.json', img: p => `verify_img/p${p}.jpg`,
+              pages: [[1,'Стар.1 · А–З'],[2,'Стар.2 · К–Р'],[3,'Стар.3 · С–Ю']] },
+  rechitsa: { name: 'Рэчыцкі', owners: 'data/rechitsa/owners.json', img: p => `verify_img/r${p}.jpg`,
+              pages: [[1,'Стар.1 · А–О'],[2,'Стар.2 · О–Т'],[3,'Стар.3 · Х–Я']] },
 };
 // deep-link: review.html#rechitsa opens straight on that uezd
 let uezd = (location.hash.replace('#','') in UEZDS) ? location.hash.replace('#','') : 'bobruisk';
@@ -170,24 +170,24 @@ function render() {
     if (dec.choice === 'fix') tr.classList.add('fixed');
     if (o.verified) tr.classList.add('verified');
     const pcs = o.parcels.map(p => `${p.num}/${p.chast}`).join(', ');
-    const alt = o.alt ? `<span class="alt">иной вариант чтения: ${o.alt}</span>` : '';
-    const q = (o.uncertain || o.flag) ? ' <span class="q" title="чтение требует проверки">⚠</span>' : '';
+    const alt = o.alt ? `<span class="alt">іншы варыянт чытання: ${o.alt}</span>` : '';
+    const q = (o.uncertain || o.flag) ? ' <span class="q" title="чытанне патрабуе праверкі">⚠</span>' : '';
     // `flag` = the two model readings disagree on the parcel number/часть — say so,
     // otherwise the ⚠ tells the helper nothing about where to look
     const flag = o.flag ? `<span class="flagnote">⚠ ${o.flag}</span>` : '';
     // only a human check counts as verification: both model readings share the same
     // brace-alignment bias, so their agreeing proves nothing about the number
-    const ver = o.verified ? `<span class="vernote">✓ ${o.fix || 'номер сверен со сканом'}</span>` : '';
+    const ver = o.verified ? `<span class="vernote">✓ ${o.fix || 'нумар звераны са сканам'}</span>` : '';
     tr.innerHTML = `
       <td class="pc">${pcs}<div class="title">${o.title || ''}</div></td>
       <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}${flag}${ver}</td>
       <td class="choices">
-        <label><input type="radio" name="r-${o.id}" value="ok" ${dec.choice==='ok'?'checked':''}> ✓ верно</label>
-        <label><input type="radio" name="r-${o.id}" value="fix" ${dec.choice==='fix'?'checked':''}> ✏ исправить:</label>
+        <label><input type="radio" name="r-${o.id}" value="ok" ${dec.choice==='ok'?'checked':''}> ✓ правільна</label>
+        <label><input type="radio" name="r-${o.id}" value="fix" ${dec.choice==='fix'?'checked':''}> ✏ выправіць:</label>
         <div class="fixwrap">
-          <input class="fix-val" type="text" placeholder="правильное чтение…" value="${dec.choice==='fix'?(dec.value||'').replace(/"/g,'&quot;'):''}">
-          <input class="fix-pc" type="text" placeholder="участки № / часть — если номер неверен" value="${(dec.pc||'').replace(/"/g,'&quot;')}">
-          <input class="fix-src" type="text" placeholder="источник / ссылка (необязательно)" value="${(dec.src||'').replace(/"/g,'&quot;')}">
+          <input class="fix-val" type="text" placeholder="правільнае чытанне…" value="${dec.choice==='fix'?(dec.value||'').replace(/"/g,'&quot;'):''}">
+          <input class="fix-pc" type="text" placeholder="участкі № / частка — калі нумар няправільны" value="${(dec.pc||'').replace(/"/g,'&quot;')}">
+          <input class="fix-src" type="text" placeholder="крыніца / спасылка (неабавязкова)" value="${(dec.src||'').replace(/"/g,'&quot;')}">
         </div>
       </td>`;
     const radios = tr.querySelectorAll(`input[name="r-${o.id}"]`);
@@ -221,8 +221,8 @@ function updateProgress() {
   const ok = mine.filter(d => d.choice === 'ok').length;
   const ver = OWNERS.filter(o => o.verified).length;
   document.getElementById('progress').textContent =
-    `отмечено: ✓ ${ok} · ✏ ${fixes} / ${OWNERS.length}` +
-    ` · сверено человеком: ${ver}/${OWNERS.length}`;
+    `адзначана: ✓ ${ok} · ✏ ${fixes} / ${OWNERS.length}` +
+    ` · звераны чалавекам: ${ver}/${OWNERS.length}`;
 }
 
 document.getElementById('btn-send').onclick = async () => {
@@ -231,34 +231,34 @@ document.getElementById('btn-send').onclick = async () => {
     .map(o => ({ o, d: decisions[key(o)] }))
     .filter(x => x.d && x.d.choice === 'fix' && ((x.d.value || '').trim() || (x.d.pc || '').trim()));
   const st = document.getElementById('sendstatus');
-  if (!fixes.length) { st.className = 'err'; st.textContent = 'Нет исправлений для отправки.'; return; }
+  if (!fixes.length) { st.className = 'err'; st.textContent = 'Няма выпраўленняў для адпраўкі.'; return; }
   const lines = fixes.map(({ o, d }) => {
     const was = o.parcels.map(p => p.num + '/' + p.chast).join(', ');
     let s = `• уч. ${was}`;
-    if ((d.value || '').trim()) s += ` | было: «${o.name_ru || o.name}» → стало: «${d.value.trim()}»`;
-    if ((d.pc || '').trim()) s += ` | УЧАСТКИ: было «${was}» → стало «${d.pc.trim()}»`;
-    if ((d.src || '').trim()) s += ` | источник: ${d.src.trim()}`;
+    if ((d.value || '').trim()) s += ` | было: «${o.name_ru || o.name}» → стала: «${d.value.trim()}»`;
+    if ((d.pc || '').trim()) s += ` | УЧАСТКІ: было «${was}» → стала «${d.pc.trim()}»`;
+    if ((d.src || '').trim()) s += ` | крыніца: ${d.src.trim()}`;
     return s + ` [id:${o.id}]`;
   }).join('\n');
   const btn = document.getElementById('btn-send');
-  btn.disabled = true; st.className = ''; st.textContent = 'Отправка…';
+  btn.disabled = true; st.className = ''; st.textContent = 'Адпраўка…';
   const res = await sendFeedback({
-    subject: `Карта 1800: пакет правок транскрипции — ${UEZDS[uezd].name} уезд (${fixes.length})`,
-    Тип: 'транскрипция (пакет)',
-    Уезд: `${UEZDS[uezd].name} (${uezd})`,
-    Имя: document.getElementById('who-name').value.trim() || '—',
-    Email_для_ответа: document.getElementById('who-email').value.trim() || '—',
-    Количество_правок: String(fixes.length),
-    Правки: lines,
+    subject: `Карта 1800: пакет правак транскрыпцыі — ${UEZDS[uezd].name} павет (${fixes.length})`,
+    Тып: 'транскрыпцыя (пакет)',
+    Павет: `${UEZDS[uezd].name} (${uezd})`,
+    Імя: document.getElementById('who-name').value.trim() || '—',
+    Email_для_адказу: document.getElementById('who-email').value.trim() || '—',
+    Колькасць_правак: String(fixes.length),
+    Праўкі: lines,
   });
   if (res.ok) {
-    st.className = 'ok'; st.textContent = `Спасибо! Отправлено правок: ${fixes.length}.`;
-    btn.textContent = 'Отправлено ✓';
+    st.className = 'ok'; st.textContent = `Дзякуй! Адпраўлена правак: ${fixes.length}.`;
+    btn.textContent = 'Адпраўлена ✓';
   } else if (res.error === 'no-key') {
-    st.className = 'err'; st.textContent = 'Форма ещё не настроена (нет ключа Web3Forms).';
+    st.className = 'err'; st.textContent = 'Форма яшчэ не наладжана (няма ключа Web3Forms).';
     btn.disabled = false;
   } else {
-    st.className = 'err'; st.textContent = 'Не удалось отправить: ' + res.error;
+    st.className = 'err'; st.textContent = 'Не ўдалося адправіць: ' + res.error;
     btn.disabled = false;
   }
 };

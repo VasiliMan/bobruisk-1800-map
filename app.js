@@ -14,9 +14,9 @@ const PAGE_W = 2400, PAGE_H = 3200;          // natural size of the owner-index 
 // size (w,h).  Offsets MUST match LAYOUT in build_combined.py.  A parcel feature
 // is assigned to a uezd by where its centroid falls (see uezdOfXY).
 const UEZDS = [
-  { id: 'bobruisk', name: 'Бобруйский уезд', owners: 'data/owners.json',
+  { id: 'bobruisk', name: 'Бабруйскі павет', owners: 'data/owners.json',
     parcels: 'data/parcels.geojson',           ox: 0,   oy: 0,     w: 15039, h: 14407 },
-  { id: 'rechitsa', name: 'Речицкий уезд',   owners: 'data/rechitsa/owners.json',
+  { id: 'rechitsa', name: 'Рэчыцкі павет',   owners: 'data/rechitsa/owners.json',
     parcels: 'data/rechitsa/parcels.geojson',  ox: 5768, oy: 10563, w: 14838, h: 20547 },
 ];
 const UEZD_BY_ID = {}; UEZDS.forEach(u => UEZD_BY_ID[u.id] = u);
@@ -65,7 +65,7 @@ map.setMaxBounds(imgBounds.pad(0.4));
 if (/edit/i.test(location.hash)) {
   const box = L.control({ position: 'bottomleft' });
   box.onAdd = () => { const d = L.DomUtil.create('div', 'coord-readout'); d.id = 'coord-readout';
-    d.textContent = 'наведите курсор…'; return d; };
+    d.textContent = 'навядзіце курсор…'; return d; };
   box.addTo(map);
   map.on('mousemove', e => {
     const [x, y] = toXY(e.latlng); const u = UEZD_BY_ID[uezdOfXY(x, y)];
@@ -164,7 +164,7 @@ function markDirty() {
       localStorage.setItem(LS_KEY, JSON.stringify(PARCELS));
       localStorage.setItem(LS_KEY + '_t', new Date().toISOString());
       const el = document.getElementById('saveind');
-      if (el) el.textContent = '✓ автосохранено ' + new Date().toLocaleTimeString('ru');
+      if (el) el.textContent = '✓ аўтазахавана ' + new Date().toLocaleTimeString('be');
     } catch (e) { console.warn('autosave failed', e); }
   }, 400);
 }
@@ -176,13 +176,13 @@ function showRestoreBanner() {
   const t = localStorage.getItem(LS_KEY + '_t');
   const bar = document.createElement('div');
   bar.id = 'restore-banner';
-  bar.innerHTML = `Загружены ваши правки из автосохранения браузера` +
+  bar.innerHTML = `Загружаны вашы праўкі з аўтазахавання браўзера` +
     (t ? ` (${new Date(t).toLocaleString('ru')})` : '') +
-    `. <button id="rb-keep">оставить</button> <button id="rb-file">загрузить из файла</button>`;
+    `. <button id="rb-keep">пакінуць</button> <button id="rb-file">загрузіць з файла</button>`;
   document.getElementById('sidebar').prepend(bar);
   document.getElementById('rb-keep').onclick = () => bar.remove();
   document.getElementById('rb-file').onclick = () => {
-    if (!confirm('Отбросить правки из автосохранения и загрузить data/parcels.geojson?')) return;
+    if (!confirm('Адкінуць праўкі з аўтазахавання і загрузіць data/parcels.geojson?')) return;
     PARCELS = JSON.parse(JSON.stringify(window._fileParcels));
     localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_KEY + '_t');
     selectedFid = null; clearVertexEdit(); renderParcels(); renderEditSel && renderEditSel();
@@ -297,8 +297,8 @@ function renderParcels() {
 }
 
 const INST_SYM = { orthodox: '☦', catholic: '✝', uniate: '✠', monastery: '✟' };
-const INST_LBL = { orthodox: 'православный храм / монастырь', catholic: 'католический костёл',
-                   uniate: 'униатский храм / монастырь', monastery: 'монастырь' };
+const INST_LBL = { orthodox: 'праваслаўны храм / манастыр', catholic: 'каталіцкі касцёл',
+                   uniate: 'уніяцкі храм / манастыр', monastery: 'манастыр' };
 function armsBlock(owner) {
   if (owner && owner.arms)
     return `<div class="popup-arms"><img src="arms/${owner.arms}" alt="герб">` +
@@ -322,7 +322,7 @@ const isPhone = () => window.matchMedia('(max-width: 700px)').matches;
 const CROP_MAX_W = Math.min(300, window.innerWidth - 90);
 function cropBlock(owner) {
   if (!owner || !owner.crop) return '';
-  return `<div class="popup-crop"><div class="popup-crop-cap">оригинал записи:</div>`
+  return `<div class="popup-crop"><div class="popup-crop-cap">арыгінал запісу:</div>`
     + `<div class="popup-crop-img" style="${cropImgStyle(owner.crop, CROP_MAX_W, 156)}"></div></div>`;
 }
 function linksBlock(owner) {
@@ -349,7 +349,7 @@ function nameHead(owner) {
 }
 // sole owner: full card, always expanded
 function ownerCard(owner) {
-  if (!owner) return `<div class="popup-name">— владелец не определён —</div>`;
+  if (!owner) return `<div class="popup-name">— уладальнік не вызначаны —</div>`;
   return `<div class="owner-card"><div class="popup-name">${nameHead(owner)}</div>${cardBody(owner)}</div>`;
 }
 // co-owner: collapsed row that expands on click (toggle handled by a delegated listener)
@@ -361,14 +361,14 @@ let currentPopupCtx = null;   // context for the "сообщить об ошиб
 function openPopup(poly, f) {
   const pr = f.properties;
   const owners = ownersOfFeature(f);
-  let html = `<div class="popup-head">Участок № ${pr.num}</div>`;
+  let html = `<div class="popup-head">Участак № ${pr.num}</div>`;
   if (owners.length > 1)
-    html += `<div class="popup-coowners-h">Несколько владельцев (${owners.length}):</div>` +
+    html += `<div class="popup-coowners-h">Некалькі ўладальнікаў (${owners.length}):</div>` +
             owners.map(coItem).join('');
   else
     html += ownerCard(owners[0] || null);
   if (pr.place) html += `<div class="popup-meta">${pr.place}</div>`;
-  html += `<button class="popup-fb" type="button">✎ Сообщить об ошибке</button>`;
+  html += `<button class="popup-fb" type="button">✎ Паведаміць пра памылку</button>`;
   currentPopupCtx = {
     num: pr.num, chast: pr.chast,
     owners: owners.map(o => o.name).join(', ') || '—',
@@ -441,7 +441,7 @@ function focusOwner(key) {
   const polys = layersByOwner[key];
   if (!polys || !polys.length) {
     const o = OWNER_BY_ID[key];
-    alert(`«${o.name}»: участок(и) ${[...new Set(o.parcels.map(p=>p.num))].join(', ')} ещё не оцифрованы.`);
+    alert(`«${o.name}»: участак(кі) ${[...new Set(o.parcels.map(p=>p.num))].join(', ')} яшчэ не алічбаваныя.`);
     return;
   }
   const b = polys.reduce((acc, p) => acc.extend(p.getBounds()), L.latLngBounds(polys[0].getBounds()));
@@ -467,7 +467,7 @@ document.getElementById('toggle-arms').addEventListener('change', renderParcels)
 
 function updateStat() {
   document.getElementById('stat').textContent =
-    `${OWNERS.length} владельцев · ${PARCELS.features.length} участков`;
+    `${OWNERS.length} уладальнікаў · ${PARCELS.features.length} участкаў`;
 }
 
 // ================= EDIT MODE =================
@@ -552,7 +552,7 @@ function commitOwners(pr, primary, extras) {
 function renderEditSel() {
   const box = document.getElementById('edit-sel');
   const f = PARCELS.features.find(x => x.properties.fid === selectedFid);
-  if (!f) { box.innerHTML = '<em>участок не выбран</em>'; return; }
+  if (!f) { box.innerHTML = '<em>участак не выбраны</em>'; return; }
   const pr = f.properties;
   const primary = (pr.owner_ids && pr.owner_ids[0]) || pr.owner_id || '';
   const extras = pr.owner_ids ? pr.owner_ids.slice(1) : [];
@@ -561,16 +561,16 @@ function renderEditSel() {
   const optsFor = (sel) => uOwners.map(o => `<option value="${o.id}" ${o.id===sel?'selected':''}>${o.name}</option>`).join('');
   const coRows = extras.map((id, i) =>
     `<div class="ed-co-row"><span>${(OWNER_BY_ID[fu + ':' + id]||{}).name || id}</span>` +
-    `<button class="ed-co-del" data-i="${i}" title="убрать совладельца">✕</button></div>`).join('');
+    `<button class="ed-co-del" data-i="${i}" title="прыбраць сауладальніка">✕</button></div>`).join('');
   box.innerHTML = `
     <div class="ed-uezd">${(UEZD_BY_ID[fu]||{}).name || fu}</div>
     <label>№ участка<input id="ed-num" value="${pr.num}"></label>
-    <label>Владелец<select id="ed-owner"><option value="">— по номеру —</option>${optsFor(primary)}</select></label>
-    <div class="ed-co">Несколько владельцев:${coRows || '<span class="ed-co-none">— нет —</span>'}
-      <div class="ed-co-add"><select id="ed-co-sel"><option value="">+ добавить совладельца…</option>${optsFor('')}</select></div></div>
-    <label>Место/подпись<input id="ed-place" value="${pr.place||''}"></label>
-    <label><input type="checkbox" id="ed-draft" ${pr.status==='draft'?'checked':''}> черновик</label>
-    <button id="ed-del" style="border-color:#c0392b;color:#c0392b">удалить участок</button>`;
+    <label>Уладальнік<select id="ed-owner"><option value="">— па нумары —</option>${optsFor(primary)}</select></label>
+    <div class="ed-co">Некалькі ўладальнікаў:${coRows || '<span class="ed-co-none">— няма —</span>'}
+      <div class="ed-co-add"><select id="ed-co-sel"><option value="">+ дадаць сауладальніка…</option>${optsFor('')}</select></div></div>
+    <label>Месца/подпіс<input id="ed-place" value="${pr.place||''}"></label>
+    <label><input type="checkbox" id="ed-draft" ${pr.status==='draft'?'checked':''}> чарнавік</label>
+    <button id="ed-del" style="border-color:#c0392b;color:#c0392b">выдаліць участак</button>`;
   const upd = () => {
     pr.num = document.getElementById('ed-num').value;
     commitOwners(pr, document.getElementById('ed-owner').value, extras);
@@ -658,8 +658,8 @@ function renderTowns() {
     });
     if (townEdit) {
       m.on('dragend', () => { const xy = toXY(m.getLatLng()); t.x = xy[0]; t.y = xy[1]; markDirtyTowns(); });
-      m.on('contextmenu', () => { if (confirm(`Удалить «${t.name}»?`)) { TOWNS.splice(idx, 1); markDirtyTowns(); renderTowns(); } });
-      m.on('dblclick', () => { const nn = prompt('Название паселішча:', t.name);
+      m.on('contextmenu', () => { if (confirm(`Выдаліць «${t.name}»?`)) { TOWNS.splice(idx, 1); markDirtyTowns(); renderTowns(); } });
+      m.on('dblclick', () => { const nn = prompt('Назва паселішча:', t.name);
         if (nn !== null && nn.trim()) { t.name = nn.trim(); markDirtyTowns(); renderTowns(); } });
     }
     m.addTo(tier.group());
@@ -679,7 +679,7 @@ if (townEdit) {
 }
 map.on('click', e => {
   if (!townEdit || editMode) return;
-  const name = prompt('Название паселішча:');
+  const name = prompt('Назва паселішча:');
   if (name === null || !name.trim()) return;
   const [x, y] = toXY(e.latlng);
   TOWNS.push({ name: name.trim(), x, y });
@@ -691,7 +691,7 @@ document.getElementById('btn-export-towns').addEventListener('click', () => {
   a.href = URL.createObjectURL(blob); a.download = 'towns.json'; a.click();
 });
 document.getElementById('btn-towns-fromfile').addEventListener('click', () => {
-  if (!confirm('Отбросить локальные правки и загрузить data/towns.json?')) return;
+  if (!confirm('Адкінуць лакальныя праўкі і загрузіць data/towns.json?')) return;
   TOWNS = JSON.parse(JSON.stringify(window._fileTowns || []));
   localStorage.removeItem(LS_KEY_T); renderTowns();
 });

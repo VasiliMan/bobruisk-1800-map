@@ -14,7 +14,7 @@ async function sendFeedback(fields) {
   if (!WEB3FORMS_KEY) return { ok: false, error: 'no-key' };
   const payload = Object.assign({
     access_key: WEB3FORMS_KEY,
-    from_name: 'Карта землевладельцев 1800',
+    from_name: 'Карта землеўладальнікаў 1800',
   }, fields);
   try {
     const r = await fetch('https://api.web3forms.com/submit', {
@@ -66,30 +66,30 @@ function openFeedbackModal(ctx) {
   if (!ov) {
     ov = document.createElement('div'); ov.id = 'fb-overlay';
     ov.innerHTML = `<div id="fb-card">
-      <h3>Сообщить об ошибке / предложить правку</h3>
+      <h3>Паведаміць пра памылку / прапанаваць праўку</h3>
       <div id="fb-body">
         <div id="fb-ctx"></div>
-        <label>Тип</label>
+        <label>Тып</label>
         <select id="fb-type">
-          <option value="транскрипция">Транскрипция (имя / чтение)</option>
-          <option value="номер участка">Номер участка / часть (не тот владелец)</option>
-          <option value="ссылка/источник">Ссылка / источник о владельце</option>
-          <option value="герб">Герб (изображение / название)</option>
-          <option value="другое">Другое</option>
+          <option value="транскрыпцыя">Транскрыпцыя (імя / чытанне)</option>
+          <option value="нумар участка">Нумар участка / частка (не той уладальнік)</option>
+          <option value="спасылка/крыніца">Спасылка / крыніца пра ўладальніка</option>
+          <option value="герб">Герб (выява / назва)</option>
+          <option value="іншае">Іншае</option>
         </select>
-        <label>Ваше исправление / комментарий *</label>
-        <textarea id="fb-text" placeholder="Опишите, что не так, и как должно быть…"></textarea>
-        <label>Источник / ссылка (необязательно)</label>
-        <input id="fb-src" type="text" placeholder="URL, архивный шифр, издание…">
-        <label>Ваше имя (необязательно)</label>
-        <input id="fb-name" type="text" placeholder="как вас упомянуть в благодарностях">
-        <label>E-mail для ответа (необязательно)</label>
-        <input id="fb-email" type="text" placeholder="если хотите получить ответ">
+        <label>Ваша выпраўленне / каментар *</label>
+        <textarea id="fb-text" placeholder="Апішыце, што не так і як павінна быць…"></textarea>
+        <label>Крыніца / спасылка (неабавязкова)</label>
+        <input id="fb-src" type="text" placeholder="URL, архіўны шыфр, выданне…">
+        <label>Ваша імя (неабавязкова)</label>
+        <input id="fb-name" type="text" placeholder="як вас згадаць у падзяках">
+        <label>E-mail для адказу (неабавязкова)</label>
+        <input id="fb-email" type="text" placeholder="калі хочаце атрымаць адказ">
         <input type="checkbox" name="botcheck" class="fb-hp" tabindex="-1" autocomplete="off">
         <div id="fb-status"></div>
         <div id="fb-actions">
-          <button id="fb-cancel" type="button">Отмена</button>
-          <button id="fb-send" type="button">Отправить</button>
+          <button id="fb-cancel" type="button">Адмена</button>
+          <button id="fb-send" type="button">Адправіць</button>
         </div>
       </div></div>`;
     document.body.appendChild(ov);
@@ -101,14 +101,14 @@ function openFeedbackModal(ctx) {
   const ctxBox = ov.querySelector('#fb-ctx');
   if (ctx.num != null) {
     ctxBox.style.display = '';
-    ctxBox.textContent = `Участок № ${ctx.num}` + (ctx.chast ? `, часть ${ctx.chast}` : '') +
+    ctxBox.textContent = `Участак № ${ctx.num}` + (ctx.chast ? `, частка ${ctx.chast}` : '') +
       (ctx.owners ? ` — ${ctx.owners}` : '');
   } else { ctxBox.style.display = 'none'; ctxBox.textContent = ''; }
-  ov.querySelector('#fb-type').value = ctx.type || 'транскрипция';
+  ov.querySelector('#fb-type').value = ctx.type || 'транскрыпцыя';
   ov.querySelector('#fb-text').value = '';
   ov.querySelector('#fb-src').value = '';
   const st = ov.querySelector('#fb-status'); st.textContent = ''; st.className = '';
-  const send = ov.querySelector('#fb-send'); send.disabled = false; send.textContent = 'Отправить';
+  const send = ov.querySelector('#fb-send'); send.disabled = false; send.textContent = 'Адправіць';
   ov._ctx = ctx;
   ov.classList.add('open');
   ov.querySelector('#fb-text').focus();
@@ -116,35 +116,35 @@ function openFeedbackModal(ctx) {
   async function submitModal() {
     const text = ov.querySelector('#fb-text').value.trim();
     const st = ov.querySelector('#fb-status');
-    if (!text) { st.className = 'err'; st.textContent = 'Пожалуйста, опишите правку.'; return; }
+    if (!text) { st.className = 'err'; st.textContent = 'Калі ласка, апішыце праўку.'; return; }
     if (ov.querySelector('[name=botcheck]').checked) { ov.classList.remove('open'); return; }
     const c = ov._ctx || {};
     const type = ov.querySelector('#fb-type').value;
-    send.disabled = true; send.textContent = 'Отправка…';
+    send.disabled = true; send.textContent = 'Адпраўка…';
     st.className = ''; st.textContent = '';
     const res = await sendFeedback({
-      subject: `Карта 1800: ${type}` + (c.num != null ? ` — участок ${c.num}${c.chast ? '/' + c.chast : ''}` : ''),
-      Тип: type,
-      Участок: c.num != null ? String(c.num) : '—',
-      Часть: c.chast != null ? String(c.chast) : '—',
-      Владельцы: c.owners || '—',
+      subject: `Карта 1800: ${type}` + (c.num != null ? ` — участак ${c.num}${c.chast ? '/' + c.chast : ''}` : ''),
+      Тып: type,
+      Участак: c.num != null ? String(c.num) : '—',
+      Частка: c.chast != null ? String(c.chast) : '—',
+      Уладальнікі: c.owners || '—',
       owner_ids: c.owner_ids || '',
-      Правка: text,
-      Источник: ov.querySelector('#fb-src').value.trim() || '—',
-      Имя: ov.querySelector('#fb-name').value.trim() || '—',
-      Email_для_ответа: ov.querySelector('#fb-email').value.trim() || '—',
+      Праўка: text,
+      Крыніца: ov.querySelector('#fb-src').value.trim() || '—',
+      Імя: ov.querySelector('#fb-name').value.trim() || '—',
+      Email_для_адказу: ov.querySelector('#fb-email').value.trim() || '—',
     });
     if (res.ok) {
-      st.className = 'ok'; st.textContent = 'Спасибо! Отзыв отправлен.';
-      send.textContent = 'Отправлено ✓';
+      st.className = 'ok'; st.textContent = 'Дзякуй! Водгук адпраўлены.';
+      send.textContent = 'Адпраўлена ✓';
       setTimeout(() => ov.classList.remove('open'), 1400);
     } else if (res.error === 'no-key') {
       st.className = 'err';
-      st.textContent = 'Форма ещё не настроена (нет ключа Web3Forms). Сообщите администратору.';
-      send.disabled = false; send.textContent = 'Отправить';
+      st.textContent = 'Форма яшчэ не наладжана (няма ключа Web3Forms). Паведаміце адміністратару.';
+      send.disabled = false; send.textContent = 'Адправіць';
     } else {
-      st.className = 'err'; st.textContent = 'Не удалось отправить: ' + res.error;
-      send.disabled = false; send.textContent = 'Отправить';
+      st.className = 'err'; st.textContent = 'Не ўдалося адправіць: ' + res.error;
+      send.disabled = false; send.textContent = 'Адправіць';
     }
   }
 }
