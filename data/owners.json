@@ -1020,7 +1020,10 @@
         "w": 779,
         "h": 121
       },
-      "fix": "правка пользователя: Келчевский (подтверждает 2-ю модель)"
+      "fix": "правка пользователя: Келчевский (подтверждает 2-ю модель)",
+      "arms": "abdank.png",
+      "arms_cap": "герб Абданк (Abdank)",
+      "ref": "З. Л. Яцкевіч. 23. Келчэўскія герба «Абданк» // Малы гербоўнік Рагачоўскай шляхты. Архіварыус: зб. навук. паведамл. і арт. — Мінск: БелНДІДАС, 2009. — Вып. 7. — С. 273. Прыналежнасць да Келчэўскіх пацвярджаецца ўладаннямі ў тым жа ўчастку: Валасовічы (Келчевский Сигизмунд Фаддеевич, па спадчыне з 1840) і Міхалёва (А. К. Келчевский, 1864) — Д. М. Дрозд. Землевладельцы Минской губернии, 1861–1900: справочник. — 2-е изд. — Минск: Медисонт, 2012. — С. 240—241."
     },
     {
       "id": "kamienski",
@@ -1415,7 +1418,16 @@
         "y": 705,
         "w": 583,
         "h": 192
-      }
+      },
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "prushanowski_jozef",
@@ -1589,7 +1601,16 @@
         "y": 1748,
         "w": 578,
         "h": 117
-      }
+      },
+      "arms": "oginiec.png",
+      "arms_cap": "герб Агінец (Oginiec)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 579—581. («Puzyna herbu Oginiec»)",
+      "links": [
+        {
+          "label": "Пузыны — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Пузыны"
+        }
+      ]
     },
     {
       "id": "plebania_uniat_nikol",
@@ -1653,7 +1674,16 @@
         "y": 2158,
         "w": 583,
         "h": 123
-      }
+      },
+      "arms": "oginiec.png",
+      "arms_cap": "герб Агінец (Oginiec)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 579—581. («Puzyna herbu Oginiec»)",
+      "links": [
+        {
+          "label": "Пузыны — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Пузыны"
+        }
+      ]
     },
     {
       "id": "pawlinowski",

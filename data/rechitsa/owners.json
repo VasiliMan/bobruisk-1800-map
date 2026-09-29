@@ -517,7 +517,16 @@
           "num": "23"
         }
       ],
-      "page": 1
+      "page": 1,
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "oskierka_ignat",
@@ -536,7 +545,16 @@
       ],
       "page": 1,
       "uncertain": true,
-      "alt": "Оскирки Игнатія подстаросты"
+      "alt": "Оскирки Игнатія подстаросты",
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "oskierka_florian",
@@ -552,7 +570,16 @@
       "page": 1,
       "uncertain": true,
       "alt": "часть 4 или 5 (фигурная скобка)",
-      "flag": "2-я модель читает часть 5 (у меня 4) — сверьте номер со сканом"
+      "flag": "2-я модель читает часть 5 (у меня 4) — сверьте номер со сканом",
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "obuchowicz_jan",
@@ -582,7 +609,16 @@
           "num": "50"
         }
       ],
-      "page": 2
+      "page": 2,
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "oskierka_leopold",
@@ -597,7 +633,16 @@
       ],
       "page": 2,
       "uncertain": true,
-      "flag": "2-я модель читает № 46, 49 (у меня 49) — сверьте номер со сканом"
+      "flag": "2-я модель читает № 46, 49 (у меня 49) — сверьте номер со сканом",
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "oskierka_michal",
@@ -610,7 +655,16 @@
           "num": "51"
         }
       ],
-      "page": 2
+      "page": 2,
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "oskierka_ambroz",
@@ -623,7 +677,16 @@
           "num": "53"
         }
       ],
-      "page": 2
+      "page": 2,
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "oskierka_anton",
@@ -638,7 +701,16 @@
       ],
       "page": 2,
       "flag": "2-я модель читает часть 6 (у меня 5) — сверьте номер со сканом",
-      "alt": "Оскирки антонія полковника и ковалера"
+      "alt": "Оскирки антонія полковника и ковалера",
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "obuchowicz_filip",
@@ -665,7 +737,16 @@
         }
       ],
       "page": 2,
-      "alt": "Оскирчины христины хорунжины"
+      "alt": "Оскирчины христины хорунжины",
+      "arms": "oskierka.png",
+      "arms_cap": "герб Мурдэліа зменены (Oskierka)",
+      "ref": "K. Niesiecki. Herbarz polski / wyd. J. N. Bobrowicz. — Lipsk: Breitkopf i Haertel, 1841. — T. 7. — S. 145. («Oskierka herbu Mordelio, z tą jednak odmianą…»)",
+      "links": [
+        {
+          "label": "Аскеркі — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Аскеркі"
+        }
+      ]
     },
     {
       "id": "osterman",
