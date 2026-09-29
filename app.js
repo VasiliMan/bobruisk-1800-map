@@ -278,12 +278,13 @@ function renderParcels() {
     const n = r.length - 1; const c = px(cx / n, cy / n);
 
     // show every co-owner's arms/cross, fanned out side by side at the parcel centre
-    const symOwners = owners.filter(o => o.arms || o.inst);
-    if (showArms && symOwners.length) {
-      const html = symOwners.map(o => o.arms
-        ? `<img class="map-arms" src="arms/${o.arms}" alt="">`
-        : `<span class="map-cross">${INST_SYM[o.inst] || '✟'}</span>`).join('');
-      const w = symOwners.length * 42;
+    // (an institution may carry both, e.g. a monastery with its order's arms + its cross)
+    const syms = owners.flatMap(o => [
+      ...(o.arms ? [`<img class="map-arms" src="arms/${o.arms}" alt="">`] : []),
+      ...(o.inst ? [`<span class="map-cross">${INST_SYM[o.inst] || '✟'}</span>`] : [])]);
+    if (showArms && syms.length) {
+      const html = syms.join('');
+      const w = syms.length * 42;
       L.marker(c, { interactive: false, icon: L.divIcon({
         className: 'arms-marker', html, iconSize: [w, 46], iconAnchor: [w / 2, 46] }) }).addTo(armsGroup);
     }
@@ -300,13 +301,14 @@ const INST_SYM = { orthodox: '☦', catholic: '✝', uniate: '✠', monastery: '
 const INST_LBL = { orthodox: 'праваслаўны храм / манастыр', catholic: 'каталіцкі касцёл',
                    uniate: 'уніяцкі храм / манастыр', monastery: 'манастыр' };
 function armsBlock(owner) {
-  if (owner && owner.arms)
+  if (!owner) return '';
+  const inst = owner.inst
+    ? `<div class="popup-arms inst"><span class="inst-sym">${INST_SYM[owner.inst] || '✟'}</span>` +
+      `<span>${INST_LBL[owner.inst] || ''}</span></div>` : '';
+  if (owner.arms)
     return `<div class="popup-arms"><img src="arms/${owner.arms}" alt="герб">` +
-           (owner.arms_cap ? `<div class="arms-cap">${owner.arms_cap}</div>` : '') + `</div>`;
-  if (owner && owner.inst)
-    return `<div class="popup-arms inst"><span class="inst-sym">${INST_SYM[owner.inst] || '✟'}</span>` +
-           `<span>${INST_LBL[owner.inst] || ''}</span></div>`;
-  return '';
+           (owner.arms_cap ? `<div class="arms-cap">${owner.arms_cap}</div>` : '') + `</div>` + inst;
+  return inst;
 }
 // inline style that shows just the cropped name region of an index page (no image files)
 function cropImgStyle(c, maxW, maxH) {
@@ -423,9 +425,8 @@ function buildSidebar() {
     el.className = 'owner'; el.dataset.id = o.id; el.dataset.uezd = u.id;
     el.dataset.search = (o.name + ' ' + (o.name_ru||'') + ' ' + (o.title||'') + ' ' + u.name).toLowerCase();
     const pcs = [...new Set(o.parcels.map(p => p.num))].join(', ');
-    const sym = o.arms ? `<img class="side-arms" src="arms/${o.arms}" alt="" title="${o.arms_cap || ''}">`
-              : o.inst ? `<span class="side-cross" title="${INST_LBL[o.inst] || ''}">${INST_SYM[o.inst] || '✟'}</span>`
-              : '';
+    const sym = (o.arms ? `<img class="side-arms" src="arms/${o.arms}" alt="" title="${o.arms_cap || ''}">` : '')
+              + (o.inst ? `<span class="side-cross" title="${INST_LBL[o.inst] || ''}">${INST_SYM[o.inst] || '✟'}</span>` : '');
     el.innerHTML = `<span class="sw" style="background:${o.color}"></span>
       <span class="nm">${o.name}</span>
       ${sym}

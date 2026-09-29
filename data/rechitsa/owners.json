@@ -334,6 +334,8 @@
       ],
       "page": 1,
       "inst": "catholic",
+      "arms": "dominican.png",
+      "arms_cap": "герб ордэна дамініканцаў (Ordo Praedicatorum)",
       "fix": "номер сверен со сканом владельцем проекта (подтверждено без изменений)",
       "verified": true
     },
@@ -409,6 +411,8 @@
       ],
       "page": 1,
       "inst": "catholic",
+      "arms": "dominican.png",
+      "arms_cap": "герб ордэна дамініканцаў (Ordo Praedicatorum)",
       "fix": "номер сверен со сканом владельцем проекта (подтверждено без изменений)",
       "verified": true
     },
@@ -444,6 +448,8 @@
       ],
       "page": 1,
       "inst": "uniate",
+      "arms": "herb_osbm.jpg",
+      "arms_cap": "Чин св. Васіля Вялікага (OSBM)",
       "alt": "Кляштора Селецкаго базыліанскаго",
       "fix": "номер сверен со сканом владельцем проекта (подтверждено без изменений)",
       "verified": true
