@@ -2021,7 +2021,15 @@
         "y": 2344,
         "w": 715,
         "h": 148
-      }
+      },
+      "arms": "chalecki.png",
+      "arms_cap": "герб Халецкі (Chalecki)",
+      "links": [
+        {
+          "label": "Халецкія герба «Халецкі» — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Халецкія_герба_«Халецкі»"
+        }
+      ]
     },
     {
       "id": "cerkov_sluck_voskr",
