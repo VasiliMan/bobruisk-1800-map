@@ -316,10 +316,14 @@ function cropImgStyle(c, maxW, maxH) {
     + `background-size:${(PAGE_W*scale).toFixed(0)}px ${(PAGE_H*scale).toFixed(0)}px;`
     + `background-position:${(-c.x*scale).toFixed(1)}px ${(-c.y*scale).toFixed(1)}px;`;
 }
+// phone layout (matches the @media query in style.css)
+const isPhone = () => window.matchMedia('(max-width: 700px)').matches;
+// crop images and popups shrink to fit narrow screens
+const CROP_MAX_W = Math.min(300, window.innerWidth - 90);
 function cropBlock(owner) {
   if (!owner || !owner.crop) return '';
   return `<div class="popup-crop"><div class="popup-crop-cap">оригинал записи:</div>`
-    + `<div class="popup-crop-img" style="${cropImgStyle(owner.crop, 300, 156)}"></div></div>`;
+    + `<div class="popup-crop-img" style="${cropImgStyle(owner.crop, CROP_MAX_W, 156)}"></div></div>`;
 }
 function linksBlock(owner) {
   if (!owner || !owner.links || !owner.links.length) return '';
@@ -374,10 +378,17 @@ function openPopup(poly, f) {
   // hidden in collapsed co-owner rows, so size for them up front to avoid overflow)
   let cropW = 0;
   owners.forEach(o => {
-    if (o.crop) cropW = Math.max(cropW, o.crop.w * Math.min(300 / o.crop.w, 156 / o.crop.h));
+    if (o.crop) cropW = Math.max(cropW, o.crop.w * Math.min(CROP_MAX_W / o.crop.w, 156 / o.crop.h));
   });
-  const opts = { maxWidth: 340 };
-  if (cropW) opts.minWidth = Math.min(340, Math.ceil(cropW) + 12);
+  const maxW = Math.min(340, window.innerWidth - 60);
+  const opts = { maxWidth: maxW };
+  if (cropW) opts.minWidth = Math.min(maxW, Math.ceil(cropW) + 12);
+  if (isPhone()) {
+    // long cards scroll inside the popup instead of running off-screen
+    opts.maxHeight = Math.round(window.innerHeight * 0.6);
+    opts.autoPanPaddingTopLeft = L.point(10, 60);   // clear of the ☰ button
+    opts.autoPanPaddingBottomRight = L.point(10, 20);
+  }
   poly.bindPopup(html, opts).openPopup();
 }
 // expand/collapse a co-owner row (delegated so it works for any popup)
@@ -389,6 +400,11 @@ document.addEventListener('click', e => {
 });
 
 // ---- sidebar ----
+// on phones the sidebar is a slide-in drawer over the map
+function setSidebarShown(on) { document.body.classList.toggle('sidebar-shown', on); }
+document.getElementById('sidebar-open').addEventListener('click', () => setSidebarShown(true));
+document.getElementById('sidebar-close').addEventListener('click', () => setSidebarShown(false));
+document.getElementById('sidebar-backdrop').addEventListener('click', () => setSidebarShown(false));
 function buildSidebar() {
   const list = document.getElementById('owner-list');
   list.innerHTML = '';
@@ -421,6 +437,7 @@ function buildSidebar() {
 }
 
 function focusOwner(key) {
+  setSidebarShown(false);
   const polys = layersByOwner[key];
   if (!polys || !polys.length) {
     const o = OWNER_BY_ID[key];

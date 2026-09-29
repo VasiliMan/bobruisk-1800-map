@@ -8,8 +8,11 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+<button id="sidebar-open" type="button" aria-label="Список владельцев">☰ Владельцы</button>
+<div id="sidebar-backdrop"></div>
 <div id="sidebar">
   <header>
+    <button id="sidebar-close" type="button" aria-label="Закрыть">✕</button>
     <h1>Землевладельцы ок. 1800<br><small>Генеральный план · Бобруйский и Речицкий уезды</small></h1>
   </header>
   <div class="controls">
@@ -18,7 +21,7 @@
       <label><input type="checkbox" id="toggle-fill" checked> заливка</label>
       <label><input type="checkbox" id="toggle-labels" checked> номера</label>
       <label><input type="checkbox" id="toggle-arms" checked> гербы</label>
-      <label><input type="checkbox" id="toggle-edit"> правка</label>
+      <label class="edit-toggle"><input type="checkbox" id="toggle-edit"> правка</label>
       <label class="towns-toggle"><input type="checkbox" id="toggle-mest" checked> мястэчкі</label>
       <label class="towns-toggle"><input type="checkbox" id="toggle-towns" checked> Буйныя шляхецкія паселішча</label>
     </div>

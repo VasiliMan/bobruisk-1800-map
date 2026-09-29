@@ -135,3 +135,43 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 1000;
   background: rgba(40,34,20,.92); color: #fbf3df; padding: 8px 16px; border-radius: 18px;
   font-size: 13px; transition: opacity .4s; pointer-events: none; max-width: 70vw; text-align: center; }
+/* ---- phone layout: map full-screen, sidebar becomes a slide-in drawer ---- */
+#sidebar-open, #sidebar-close, #sidebar-backdrop { display: none; }
+@media (max-width: 700px) {
+  html, body { height: 100dvh; overflow: hidden; }
+  #map { height: 100dvh; }
+  #sidebar {
+    position: fixed; top: 0; left: 0; z-index: 1100; height: 100dvh;
+    width: min(88vw, 360px); min-width: 0;
+    transform: translateX(-100%); transition: transform .22s ease;
+    box-shadow: 2px 0 12px rgba(0,0,0,.25);
+  }
+  body.sidebar-shown #sidebar { transform: none; }
+  #sidebar-backdrop { position: fixed; inset: 0; z-index: 1050; background: rgba(0,0,0,.3); }
+  body.sidebar-shown #sidebar-backdrop { display: block; }
+  #sidebar-open {
+    display: block; position: fixed; top: 10px; right: 10px; z-index: 1000;
+    padding: 9px 14px; font-size: 15px; font-weight: 600; color: #4a3f2a;
+    background: #f6f3ea; border: 1px solid #cdc6b0; border-radius: 8px;
+    box-shadow: 0 1px 5px rgba(0,0,0,.3); cursor: pointer;
+  }
+  #sidebar-close {
+    display: block; float: right; margin: -4px -6px 0 8px; padding: 4px 10px;
+    font-size: 18px; border: none; background: none; color: #6a5a30; cursor: pointer;
+  }
+  header { padding-top: calc(12px + env(safe-area-inset-top)); }
+  /* bigger touch targets */
+  #search { font-size: 16px; padding: 9px 10px; }   /* 16px stops iOS zoom-on-focus */
+  .row { font-size: 14px; gap: 10px 16px; }
+  .row input[type=checkbox] { width: 18px; height: 18px; vertical-align: -4px; }
+  .owner { padding: 10px 14px; font-size: 15px; }
+  .owner .pc { font-size: 12px; }
+  .side-links { font-size: 14px; padding: 10px 14px 4px; }
+  .side-links a { display: inline-block; padding: 4px 0; }
+  /* vertex editing needs a mouse (drag, right-click) */
+  .edit-toggle, #edit-panel, #town-panel { display: none !important; }
+  /* popups: tighter type, fit the screen */
+  .leaflet-popup-content { font-size: 15px; margin: 12px 14px; }
+  .popup-meta, .popup-links a { font-size: 14px; }
+  .leaflet-control-zoom a { width: 36px !important; height: 36px !important; line-height: 36px !important; }
+}
