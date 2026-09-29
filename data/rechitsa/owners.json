@@ -204,7 +204,19 @@
         }
       ],
       "page": 1,
-      "alt": "Горвата игнатія Судьи"
+      "alt": "Горвата игнатія Судьи",
+      "arms": "pobog.png",
+      "arms_cap": "герб Побаг (Pobóg) — Горваты",
+      "links": [
+        {
+          "label": "Ігнат Тадэвушавіч Горват — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Ігнат_Тадэвушавіч_Горват"
+        },
+        {
+          "label": "Горваты — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Горваты"
+        }
+      ]
     },
     {
       "id": "derostensakin",
@@ -292,7 +304,9 @@
           "num": "19"
         }
       ],
-      "page": 1
+      "page": 1,
+      "arms": "coa_zabiello.png",
+      "arms_cap": "Герб Забелло (Zabiełło)"
     },
     {
       "id": "zawistowski",
@@ -598,7 +612,15 @@
           "num": "45"
         }
       ],
-      "page": 2
+      "page": 2,
+      "arms": "jasienczyk3.png",
+      "arms_cap": "герб Ясенчык III («Ключ раздвоены»)",
+      "links": [
+        {
+          "label": "Абуховічы — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Абуховічы"
+        }
+      ]
     },
     {
       "id": "oskierka_stanislaw",
@@ -729,7 +751,15 @@
           "num": "71"
         }
       ],
-      "page": 2
+      "page": 2,
+      "arms": "jasienczyk3.png",
+      "arms_cap": "герб Ясенчык III («Ключ раздвоены»)",
+      "links": [
+        {
+          "label": "Абуховічы — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Абуховічы"
+        }
+      ]
     },
     {
       "id": "oskierczyna",
@@ -1291,7 +1321,15 @@
       "page": 3,
       "alt": "Халецкаго казимира обозного",
       "fix": "номер сверен со сканом владельцем проекта (подтверждено без изменений)",
-      "verified": true
+      "verified": true,
+      "arms": "chalecki.png",
+      "arms_cap": "герб Халецкі (Chalecki)",
+      "links": [
+        {
+          "label": "Халецкія герба «Халецкі» — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Халецкія_герба_«Халецкі»"
+        }
+      ]
     },
     {
       "id": "chalecki_tadeusz",
@@ -1306,7 +1344,15 @@
       ],
       "page": 3,
       "fix": "номер сверен со сканом владельцем проекта (подтверждено без изменений)",
-      "verified": true
+      "verified": true,
+      "arms": "chalecki.png",
+      "arms_cap": "герб Халецкі (Chalecki)",
+      "links": [
+        {
+          "label": "Халецкія герба «Халецкі» — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Халецкія_герба_«Халецкі»"
+        }
+      ]
     },
     {
       "id": "chalecki_pawel",
@@ -1321,7 +1367,15 @@
       ],
       "page": 3,
       "fix": "номер сверен со сканом владельцем проекта (подтверждено без изменений)",
-      "verified": true
+      "verified": true,
+      "arms": "chalecki.png",
+      "arms_cap": "герб Халецкі (Chalecki)",
+      "links": [
+        {
+          "label": "Халецкія герба «Халецкі» — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Халецкія_герба_«Халецкі»"
+        }
+      ]
     },
     {
       "id": "szujski_karol",
