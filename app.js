@@ -250,9 +250,12 @@ function renderParcels() {
   const fill = document.getElementById('toggle-fill').checked;
   const showLabels = document.getElementById('toggle-labels').checked;
   const showArms = document.getElementById('toggle-arms').checked;
+  const scaleArms = document.getElementById('toggle-armscale').checked;
 
   const active = PARCELS.features.filter(f => f.geometry.type === 'Polygon');
   const holesByParent = computeEnclaves(active);
+  const areas = active.map(f => f._area).sort((a, b) => a - b);
+  const medianArea = areas[Math.floor(areas.length / 2)] || 1;
   // draw bigger (containing) parcels first so enclaves sit on top
   const ordered = [...active].sort((a, b) => b._area - a._area);
 
@@ -279,14 +282,18 @@ function renderParcels() {
 
     // show every co-owner's arms/cross, fanned out side by side at the parcel centre
     // (an institution may carry both, e.g. a monastery with its order's arms + its cross)
+    // optional: scale by parcel size (sqrt of area relative to the median parcel, clamped)
+    const k = scaleArms ? Math.min(2.2, Math.max(0.5, Math.sqrt(f._area / medianArea))) : 1;
     const syms = owners.flatMap(o => [
-      ...armsList(o).map(a => `<img class="map-arms" src="arms/${a.file}" alt="">`),
-      ...(o.inst ? [`<span class="map-cross">${INST_SYM[o.inst] || '✟'}</span>`] : [])]);
+      ...armsList(o).map(a => `<img class="map-arms" src="arms/${a.file}" alt=""` +
+        (k !== 1 ? ` style="width:${(40 * k).toFixed(0)}px;height:${(44 * k).toFixed(0)}px"` : '') + `>`),
+      ...(o.inst ? [`<span class="map-cross"` + (k !== 1 ? ` style="font-size:${(30 * k).toFixed(0)}px"` : '') +
+        `>${INST_SYM[o.inst] || '✟'}</span>`] : [])]);
     if (showArms && syms.length) {
       const html = syms.join('');
-      const w = syms.length * 42;
+      const w = syms.length * 42 * k, h = 46 * k;
       L.marker(c, { interactive: false, icon: L.divIcon({
-        className: 'arms-marker', html, iconSize: [w, 46], iconAnchor: [w / 2, 46] }) }).addTo(armsGroup);
+        className: 'arms-marker', html, iconSize: [w, h], iconAnchor: [w / 2, h] }) }).addTo(armsGroup);
     }
     if (showLabels) {
       L.marker(c, { interactive: false, icon: L.divIcon({
@@ -478,6 +485,7 @@ document.getElementById('toggle-base').addEventListener('change', e =>
 document.getElementById('toggle-fill').addEventListener('change', renderParcels);
 document.getElementById('toggle-labels').addEventListener('change', renderParcels);
 document.getElementById('toggle-arms').addEventListener('change', renderParcels);
+document.getElementById('toggle-armscale').addEventListener('change', renderParcels);
 
 function updateStat() {
   document.getElementById('stat').textContent =
