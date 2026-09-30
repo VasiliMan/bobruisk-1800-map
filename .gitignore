@@ -11,3 +11,5 @@ align*.png
 
 # local scan archive: only the алфавит pages are published (verify_img/r*.jpg)
 data/Речицкий уезд/
+tiles_mozyr/
+tiles_pinsk/

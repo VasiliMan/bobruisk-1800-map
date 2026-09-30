@@ -7,21 +7,30 @@
    parcels.geojson coords are [x,y] PIXELS (not lon/lat); app converts via
    map.unproject(...,MAX_Z). */
 
-const IMG_W = 20606, IMG_H = 31110, MAX_Z = 7, TILE = 256;  // combined canvas
+const IMG_W = 42878, IMG_H = 31366, MAX_Z = 7, TILE = 256;  // combined canvas (tools/build_tiles.py)
 const PAGE_W = 2400, PAGE_H = 3200;          // natural size of the owner-index page scans
 
-// Each uezd: where its scan sits in the combined canvas (ox,oy) and its source
-// size (w,h).  Offsets MUST match LAYOUT in build_combined.py.  A parcel feature
-// is assigned to a uezd by where its centroid falls (see uezdOfXY).
+// Each uezd: the bounding box of its area in the combined canvas (ox,oy,w,h) -- used for
+// the initial view and the edit-mode readout. Placement of the scans is in tools/layout.json
+// (Мозырь is rotated and Пинск rescaled), baked by tools/build_tiles.py, which also writes
+// data/uezd_outlines.json: a parcel is assigned to the uezd whose OUTLINE holds its centroid.
 const UEZDS = [
   { id: 'bobruisk', name: 'Бабруйскі павет', owners: 'data/owners.json',
-    parcels: 'data/parcels.geojson',           ox: 0,   oy: 0,     w: 15039, h: 14407 },
+    parcels: 'data/parcels.geojson',           ox: 22016, oy: 0,     w: 15039, h: 14407 },
   { id: 'rechitsa', name: 'Рэчыцкі павет',   owners: 'data/rechitsa/owners.json',
-    parcels: 'data/rechitsa/parcels.geojson',  ox: 5768, oy: 10563, w: 14838, h: 20547 },
+    parcels: 'data/rechitsa/parcels.geojson',  ox: 27784, oy: 10563, w: 14838, h: 20547 },
+  { id: 'mozyr',    name: 'Мазырскі павет',  owners: 'data/mozyr/owners.json',
+    parcels: 'data/mozyr/parcels.geojson',     ox: 11984, oy: 6095, w: 19425, h: 17941 },
+  { id: 'pinsk',    name: 'Пінскі павет',    owners: 'data/pinsk/owners.json',
+    parcels: 'data/pinsk/parcels.geojson',     ox: 396,   oy: 3804, w: 13433, h: 15052 },
 ];
+// every uezd outline in canvas pixels (data/uezd_outlines.json), loaded at start
+let UEZD_OUTLINES = {};
 const UEZD_BY_ID = {}; UEZDS.forEach(u => UEZD_BY_ID[u.id] = u);
 // which uezd a global pixel (x,y) belongs to: containing rect, else nearest centre
 function uezdOfXY(x, y) {
+  for (const u of UEZDS)
+    if (UEZD_OUTLINES[u.id] && pointInRing([x, y], UEZD_OUTLINES[u.id])) return u.id;
   for (const u of UEZDS)
     if (x >= u.ox && x <= u.ox + u.w && y >= u.oy && y <= u.oy + u.h) return u.id;
   let best = UEZDS[0], bd = Infinity;
@@ -120,9 +129,12 @@ const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
 
 Promise.all([
   fetchJson('data/towns.json', { towns: [] }),
+  fetchJson('data/uezd_outlines.json', {}),
   Promise.all(UEZDS.map(u => fetchJson(u.owners, { owners: [] }))),
   Promise.all(UEZDS.map(u => fetchJson(u.parcels, emptyFC()))),
-]).then(([td, ownerDocs, parcelDocs]) => {
+]).then(([td, outl, ownerDocs, parcelDocs]) => {
+  // close each ring (pointInRing expects last point == first)
+  for (const [u, r] of Object.entries(outl)) UEZD_OUTLINES[u] = r.length ? [...r, r[0]] : r;
   const localT = loadLocalTowns();
   TOWNS = (localT && localT.length) ? localT : (td.towns || []);
   window._fileTowns = td.towns || [];
@@ -156,7 +168,27 @@ Promise.all([
 });
 
 // ---- autosave to browser localStorage (safety net; Export still writes the real file) ----
-const LS_KEY = 'bobruisk_parcels_v1';
+const LS_KEY = 'bobruisk_parcels_v2';
+// the canvas grew west by CANVAS_DX when Мозырь/Пинск were added; edits autosaved under the
+// old keys are in old pixels -- shift them once and move them to the new keys
+const CANVAS_DX = 22016;
+(function migrateLocal() {
+  try {
+    const old = localStorage.getItem('bobruisk_parcels_v1');
+    if (old && !localStorage.getItem(LS_KEY)) {
+      const fc = JSON.parse(old);
+      (fc.features || []).forEach(f => { if (f.geometry && f.geometry.type === 'Polygon')
+        f.geometry.coordinates = f.geometry.coordinates.map(r => r.map(([x, y]) => [x + CANVAS_DX, y])); });
+      localStorage.setItem(LS_KEY, JSON.stringify(fc));
+      const t = localStorage.getItem('bobruisk_parcels_v1_t'); if (t) localStorage.setItem(LS_KEY + '_t', t);
+    }
+    localStorage.removeItem('bobruisk_parcels_v1'); localStorage.removeItem('bobruisk_parcels_v1_t');
+    const oldT = localStorage.getItem('bobruisk_towns_v2');
+    if (oldT && !localStorage.getItem('bobruisk_towns_v3'))
+      localStorage.setItem('bobruisk_towns_v3', JSON.stringify(JSON.parse(oldT).map(t => ({ ...t, x: t.x + CANVAS_DX }))));
+    localStorage.removeItem('bobruisk_towns_v2');
+  } catch (e) { console.warn('local-edit migration failed', e); }
+})();
 let saveTimer = null;
 function markDirty() {
   clearTimeout(saveTimer);
@@ -719,7 +751,7 @@ document.getElementById('btn-export').addEventListener('click', () => {
 // checkbox enters a local placement mode; Export writes data/towns.json to commit.
 // v2: entries gained a `kind` tier (city/mestechko); v1 autosaves predate it and
 // would hide the tiers if replayed over the file, so the key is versioned.
-const LS_KEY_T = 'bobruisk_towns_v2';
+const LS_KEY_T = 'bobruisk_towns_v3';
 let saveTimerT = null;
 function markDirtyTowns() {
   clearTimeout(saveTimerT);

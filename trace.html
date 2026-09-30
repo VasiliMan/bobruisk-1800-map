@@ -27,6 +27,8 @@
   <select id="uezd">
     <option value="rechitsa">Речицкий уезд</option>
     <option value="bobruisk">Бобруйский уезд</option>
+    <option value="mozyr">Мозырский уезд</option>
+    <option value="pinsk">Пинский уезд</option>
   </select>
   <span id="hint">клик — добавить точку · перетащить — двигать · правый клик по точке — удалить</span>
   <span class="sp"></span>
@@ -41,6 +43,8 @@
 const CFG = {
   rechitsa: { tiles:'tiles_rechitsa', W:14838, H:20547, maxZ:7 },
   bobruisk: { tiles:'tiles',          W:15039, H:14407, maxZ:6 },
+  mozyr:    { tiles:'tiles_mozyr',    W:20336, H:17214, maxZ:7 },
+  pinsk:    { tiles:'tiles_pinsk',    W:10543, H:11837, maxZ:6 },
 };
 const params = new URLSearchParams(location.search);
 let uezd = params.get('uezd') || 'rechitsa';
@@ -63,6 +67,10 @@ function init() {
   pts = []; markers.forEach(m=>map.removeLayer(m)); markers = [];
   const saved = localStorage.getItem(LSK());
   if (saved) { try { JSON.parse(saved).forEach(p => addPoint(p[0],p[1],false)); } catch(e){} }
+  else   // nothing edited here yet: start from the committed outline (e.g. the auto-traced draft)
+    fetch('data/' + uezd + '_outline.json', { cache:'no-cache' }).then(r => r.ok ? r.json() : null)
+      .then(d => { if (d && d.points && !pts.length) { d.points.forEach(p => addPoint(p[0],p[1],false)); redraw(); } })
+      .catch(() => {});
   redraw();
   map.on('click', e => { const p = map.project(e.latlng, c.maxZ); addPoint(Math.round(p.x), Math.round(p.y)); });
 }

@@ -1,0 +1,42 @@
+{
+ "_note": "Placement of each uezd scan in the combined canvas (pixels of the CURRENT canvas, whose origin is the top-left of the Бобруйск scan). canvas = scan_xy @ [[cos,sin],[-sin,cos]] + t. Бобруйск/Речица are pure shifts; Мозырь fitted to its Бобруйск+Речица borders (tools: ICP on outlines; geography check with Мозырь/Петриков/Копаткевичи/Ельск gave the same scale, 1.02). Пинск additionally has 'scale' (its scan is at 88 px/km vs ~115 for the others): canvas = scale * scan_xy @ Rot + t.",
+ "bobruisk": {
+  "scan": "Бобруйский (baked in tiles/)",
+  "theta_deg": 0.0,
+  "t": [
+   0,
+   0
+  ]
+ },
+ "rechitsa": {
+  "scan": "Речицкий (baked in tiles/)",
+  "theta_deg": 0.0,
+  "t": [
+   5768,
+   10563
+  ]
+ },
+ "mozyr": {
+  "scan": "~/Documents/SORT/Archive/inbox/Мозырский уезд.jpg",
+  "W": 20336,
+  "H": 17214,
+  "theta_deg": 6.084,
+  "t": [
+   -9297.0,
+   5531.0
+  ],
+  "fit": "border ICP, 382 pairs, mean gap 121 px (~1 km)"
+ },
+ "pinsk": {
+  "scan": "~/Documents/SORT/Archive/inbox/Пинский уезд.png",
+  "W": 10543,
+  "H": 11837,
+  "scale": 1.2903,
+  "theta_deg": 0.038,
+  "t": [
+   -21716.6,
+   3621.0
+  ],
+  "fit": "scale from geography (Пинск/Лунинец/Столин vs Мозырь towns: 88.2 vs 113.8 px/km); rotation+shift by border ICP vs Мозырь, 232 pairs, mean gap 59 px"
+ }
+}
