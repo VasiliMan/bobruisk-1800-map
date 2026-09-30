@@ -1,4 +1,139 @@
 {
  "type": "FeatureCollection",
- "features": []
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "fid": "mz3-33",
+    "num": "33",
+    "status": "draft",
+    "owner_id": "durowski_andrzej",
+    "owner_ids": [
+     "durowski_andrzej",
+     "potocki_stanislaw",
+     "trzypolski_franciszek",
+     "trzypolska_magdalena"
+    ],
+    "chast": 3,
+    "uezd": "mozyr"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       25493,
+       22873
+      ],
+      [
+       26446,
+       22924
+      ],
+      [
+       26429,
+       23299
+      ],
+      [
+       26253,
+       23293
+      ],
+      [
+       26039,
+       23336
+      ],
+      [
+       25903,
+       23387
+      ],
+      [
+       25744,
+       23409
+      ],
+      [
+       25584,
+       23431
+      ],
+      [
+       25462,
+       23412
+      ],
+      [
+       25493,
+       22873
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "fid": "mz3-32",
+    "num": "32",
+    "status": "draft",
+    "owner_id": "tretiak_ludwik",
+    "owner_ids": [
+     "tretiak_ludwik",
+     "tretiak_stanislaw"
+    ],
+    "chast": 3,
+    "uezd": "mozyr"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       26446,
+       22924
+      ],
+      [
+       27515,
+       22977
+      ],
+      [
+       27477,
+       23398
+      ],
+      [
+       27287,
+       23404
+      ],
+      [
+       27194,
+       23420
+      ],
+      [
+       27022,
+       23434
+      ],
+      [
+       26806,
+       23437
+      ],
+      [
+       26790,
+       23403
+      ],
+      [
+       26638,
+       23354
+      ],
+      [
+       26511,
+       23321
+      ],
+      [
+       26429,
+       23299
+      ],
+      [
+       26446,
+       22924
+      ]
+     ]
+    ]
+   }
+  }
+ ]
 }

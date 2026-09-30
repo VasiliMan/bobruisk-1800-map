@@ -4,5 +4,151 @@
     "source": "РГИА 1350-312-89 (Минская губ.), л.205 (IMG_4927 и далее)",
     "note": "Parcel key: 'num' = number on the plan; 'chast' = part. Numbers restart per part, so a holding = (chast,num). Not yet transcribed."
   },
-  "owners": []
+  "owners": [
+    {
+      "id": "durowski_andrzej",
+      "name_ru": "Дуровскаго Андрея судьи",
+      "name": "Дуровский Андрей",
+      "title": "судья",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "33"
+        }
+      ],
+      "page": 1,
+      "crop": {
+        "page": 1,
+        "x": 336,
+        "y": 2243,
+        "w": 712,
+        "h": 58
+      }
+    },
+    {
+      "id": "potocki_stanislaw",
+      "name_ru": "Потоцкаго Станислава стольника",
+      "name": "Потоцкий Станислав",
+      "title": "стольник",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "33"
+        },
+        {
+          "chast": 3,
+          "num": "36"
+        },
+        {
+          "chast": 3,
+          "num": "38"
+        },
+        {
+          "chast": 3,
+          "num": "39"
+        }
+      ],
+      "page": 2,
+      "crop": {
+        "page": 2,
+        "x": 1309,
+        "y": 2835,
+        "w": 611,
+        "h": 178
+      }
+    },
+    {
+      "id": "tretiak_ludwik",
+      "name_ru": "Третьяка Людвика регента",
+      "name": "Третьяк Людвик",
+      "title": "регент",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "32"
+        }
+      ],
+      "page": 3,
+      "crop": {
+        "page": 3,
+        "x": 1245,
+        "y": 2459,
+        "w": 739,
+        "h": 58
+      }
+    },
+    {
+      "id": "tretiak_stanislaw",
+      "name_ru": "Третьяка Станислава старосты",
+      "name": "Третьяк Станислав",
+      "title": "староста",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "32"
+        }
+      ],
+      "page": 3,
+      "crop": {
+        "page": 3,
+        "x": 1245,
+        "y": 2515,
+        "w": 739,
+        "h": 58
+      }
+    },
+    {
+      "id": "trzypolski_franciszek",
+      "name_ru": "Трипольскаго Францишка стольника",
+      "name": "Трипольский Франтишек",
+      "title": "стольник",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "33"
+        }
+      ],
+      "page": 3,
+      "uncertain": true,
+      "crop": {
+        "page": 3,
+        "x": 1245,
+        "y": 2566,
+        "w": 739,
+        "h": 174
+      }
+    },
+    {
+      "id": "trzypolska_magdalena",
+      "name_ru": "Трипольской Магдалены ловчани",
+      "name": "Трипольская Магдалена",
+      "title": "ловчина",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "33"
+        },
+        {
+          "chast": 3,
+          "num": "36"
+        },
+        {
+          "chast": 3,
+          "num": "38"
+        },
+        {
+          "chast": 3,
+          "num": "39"
+        }
+      ],
+      "page": 3,
+      "crop": {
+        "page": 3,
+        "x": 1245,
+        "y": 2915,
+        "w": 739,
+        "h": 58
+      }
+    }
+  ]
 }

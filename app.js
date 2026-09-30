@@ -353,10 +353,12 @@ function armsBlock(owner) {
            (a.cap ? `<div class="arms-cap">${a.cap}</div>` : '') + `</div>`).join('') + inst;
 }
 // inline style that shows just the cropped name region of an index page (no image files)
-function cropImgStyle(c, maxW, maxH) {
+// index-page scans per uezd: verify_img/<prefix><page>.jpg
+const PAGE_PREFIX = { bobruisk: 'p', rechitsa: 'r', mozyr: 'm', pinsk: 'n' };
+function cropImgStyle(c, maxW, maxH, prefix = 'p') {
   const scale = Math.min(maxW / c.w, maxH / c.h);
   return `width:${(c.w*scale).toFixed(0)}px;height:${(c.h*scale).toFixed(0)}px;`
-    + `background-image:url(verify_img/p${c.page}.jpg);`
+    + `background-image:url(verify_img/${prefix}${c.page}.jpg);`
     + `background-size:${(PAGE_W*scale).toFixed(0)}px ${(PAGE_H*scale).toFixed(0)}px;`
     + `background-position:${(-c.x*scale).toFixed(1)}px ${(-c.y*scale).toFixed(1)}px;`;
 }
@@ -367,7 +369,7 @@ const CROP_MAX_W = Math.min(300, window.innerWidth - 90);
 function cropBlock(owner) {
   if (!owner || !owner.crop) return '';
   return `<div class="popup-crop"><div class="popup-crop-cap">арыгінал запісу:</div>`
-    + `<div class="popup-crop-img" style="${cropImgStyle(owner.crop, CROP_MAX_W, 156)}"></div></div>`;
+    + `<div class="popup-crop-img" style="${cropImgStyle(owner.crop, CROP_MAX_W, 156, PAGE_PREFIX[owner.uezd] || 'p')}"></div></div>`;
 }
 function linksBlock(owner) {
   if (!owner || !owner.links || !owner.links.length) return '';

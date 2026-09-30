@@ -4875,6 +4875,116 @@
    ],
    "_area": 2646436.00000003,
    "_parentFid": null
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "fid": "r6-74",
+    "num": "74",
+    "status": "draft",
+    "owner_id": "wenslawowicz_eleonora",
+    "chast": 6,
+    "uezd": "rechitsa"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       29590,
+       13455
+      ],
+      [
+       31060,
+       13361
+      ],
+      [
+       31055,
+       14275
+      ],
+      [
+       29500,
+       14173
+      ],
+      [
+       29195,
+       14153
+      ],
+      [
+       29255,
+       13800
+      ],
+      [
+       29590,
+       13455
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "fid": "r5-48",
+    "num": "48",
+    "status": "draft",
+    "owner_id": "zudrow",
+    "owner_ids": [
+     "zudrow",
+     "kazarin",
+     "rusecki",
+     "tretiak"
+    ],
+    "chast": 5,
+    "uezd": "rechitsa"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       31515,
+       18700
+      ],
+      [
+       31977,
+       18946
+      ],
+      [
+       32415,
+       19200
+      ],
+      [
+       32292,
+       19500
+      ],
+      [
+       32092,
+       19938
+      ],
+      [
+       31592,
+       19700
+      ],
+      [
+       31100,
+       19423
+      ],
+      [
+       30992,
+       19192
+      ],
+      [
+       31192,
+       18992
+      ],
+      [
+       31515,
+       18700
+      ]
+     ]
+    ]
+   }
   }
  ]
 }
