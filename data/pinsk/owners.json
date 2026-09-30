@@ -4,5 +4,32 @@
     "source": "РГИА 1350-312-89 (Минская губ.), л.239 (IMG_5001 и далее)",
     "note": "Parcel key: 'num' = number on the plan; 'chast' = part. Numbers restart per part, so a holding = (chast,num). Not yet transcribed."
   },
-  "owners": []
+  "owners": [
+    {
+      "id": "szolomicki_hilary",
+      "name_ru": "Шоломицкаго Гилярія",
+      "name": "Шоломицкий Гилярий",
+      "title": "",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "21"
+        }
+      ],
+      "page": 5
+    },
+    {
+      "id": "szolomicki_fedor",
+      "name_ru": "Шоломитцкаго Федора",
+      "name": "Шоломицкий Федор",
+      "title": "",
+      "parcels": [
+        {
+          "chast": 3,
+          "num": "68"
+        }
+      ],
+      "page": 5
+    }
+  ]
 }
