@@ -156,6 +156,72 @@
      ]
     ]
    }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "fid": "pn1-127",
+    "num": "127",
+    "status": "draft",
+    "owner_id": "wegrzecki_ivan",
+    "owner_ids": [
+     "wegrzecki_ivan",
+     "skirmunt_semen",
+     "wiszniewski_tomasz",
+     "strowinski",
+     "niewinski_leon",
+     "pinsk_okolichna"
+    ],
+    "chast": 1,
+    "uezd": "pinsk"
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       6635,
+       7970
+      ],
+      [
+       6554,
+       8270
+      ],
+      [
+       6190,
+       9609
+      ],
+      [
+       6182,
+       9818
+      ],
+      [
+       6021,
+       9794
+      ],
+      [
+       5715,
+       9697
+      ],
+      [
+       4811,
+       9656
+      ],
+      [
+       5457,
+       9124
+      ],
+      [
+       6094,
+       8560
+      ],
+      [
+       6635,
+       7970
+      ]
+     ]
+    ]
+   }
   }
  ]
 }
