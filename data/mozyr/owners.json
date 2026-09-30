@@ -286,8 +286,14 @@
         {
           "label": "Ян Салагуб — Вікіпедыя",
           "url": "https://be.wikipedia.org/wiki/Ян_Салагуб"
+        },
+        {
+          "label": "Салагубы — Вікіпедыя",
+          "url": "https://be.wikipedia.org/wiki/Салагубы"
         }
-      ]
+      ],
+      "arms": "prawdzic.png",
+      "arms_cap": "герб Праўдзіч (Prawdzic)"
     }
   ]
 }
