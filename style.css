@@ -71,6 +71,22 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 .popup-fb { display: block; margin-top: 10px; width: 100%; padding: 6px; font-size: 13px; cursor: pointer;
   border: 1px solid #cdc6b0; background: #efe9d6; color: #6a5a30; border-radius: 6px; }
 .popup-fb:hover { background: #e6dcbf; }
+/* folded literature reference */
+.popup-ref-d { margin-top: 8px; }
+.popup-ref-d > summary { cursor: pointer; font-size: 13px; color: #5a5135; list-style: none;
+  padding: 4px 8px; background: #f6f1e1; border-left: 3px solid #b9ad8a; border-radius: 4px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.popup-ref-d > summary::-webkit-details-marker { display: none; }
+.popup-ref-d > summary::after { content: ' ▸'; color: #8a7d5e; }
+.popup-ref-d[open] > summary::after { content: ' ▾'; }
+.popup-ref-d > summary span { font-style: italic; }
+.popup-ref-d .popup-ref { margin-top: 4px; }
+.popup-btns { display: flex; gap: 6px; margin-top: 10px; }
+.popup-btns .popup-fb, .popup-btns .popup-link { margin-top: 0; }
+.popup-btns .popup-fb { flex: 1; }
+.popup-link { padding: 6px 10px; font-size: 13px; cursor: pointer; white-space: nowrap;
+  border: 1px solid #cdc6b0; background: #efe9d6; color: #6a5a30; border-radius: 6px; }
+.popup-link:hover { background: #e6dcbf; }
 .side-links { padding: 6px 14px 0; font-size: 12px; }
 .side-links a { color: #2c6b8a; text-decoration: none; margin-right: 12px; }
 .side-links a:hover { text-decoration: underline; }

@@ -62,7 +62,7 @@ map.setMaxBounds(imgBounds.pad(0.4));
 // ---- coordinate readout (alignment/placement helper; #edit only) ----
 // shows global combined-pixel [x,y] plus the uezd-LOCAL [x,y] under the cursor —
 // use it to read matching landmark points on the shared border for re-baking.
-if (/edit/i.test(location.hash)) {
+if (/^#edit/i.test(location.hash)) {
   const box = L.control({ position: 'bottomleft' });
   box.onAdd = () => { const d = L.DomUtil.create('div', 'coord-readout'); d.id = 'coord-readout';
     d.textContent = 'навядзіце курсор…'; return d; };
@@ -109,7 +109,7 @@ let editMode = false, selectedFid = null;
 let TOWNS = [], townsVisible = true, mestVisible = true;
 // placement/editing of settlements is a local-only tool, off on the public page;
 // open the map with #edit in the URL (e.g. localhost:8000/#edit) to turn it on.
-let townEdit = /edit/i.test(location.hash);
+let townEdit = /^#edit/i.test(location.hash);
 
 // `cache: no-cache` = always revalidate (cheap 304 when unchanged). Without it a
 // data file can sit in cache for max-age while a freshly deployed app.js runs
@@ -152,6 +152,7 @@ Promise.all([
   else PARCELS = fileParcels;
   window._fileParcels = fileParcels;       // kept so "load from file" can discard local edits
   buildSidebar(); renderParcels(); updateStat();
+  applyHash();
 });
 
 // ---- autosave to browser localStorage (safety net; Export still writes the real file) ----
@@ -343,9 +344,14 @@ function linksBlock(owner) {
     `</div>`;
 }
 // a literature reference (book chapter), shown as plain text — not a link
+// folded by default: the summary shows the start of the citation (usually the author),
+// the full text opens on click — keeps long references from overflowing the popup
 function refBlock(owner) {
   if (!owner || !owner.ref) return '';
-  return `<div class="popup-ref">📖 ${owner.ref}</div>`;
+  const head = owner.ref.split(' // ')[0];
+  const teaser = head.length > 48 ? head.slice(0, 46).replace(/\s+\S*$/, '') + '…' : head;
+  return `<details class="popup-ref-d"><summary>📖 Крыніца: <span>${teaser}</span></summary>` +
+         `<div class="popup-ref">${owner.ref}</div></details>`;
 }
 // the detail body for one owner (no name heading): original spelling, title, crop, arms, links
 function cardBody(owner) {
@@ -379,7 +385,8 @@ function openPopup(poly, f) {
   else
     html += ownerCard(owners[0] || null);
   if (pr.place) html += `<div class="popup-meta">${pr.place}</div>`;
-  html += `<button class="popup-fb" type="button">✎ Паведаміць пра памылку</button>`;
+  currentLink = parcelHash(f);
+  html += popupButtons();
   currentPopupCtx = {
     num: pr.num, chast: pr.chast,
     owners: owners.map(o => o.name).join(', ') || '—',
@@ -401,6 +408,65 @@ function openPopup(poly, f) {
     opts.autoPanPaddingBottomRight = L.point(10, 20);
   }
   poly.bindPopup(html, opts).openPopup();
+  setHash(currentLink);
+}
+
+// ---- permalinks: #bobruisk/<част>/<№> opens a parcel, #owner/<uezd>/<id> an owner ----
+let currentLink = '';
+const parcelHash = f => `#${f.properties.uezd}/${f.properties.chast ?? ''}/${encodeURIComponent(f.properties.num)}`;
+const ownerHash = key => `#owner/${key.split(':').map(encodeURIComponent).join('/')}`;
+function popupButtons() {
+  return `<div class="popup-btns"><button class="popup-link" type="button">🔗 Спасылка</button>` +
+         `<button class="popup-fb" type="button">✎ Паведаміць пра памылку</button></div>`;
+}
+let settingHash = false;
+function setHash(h) {
+  if (editMode || /^#edit/i.test(location.hash) || location.hash === h) return;
+  settingHash = true;
+  history.replaceState(null, '', h || location.pathname + location.search);
+  settingHash = false;
+}
+map.on('popupclose', () => { if (!/^#edit/i.test(location.hash)) setHash(''); });
+function applyHash() {
+  const h = decodeURIComponent(location.hash.slice(1));
+  if (!h || /^edit/i.test(h)) return;
+  const parts = h.split('/');
+  if (parts[0] === 'owner') {
+    const key = parts[1] + ':' + parts.slice(2).join('/');
+    if (OWNER_BY_ID[key]) focusOwner(key);
+    return;
+  }
+  const [uezd, chast, num] = parts;
+  const f = PARCELS.features.find(f => f.properties.uezd === uezd && String(f.properties.num) === num &&
+    (chast === '' || String(f.properties.chast) === chast));
+  const poly = f && layerByFid[f.properties.fid];
+  if (!poly) return;
+  // jump without animation so the popup's auto-pan works on the final view
+  map.fitBounds(poly.getBounds().pad(0.8), { maxZoom: 5, animate: false });
+  openPopup(poly, f);
+}
+window.addEventListener('hashchange', () => { if (!settingHash) applyHash(); });
+// the popup grows when its arms image loads or a citation is unfolded; re-run layout +
+// auto-pan then, otherwise its top ends up off-screen
+map.on('popupopen', e => {
+  const el = e.popup.getElement(); if (!el) return;
+  // update() re-lays out the popup; setLatLng() re-runs Leaflet's auto-pan on the new size
+  const refit = () => { if (e.popup.isOpen()) { e.popup.update(); e.popup.setLatLng(e.popup.getLatLng()); } };
+  el.querySelectorAll('img').forEach(img => { if (!img.complete) img.addEventListener('load', refit, { once: true }); });
+  el.addEventListener('toggle', refit, true);
+});
+function toast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) { el = document.createElement('div'); el.id = 'toast'; document.body.appendChild(el); }
+  el.textContent = msg; el.style.opacity = '1';
+  clearTimeout(toast._t); toast._t = setTimeout(() => { el.style.opacity = '0'; }, 2200);
+}
+function copyLink() {
+  const url = location.origin + location.pathname + currentLink;
+  const done = () => toast('Спасылка скапіраваная');
+  if (navigator.clipboard && window.isSecureContext)
+    navigator.clipboard.writeText(url).then(done, () => prompt('Скапіруйце спасылку:', url));
+  else prompt('Скапіруйце спасылку:', url);
 }
 // expand/collapse a co-owner row (delegated so it works for any popup)
 document.addEventListener('click', e => {
@@ -408,6 +474,7 @@ document.addEventListener('click', e => {
   if (t) t.parentElement.classList.toggle('open');
   if (e.target.closest('.popup-fb') && typeof openFeedbackModal === 'function')
     openFeedbackModal(currentPopupCtx);
+  if (e.target.closest('.popup-link')) copyLink();
 });
 
 // ---- sidebar ----
@@ -454,12 +521,13 @@ function focusOwner(key) {
     const o = OWNER_BY_ID[key];
     const nums = [...new Set(o.parcels.map(p => p.chast ? `${p.num}/${p.chast}` : p.num))].join(', ');
     currentPopupCtx = { num: null, owners: o.name, owner_ids: o.id };
+    currentLink = ownerHash(key);
     L.popup({ maxWidth: Math.min(340, window.innerWidth - 60) })
       .setLatLng(map.getCenter())
       .setContent(ownerCard(o) +
-        `<div class="popup-flag">Участак(кі) ${nums} яшчэ не алічбаваныя на карце.</div>` +
-        `<button class="popup-fb" type="button">✎ Паведаміць пра памылку</button>`)
+        `<div class="popup-flag">Участак(кі) ${nums} яшчэ не алічбаваныя на карце.</div>` + popupButtons())
       .openOn(map);
+    setHash(currentLink);
     return;
   }
   const b = polys.reduce((acc, p) => acc.extend(p.getBounds()), L.latLngBounds(polys[0].getBounds()));
@@ -467,6 +535,7 @@ function focusOwner(key) {
   polys.forEach(p => { p.setStyle({ weight: 3, color: '#c0392b' });
     setTimeout(() => p.setStyle({ weight: 1, color: '#6b5a2a' }), 2200); });
   if (polys.length === 1 && !editMode) openPopup(polys[0], polys[0].featureRef);
+  else { map.closePopup(); currentLink = ownerHash(key); setHash(currentLink); }
 }
 
 document.getElementById('search').addEventListener('input', e => {
