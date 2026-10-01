@@ -8,8 +8,7 @@
     "num": "21",
     "status": "draft",
     "owner_id": "szolomicki_hilary",
-    "chast": 3,
-    "uezd": "pinsk"
+    "chast": 3
    },
    "geometry": {
     "type": "Polygon",
@@ -62,8 +61,7 @@
     "num": "68",
     "status": "draft",
     "owner_id": "szolomicki_fedor",
-    "chast": 3,
-    "uezd": "pinsk"
+    "chast": 3
    },
    "geometry": {
     "type": "Polygon",
@@ -172,8 +170,7 @@
      "niewinski_leon",
      "pinsk_okolichna"
     ],
-    "chast": 1,
-    "uezd": "pinsk"
+    "chast": 1
    },
    "geometry": {
     "type": "Polygon",

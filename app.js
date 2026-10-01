@@ -738,7 +738,9 @@ document.getElementById('btn-newparcel').addEventListener('click', () => {
 // tools/split_parcels.py splits it back into data/**/parcels.geojson.
 document.getElementById('btn-export').addEventListener('click', () => {
   const feats = PARCELS.features.map(f => {
-    const g = JSON.parse(JSON.stringify(f)); g.properties.uezd = uezdOfFeature(f); return g; });
+    const g = { type: 'Feature', properties: { ...f.properties, uezd: uezdOfFeature(f) },
+                geometry: JSON.parse(JSON.stringify(f.geometry)) };   // no app-internal _ring/_area
+    return g; });
   const blob = new Blob([JSON.stringify({ type: 'FeatureCollection', features: feats }, null, 1)],
                         { type: 'application/json' });
   const a = document.createElement('a');

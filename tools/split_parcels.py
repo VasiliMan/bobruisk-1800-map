@@ -9,10 +9,15 @@ PATH = lambda u: 'data/parcels.geojson' if u == 'bobruisk' else f'data/{u}/parce
 exp = json.load(open(sys.argv[1]))
 by = {}
 for f in exp['features']:
-    by.setdefault(f['properties'].get('uezd'), []).append(f)
+    u = f['properties'].pop('uezd', None)          # the app re-derives it; files don't store it
+    for k in [k for k in f if k.startswith('_')]: del f[k]   # app-internal (_ring, _area, _parentFid)
+    by.setdefault(u, []).append(f)
 for u, feats in sorted(by.items(), key=lambda kv: str(kv[0])):
     if u is None: print(f'!! {len(feats)} features without uezd — skipped'); continue
     old = {f['properties']['fid']: f for f in json.load(open(PATH(u)))['features']}
+    for f in old.values():
+        f['properties'].pop('uezd', None)
+        for k in [k for k in f if k.startswith('_')]: del f[k]
     new = {f['properties']['fid']: f for f in feats}
     added = [k for k in new if k not in old]; gone = [k for k in old if k not in new]
     changed = [k for k in new if k in old and new[k] != old[k]]
