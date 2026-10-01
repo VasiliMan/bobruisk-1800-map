@@ -733,19 +733,18 @@ document.getElementById('btn-newparcel').addEventListener('click', () => {
 // Export splits the merged collection back into one geojson per uezd (the `uezd`
 // property is internal — stripped on the way out). Downloads filename hints where
 // each file belongs: bobruisk -> data/parcels.geojson, others -> <id>.parcels.geojson.
+// one file with every uezd's parcels (each tagged with its `uezd`): browsers such as Safari
+// keep only the last of several downloads started by one click, so per-uezd files got lost.
+// tools/split_parcels.py splits it back into data/**/parcels.geojson.
 document.getElementById('btn-export').addEventListener('click', () => {
-  UEZDS.forEach(u => {
-    const feats = PARCELS.features
-      .filter(f => uezdOfFeature(f) === u.id)
-      .map(f => { const g = JSON.parse(JSON.stringify(f)); delete g.properties.uezd; return g; });
-    if (!feats.length) return;
-    const fc = { type: 'FeatureCollection', features: feats };
-    const blob = new Blob([JSON.stringify(fc, null, 1)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = u.id === 'bobruisk' ? 'parcels.geojson' : u.id + '.parcels.geojson';
-    a.click();
-  });
+  const feats = PARCELS.features.map(f => {
+    const g = JSON.parse(JSON.stringify(f)); g.properties.uezd = uezdOfFeature(f); return g; });
+  const blob = new Blob([JSON.stringify({ type: 'FeatureCollection', features: feats }, null, 1)],
+                        { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'all.parcels.geojson';
+  a.click();
 });
 
 // ================= TOWNS =================
