@@ -1333,6 +1333,50 @@
      ]
     ]
    }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "fid": "mz8-48",
+    "num": "48",
+    "status": "draft",
+    "owner_id": "bohusz_dominik",
+    "owner_ids": [
+     "bohusz_dominik",
+     "bohusz_dyzma",
+     "bohusz_jan",
+     "bohuszowa_franciszka",
+     "wenclawowicz_jan"
+    ],
+    "chast": 8
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       26337,
+       13258
+      ],
+      [
+       26744,
+       13256
+      ],
+      [
+       26709,
+       13589
+      ],
+      [
+       26330,
+       13554
+      ],
+      [
+       26337,
+       13258
+      ]
+     ]
+    ]
+   }
   }
  ]
 }
