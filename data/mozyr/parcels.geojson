@@ -912,7 +912,12 @@
     "fid": "p1790849958976",
     "num": "69",
     "status": "draft",
-    "chast": 5
+    "chast": 5,
+    "owner_id": "norycki_michal",
+    "owner_ids": [
+     "norycki_michal",
+     "polchowski_antoni"
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -989,7 +994,8 @@
     "fid": "p1790850298202",
     "num": "74",
     "status": "draft",
-    "chast": 7
+    "chast": 7,
+    "owner_id": "monastyr_moroczna"
    },
    "geometry": {
     "type": "Polygon",
@@ -1033,7 +1039,8 @@
     "fid": "p1790850327597",
     "num": "75",
     "status": "draft",
-    "chast": 7
+    "chast": 7,
+    "owner_id": "wojewodzki_antoni"
    },
    "geometry": {
     "type": "Polygon",
@@ -1069,7 +1076,8 @@
     "fid": "p1790850374296",
     "num": "73",
     "status": "draft",
-    "chast": 7
+    "chast": 8,
+    "owner_id": "plebania_knyaz_ozero"
    },
    "geometry": {
     "type": "Polygon",
@@ -1105,7 +1113,8 @@
     "fid": "p1790850406685",
     "num": "58",
     "status": "draft",
-    "chast": 4
+    "chast": 4,
+    "owner_id": "marsura"
    },
    "geometry": {
     "type": "Polygon",
@@ -1149,7 +1158,18 @@
     "fid": "p1790850447132",
     "num": "65",
     "status": "draft",
-    "chast": 5
+    "chast": 5,
+    "owner_id": "waksowicz_ignacy",
+    "owner_ids": [
+     "waksowicz_ignacy",
+     "herolad_foma",
+     "dostoewski",
+     "komarnicki_ivan",
+     "korewa_karl",
+     "mroczkowski_michal",
+     "ramud",
+     "mozyr_okolichna"
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -1189,7 +1209,10 @@
     "owner_id": "radziwill_dominik",
     "owner_ids": [
      "radziwill_dominik",
-     "radziwill_jozef"
+     "radziwill_jozef",
+     "radziejowski_tomasz",
+     "ramud",
+     "kiniewicz_michal"
     ]
    },
    "geometry": {
@@ -1275,7 +1298,13 @@
     "fid": "p1790850654952",
     "num": "63",
     "status": "draft",
-    "chast": 5
+    "chast": 5,
+    "owner_id": "zeligowski_marcin",
+    "owner_ids": [
+     "zeligowski_marcin",
+     "norycki_michal",
+     "mozyr_okolichna"
+    ]
    },
    "geometry": {
     "type": "Polygon",
