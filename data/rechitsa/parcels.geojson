@@ -592,7 +592,11 @@
     "num": "19",
     "status": "draft",
     "owner_id": "judycki",
-    "chast": 7
+    "chast": 7,
+    "parts": [
+     7,
+     2
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -852,7 +856,11 @@
     "fid": "p1790692093003",
     "num": "26",
     "status": "draft",
-    "chast": 2
+    "chast": 2,
+    "parts": [
+     2,
+     3
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -1092,7 +1100,11 @@
     "fid": "p1790692328640",
     "num": "1",
     "status": "draft",
-    "chast": 1
+    "chast": 1,
+    "parts": [
+     1,
+     6
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -1892,7 +1904,11 @@
     "fid": "p1790692923716",
     "num": "43",
     "status": "draft",
-    "chast": 5
+    "chast": 5,
+    "parts": [
+     5,
+     4
+    ]
    },
    "geometry": {
     "type": "Polygon",

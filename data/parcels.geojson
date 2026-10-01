@@ -5512,7 +5512,11 @@
     "chast": 3,
     "num": "33",
     "status": "draft",
-    "owner_id": "puzyna_michal"
+    "owner_id": "puzyna_michal",
+    "parts": [
+     3,
+     4
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -5682,7 +5686,12 @@
     "chast": 4,
     "num": "47",
     "owner_id": "mon_nikolaev",
-    "status": "draft"
+    "status": "draft",
+    "parts": [
+     4,
+     5,
+     6
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -5963,7 +5972,11 @@
     "chast": 5,
     "num": "51",
     "status": "draft",
-    "owner_id": "bytowski_stepan"
+    "owner_id": "bytowski_stepan",
+    "parts": [
+     5,
+     6
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -6040,7 +6053,11 @@
     "chast": 7,
     "num": "15",
     "owner_id": "starostwo_lubonicz",
-    "status": "draft"
+    "status": "draft",
+    "parts": [
+     7,
+     1
+    ]
    },
    "geometry": {
     "type": "Polygon",
