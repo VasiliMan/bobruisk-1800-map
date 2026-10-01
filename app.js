@@ -240,8 +240,15 @@ function ownersOfNum(num, uezd, chast) {
     if (OWNER_BY_ID[k] && !seen.has(k)) { seen.add(k); list.push(OWNER_BY_ID[k]); } });
   return list;
 }
+// a parcel drawn across several sheets of the plan lists them in `parts` (e.g. [5,6,4]):
+// owners indexed under any of those parts count as its owners
 function ownersOfFeature(f) {
-  return ownersOfNum(f.properties.num, uezdOfFeature(f), f.properties.chast);
+  const pr = f.properties, u = uezdOfFeature(f);
+  const parts = pr.parts && pr.parts.length ? pr.parts : [pr.chast];
+  const seen = new Set(), list = [];
+  parts.forEach(ch => ownersOfNum(pr.num, u, ch).forEach(o => {
+    if (!seen.has(o.key)) { seen.add(o.key); list.push(o); } }));
+  return list;
 }
 function ownerOfFeature(f) { return ownersOfFeature(f)[0] || null; }
 

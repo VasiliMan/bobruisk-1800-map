@@ -249,7 +249,12 @@
     "num": "59",
     "status": "draft",
     "owner_id": "radziwill_jozef",
-    "chast": 5
+    "chast": 5,
+    "parts": [
+     5,
+     4,
+     6
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -459,7 +464,11 @@
     "num": "72",
     "status": "draft",
     "owner_id": "radziwill_dominik",
-    "chast": 6
+    "chast": 6,
+    "parts": [
+     6,
+     7
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -724,7 +733,14 @@
     "num": "57",
     "status": "draft",
     "owner_id": "sollohub_jan",
-    "chast": 5
+    "chast": 5,
+    "parts": [
+     5,
+     2,
+     4,
+     6,
+     9
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -974,7 +990,14 @@
     "num": "57",
     "status": "draft",
     "chast": 5,
-    "owner_id": "sollohub_jan"
+    "owner_id": "sollohub_jan",
+    "parts": [
+     5,
+     2,
+     4,
+     6,
+     9
+    ]
    },
    "geometry": {
     "type": "Polygon",
