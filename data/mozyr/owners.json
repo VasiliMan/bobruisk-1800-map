@@ -802,6 +802,35 @@
       "arms": "wenclawowicz.png",
       "arms_cap": "герб Венцлавовічаў",
       "ref": "131. Венцлавовічы (Wenclawowicz) // Гербоўнік беларускай шляхты. — Мінск: Беларусь, 2014. — Т. 3: В. — С. 271—273."
+    },
+    {
+      "id": "jelenski_gedeon",
+      "name_ru": "Еленскаго Гедеона каштеляна и кавалера",
+      "name": "Еленский Гедеон",
+      "title": "каштелян, кавалер",
+      "parcels": [
+        {
+          "chast": 8,
+          "num": "50"
+        }
+      ],
+      "page": 1,
+      "crop": {
+        "page": 1,
+        "x": 329,
+        "y": 2868,
+        "w": 747,
+        "h": 132
+      },
+      "arms": "korczak2.png",
+      "arms_cap": "герб Корчак зменены (Korczak II)",
+      "flag": "Памёр у лютым 1798 г.; на плане (каля 1800) запісаны як уладальнік.",
+      "links": [
+        {
+          "label": "Gedeon Jeleński — Wikipedia (pl)",
+          "url": "https://pl.wikipedia.org/wiki/Gedeon_Jeleński"
+        }
+      ]
     }
   ]
 }
