@@ -149,7 +149,7 @@ Promise.all([
       // ids are only unique WITHIN a uezd (e.g. `judycki` exists in both), so the
       // lookup key must carry the uezd or one owner silently shadows the other
       o.key = u.id + ':' + o.id; OWNER_BY_ID[o.key] = o; OWNERS.push(o);
-      o.parcels.forEach(p => { const n = String(p.num);
+      o.parcels.forEach(p => { const n = numKey(p.num);
         (NUM2OWNERS[u.id][n] = NUM2OWNERS[u.id][n] || []).push({ id: o.id, major: !!p.major, chast: p.chast }); });
     });
   });
@@ -231,8 +231,14 @@ function showRestoreBanner() {
 // if that leaves nothing (a feature with a missing//wrong chast still shows its
 // owners rather than silently going blank).
 // Co-owners are EQUAL shares — no major/minor; order is owners.json order.
+// Letter "numbers" mix scripts in the data (Cyrillic А/В/С/Р next to Latin S/d/f), and a
+// Latin A typed in the editor looks identical to a Cyrillic А — so every number lookup
+// folds Latin look-alikes to Cyrillic and trims spaces.
+const LAT2CYR = { A:'А', B:'В', C:'С', E:'Е', H:'Н', K:'К', M:'М', O:'О', P:'Р', T:'Т', X:'Х',
+                  a:'а', c:'с', e:'е', o:'о', p:'р', x:'х', y:'у' };
+const numKey = n => String(n).trim().replace(/[ABCEHKMOPTXaceopxy]/g, ch => LAT2CYR[ch]);
 function ownersOfNum(num, uezd, chast) {
-  const entries = (NUM2OWNERS[uezd] || {})[String(num)] || [];
+  const entries = (NUM2OWNERS[uezd] || {})[numKey(num)] || [];
   const exact = (chast == null) ? entries : entries.filter(e => e.chast === chast);
   const use = exact.length ? exact : entries;
   const seen = new Set(), list = [];
@@ -478,7 +484,7 @@ function applyHash() {
     return;
   }
   const [uezd, chast, num] = parts;
-  const f = PARCELS.features.find(f => f.properties.uezd === uezd && String(f.properties.num) === num &&
+  const f = PARCELS.features.find(f => f.properties.uezd === uezd && numKey(f.properties.num) === numKey(num) &&
     (chast === '' || String(f.properties.chast) === chast));
   const poly = f && layerByFid[f.properties.fid];
   if (!poly) return;
@@ -704,7 +710,7 @@ function renderEditSel() {
     <label><input type="checkbox" id="ed-draft" ${pr.status==='draft'?'checked':''}> чарнавік</label>
     <button id="ed-del" style="border-color:#c0392b;color:#c0392b">выдаліць участак</button>`;
   const upd = () => {
-    pr.num = document.getElementById('ed-num').value;
+    pr.num = document.getElementById('ed-num').value.trim();
     commitOwners(pr, document.getElementById('ed-owner').value, extras);
     pr.place = document.getElementById('ed-place').value || undefined;
     pr.status = document.getElementById('ed-draft').checked ? 'draft' : 'verified';

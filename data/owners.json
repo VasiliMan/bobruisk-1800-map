@@ -2,7 +2,7 @@
   "meta": {
     "title": "Алфавитъ всемъ владельцамъ Бобруйскаго повета",
     "source": "РГИА 1350-312-89 (Минская губ.), л.123-125 (IMG_4755/4756/4757)",
-    "note": "Parcel key: 'num' = number/letter on the plan; 'chast' = part (1-7). Numbers restart per part, so a holding = (chast,num). 'uncertain':true marks readings needing user verification.",
+    "note": "Parcel key: 'num' = number/letter on the plan; 'chast' = part of the plan the parcel is drawn on. Numbers are unique per uezd (they run on across parts); 'chast' says which sheet, and a parcel spanning sheets lists them in 'parts' on the feature. 'uncertain':true marks readings needing user verification.",
     "transcribed_by": "first-pass AI reading of handwritten old-orthography index; verify against scans",
     "crosscheck": "Сверено со 2-й моделью транскрипции (поле 'alt' = её чтение; 'flag' = расхождение по номеру/части, требует проверки).",
     "arms_note": "owner.arms=файл в arms/; owner.inst=orthodox|catholic|uniate|monastery (символ креста вместо герба); owner.links=[{label,url}] (Вікіпедыя и пр.)."

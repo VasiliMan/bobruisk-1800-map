@@ -15,6 +15,9 @@ usage: check_owners.py [uezd ...]      (default: all)
 """
 import sys, json
 from collections import defaultdict
+# same folding as numKey() in app.js: Latin look-alikes -> Cyrillic, trimmed
+NUMKEY = str.maketrans('ABCEHKMOPTXaceopxy', 'АВСЕНКМОРТХасеорху')
+nk = lambda n: str(n).strip().translate(NUMKEY)
 UEZDS = {'bobruisk': ('data/owners.json', 'data/parcels.geojson'),
          'rechitsa': ('data/rechitsa/owners.json', 'data/rechitsa/parcels.geojson'),
          'mozyr':    ('data/mozyr/owners.json', 'data/mozyr/parcels.geojson'),
@@ -25,12 +28,12 @@ for u in (sys.argv[1:] or UEZDS):
     idx = defaultdict(set); name = {}
     for o in owners:
         name[o['id']] = o['name']
-        for p in o['parcels']: idx[(p.get('chast'), str(p['num']))].add(o['id'])
+        for p in o['parcels']: idx[(p.get('chast'), nk(p['num']))].add(o['id'])
     traced = {}
     for f in feats:
         pr = f['properties']
         for c in (pr.get('parts') or [pr.get('chast')]):     # multi-sheet parcels list all their parts
-            traced[(c, str(pr.get('num')))] = pr
+            traced[(c, nk(pr.get('num')))] = pr
     print(f'\n===== {u}: {len(owners)} owners, {len(traced)} traced parcels =====')
     for (ch, num), pr in sorted(traced.items(), key=lambda k: (str(k[0][1]).zfill(4), k[0][0] or 0)):
         here = set().union(*[idx.get((c, num), set()) for c in (pr.get('parts') or [ch])])

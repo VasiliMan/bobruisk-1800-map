@@ -2,7 +2,7 @@
   "meta": {
     "title": "Алфавитъ владѣльцамъ пинскаго повѣта",
     "source": "РГИА 1350-312-89 (Минская губ.), л.239 (IMG_5001 и далее)",
-    "note": "Parcel key: 'num' = number on the plan; 'chast' = part. Numbers restart per part, so a holding = (chast,num). Not yet transcribed."
+    "note": "Parcel key: 'num' = number/letter on the plan; 'chast' = part of the plan the parcel is drawn on. Numbers are unique per uezd (they run on across parts); 'chast' says which sheet, and a parcel spanning sheets lists them in 'parts' on the feature. Partly transcribed."
   },
   "owners": [
     {
