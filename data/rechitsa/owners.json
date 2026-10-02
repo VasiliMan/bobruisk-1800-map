@@ -36,7 +36,19 @@
         "y": 699,
         "w": 686,
         "h": 87
-      }
+      },
+      "arms": "alopeus.png",
+      "arms_cap": "герб фон Алопеусаў (Курляндскі гербоўнік, 1856)",
+      "links": [
+        {
+          "label": "Алопеус, Максим Максимович — Википедия (ru)",
+          "url": "https://ru.wikipedia.org/wiki/Алопеус,_Максим_Максимович"
+        },
+        {
+          "label": "Maximilian von Alopaeus — Wikipedia (en)",
+          "url": "https://en.wikipedia.org/wiki/Maximilian_von_Alopaeus"
+        }
+      ]
     },
     {
       "id": "bukaty",
@@ -1126,7 +1138,19 @@
         "y": 1161,
         "w": 878,
         "h": 133
-      }
+      },
+      "arms": "osterman.png",
+      "arms_cap": "герб графаў Остэрманаў",
+      "links": [
+        {
+          "label": "Іван Андрэевіч Астэрман — Вікіпедыя (be)",
+          "url": "https://be.wikipedia.org/wiki/Іван_Андрэевіч_Астэрман"
+        },
+        {
+          "label": "Остерман, Иван Андреевич — Википедия (ru)",
+          "url": "https://ru.wikipedia.org/wiki/Остерман,_Иван_Андреевич"
+        }
+      ]
     },
     {
       "id": "potocka",
@@ -1653,7 +1677,19 @@
         "y": 1454,
         "w": 501,
         "h": 178
-      }
+      },
+      "arms": "sievers.png",
+      "arms_cap": "герб графаў Сіверсаў",
+      "links": [
+        {
+          "label": "Якаў Яфімавіч Сіверс — Вікіпедыя (be)",
+          "url": "https://be.wikipedia.org/wiki/Якаў_Яфімавіч_Сіверс"
+        },
+        {
+          "label": "Сиверс, Яков Ефимович — Википедия (ru)",
+          "url": "https://ru.wikipedia.org/wiki/Сиверс,_Яков_Ефимович"
+        }
+      ]
     },
     {
       "id": "starostwo_nastolskoe",
