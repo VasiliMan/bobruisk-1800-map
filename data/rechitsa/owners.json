@@ -263,7 +263,19 @@
         "y": 2180,
         "w": 686,
         "h": 142
-      }
+      },
+      "arms": "syrokomla.png",
+      "arms_cap": "герб Сыракомля (Syrokomla)",
+      "links": [
+        {
+          "label": "Марцін Грахольскі — Вікіпедыя (be)",
+          "url": "https://be.wikipedia.org/wiki/Марцін_Грахольскі"
+        },
+        {
+          "label": "Marcin Grocholski — Wikipedia (pl)",
+          "url": "https://pl.wikipedia.org/wiki/Marcin_Grocholski"
+        }
+      ]
     },
     {
       "id": "gorwatt",
