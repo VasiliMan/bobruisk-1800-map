@@ -8,12 +8,17 @@ notes → воевода Ксаверий Хоминский). The economic note
 letters) plus first name when both sides give one, so case endings and spelling mostly agree;
 every hit is still a lead to check on the scans, not a verdict.
 
-  X  alphabet links an owner to a number whose econ entry does not name him (likely misread brace)
-  S  …the econ entry names him only as a minor share; the «владение» is someone else's
-  U  traced parcel: econ's principal owner is missing from the alphabet links for that number
-  M  econ names a principal owner who is in the alphabet but not linked to that number
-  P  часть differs between alphabet and econ
-  N  traced parcel with no alphabet owner — econ says who it is
+The economic notes are the authority. Findings are graded by that rule:
+
+  CRITICAL  owner is ONLY in the alphabet: the alphabet links him to a number, and he appears
+            nowhere in the economic notes of the uezd — something is really wrong (misread
+            name, wrong uezd, invented row); check the scans
+  DISAGREE  the alphabet links an owner to a number whose econ entry does not name him, or names
+            him only as a minor share, or gives another часть — the econ entry wins; the record
+            must say so («econ» note on the owner)
+  MISSING   econ names an owner for a number that the alphabet does not link (not a big deal —
+            the alphabet is partly transcribed); listed when the parcel is traced, or the owner
+            is already in the alphabet under another number
 
 usage: check_econ.py [uezd ...]      (default: every uezd that has data/<uezd>/econ.tsv)
 """
@@ -80,30 +85,39 @@ for u in uezds:
         for p in o['parcels']: byn[nk(p['num'])].append((o, p.get('chast')))
     print(f'\n===== {u}: {len(econ)} econ entries, {len(owners)} alphabet owners =====')
     out = []
+    every = [p for e in econ.values() for _, p in e['principal'] + e['minor']]
     for num, links in byn.items():
         e = econ.get(num)
-        if not e: continue
         for o, ch in links:
-            if not who[o['id']][0]: continue
-            if any(same(who[o['id']], p) for _, p in e['principal']): pass
-            elif any(same(who[o['id']], p) for _, p in e['minor']):
-                out.append((num, 'S', f"alphabet {o['name']} → {num}/{ch}, but econ (IMG_{e['img']}) has him only as a share; "
-                                      f"владение: {e['owners']}"))
+            w = who[o['id']]
+            if not w[0]: continue
+            if not any(same(w, p) for p in every):
+                out.append(('CRITICAL', num, f"{o['name']} → {num}/{ch}: not in the economic notes at all"))
+                continue
+            if not e:
+                out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: no econ entry for {num}"))
+                continue
+            elsewhere = sorted({n for n, e2 in econ.items() if n != num and any(same(w, p) for _, p in e2['principal'])},
+                               key=lambda n: n.zfill(4))
+            hint = f" (econ has him at {', '.join(elsewhere)})" if elsewhere else ''
+            if any(same(w, p) for _, p in e['principal']): pass
+            elif any(same(w, p) for _, p in e['minor']):
+                out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: econ (IMG_{e['img']}) has him only as a share; "
+                                             f"владение: {e['owners']}{hint}"))
             else:
-                out.append((num, 'X', f"alphabet {o['name']} → {num}/{ch}; econ (IMG_{e['img']}): {e['owners']}"))
+                out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: econ (IMG_{e['img']}): {e['owners']}{hint}"))
             if ch and e['parts'] and ch not in e['parts']:
-                out.append((num, 'P', f"{o['name']}: alphabet часть {ch}, econ {sorted(e['parts'])}"))
+                out.append(('DISAGREE', num, f"{o['name']}: alphabet часть {ch}, econ {sorted(e['parts'])}"))
     for num, e in econ.items():
         linked = [who[o['id']] for o, _ in byn.get(num, [])]
         for label, p in e['principal']:
             if not p[0] or any(same(p, l) for l in linked): continue
             cand = [o for o in owners if same(who[o['id']], p)]
             if cand:
-                out.append((num, 'M', f"econ (IMG_{e['img']}) «{label}» = alphabet {', '.join(o['name'] for o in cand)}, not linked to {num}"))
-            elif num in traced and num in byn:
-                out.append((num, 'U', f"econ (IMG_{e['img']}) owner «{label}» missing from the alphabet entry for {num}"))
-    for num in sorted(traced, key=lambda n: n.zfill(4)):
-        if num not in byn and num in econ:
-            out.append((num, 'N', f"traced, no alphabet owner; econ (IMG_{econ[num]['img']}): {econ[num]['owners']}"))
-    for num, kind, msg in sorted(out, key=lambda t: (t[0].zfill(4), t[1])):
-        print(f'  {kind}  {num}: {msg}')
+                out.append(('MISSING', num, f"econ (IMG_{e['img']}) «{label}» = {', '.join(o['name'] for o in cand)}, not linked to {num}"))
+            elif num in traced:
+                out.append(('MISSING', num, f"traced; econ (IMG_{e['img']}) owner «{label}» not in the alphabet"))
+    order = {'CRITICAL': 0, 'DISAGREE': 1, 'MISSING': 2}
+    for sev, num, msg in sorted(out, key=lambda t: (order[t[0]], t[1].zfill(4))):
+        print(f'  {sev:8s} {num}: {msg}')
+    print('  — ' + ', '.join(f"{k} {sum(1 for t in out if t[0] == k)}" for k in order))
