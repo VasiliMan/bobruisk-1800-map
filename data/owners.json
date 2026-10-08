@@ -1462,7 +1462,15 @@
         "y": 965,
         "w": 581,
         "h": 132
-      }
+      },
+      "arms": "prus.png",
+      "arms_cap": "герб Прус I (Prus I)",
+      "links": [
+        {
+          "label": "Вікіпедыя: Прушаноўскія герба «Прус І»",
+          "url": "https://be.wikipedia.org/wiki/%D0%9F%D1%80%D1%83%D1%88%D0%B0%D0%BD%D0%BE%D1%9E%D1%81%D0%BA%D1%96%D1%8F_%D0%B3%D0%B5%D1%80%D0%B1%D0%B0_%C2%AB%D0%9F%D1%80%D1%83%D1%81_%D0%86%C2%BB"
+        }
+      ]
     },
     {
       "id": "prushanowski_feliks",
@@ -1482,7 +1490,15 @@
         "y": 1106,
         "w": 588,
         "h": 114
-      }
+      },
+      "arms": "prus.png",
+      "arms_cap": "герб Прус I (Prus I)",
+      "links": [
+        {
+          "label": "Вікіпедыя: Прушаноўскія герба «Прус І»",
+          "url": "https://be.wikipedia.org/wiki/%D0%9F%D1%80%D1%83%D1%88%D0%B0%D0%BD%D0%BE%D1%9E%D1%81%D0%BA%D1%96%D1%8F_%D0%B3%D0%B5%D1%80%D0%B1%D0%B0_%C2%AB%D0%9F%D1%80%D1%83%D1%81_%D0%86%C2%BB"
+        }
+      ]
     },
     {
       "id": "pientkowski",
@@ -1562,7 +1578,15 @@
         "y": 1504,
         "w": 587,
         "h": 192
-      }
+      },
+      "arms": "prus.png",
+      "arms_cap": "герб Прус I (Prus I)",
+      "links": [
+        {
+          "label": "Вікіпедыя: Прушаноўскія герба «Прус І»",
+          "url": "https://be.wikipedia.org/wiki/%D0%9F%D1%80%D1%83%D1%88%D0%B0%D0%BD%D0%BE%D1%9E%D1%81%D0%BA%D1%96%D1%8F_%D0%B3%D0%B5%D1%80%D0%B1%D0%B0_%C2%AB%D0%9F%D1%80%D1%83%D1%81_%D0%86%C2%BB"
+        }
+      ]
     },
     {
       "id": "pushchin",

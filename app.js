@@ -116,7 +116,7 @@ const TIERS = {
 };
 const tierOf = t => TIERS[t.kind] ? t.kind : '';
 let editMode = false, selectedFid = null;
-let TOWNS = [], townsVisible = true, mestVisible = true;
+let TOWNS = [], townsVisible = false, mestVisible = true;
 // placement/editing of settlements is a local-only tool, off on the public page;
 // open the map with #edit in the URL (e.g. localhost:8000/#edit) to turn it on.
 let townEdit = /^#edit/i.test(location.hash);
