@@ -13,8 +13,8 @@ The economic notes are the authority. Findings are graded by that rule:
   CRITICAL  owner is ONLY in the alphabet: the alphabet links him to a number, and he appears
             nowhere in the economic notes of the uezd — something is really wrong (misread
             name, wrong uezd, invented row); check the scans
-  DISAGREE  the alphabet links an owner to a number whose econ entry does not name him, or names
-            him only as a minor share, or gives another часть — the econ entry wins; the record
+  DISAGREE  the alphabet links an owner to a number whose econ entry does not name him (a co-owner
+            the notes list under «also» is agreement), or gives another часть — the econ entry wins; the record
             must say so («econ» note on the owner)
   MISSING   econ names an owner for a number that the alphabet does not link (not a big deal —
             the alphabet is partly transcribed); listed when the parcel is traced, or the owner
@@ -126,7 +126,7 @@ for u in uezds:
     feats = json.load(open(pp))['features']
     traced = {nk(f['properties'].get('num')) for f in feats}
     # institutions and староства («Староство Речицкое (гр. Юдицкий)») are matched on every word
-    who = {o['id']: person(o.get('name', '') + ' ' + o.get('name_ru', '')) if o.get('inst') or re.match(r'(староств|кляштор|плебан|монаст|церк|казен)', o.get('name', '').lower()) or '(' in o.get('name', '')
+    who = {o['id']: person(' '.join(filter(None, [o.get('name'), o.get('name_ru'), o.get('econ_name')]))) if o.get('inst') or re.match(r'(староств|кляштор|плебан|монаст|церк|казен)', o.get('name', '').lower()) or '(' in o.get('name', '')
            else alphabet_person(o) for o in owners}
     byn = defaultdict(list)
     for o in owners:
@@ -139,7 +139,8 @@ for u in uezds:
         for o, ch in links:
             w = who[o['id']]
             if not w[0]: continue
-            if not any(same(w, p) for p in every):
+            if not any(same(w, p) for p in every) and not (o.get('econ_name') and any(
+                    o['econ_name'] in e2['owners'] + e2['also'] for e2 in econ.values())):
                 kin = sorted({n for n, e2 in econ.items() for _, p in e2['principal'] + e2['minor'] if same((w[0], set()), p)},
                              key=lambda n: n.zfill(4))
                 if kin:   # surname is there, first name differs
@@ -154,10 +155,11 @@ for u in uezds:
             elsewhere = sorted({n for n, e2 in econ.items() if n != num and any(same(w, p) for _, p in e2['principal'])},
                                key=lambda n: n.zfill(4))
             hint = f" (econ has him at {', '.join(elsewhere)})" if elsewhere else ''
-            if any(same(w, p) for _, p in e['principal']): pass
+            # `econ_name` on an owner: how the notes spell an institution whose name has no distinctive word
+            if o.get('econ_name') and o['econ_name'] in e['owners'] + ' ' + e['also']: pass
+            elif any(same(w, p) for _, p in e['principal']): pass
             elif any(same(w, p) for _, p in e['minor']):
-                out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: econ (IMG_{e['img']}) has him only as a share; "
-                                             f"владение: {e['owners']}{hint}"))
+                pass   # a co-owner the notes confirm; a missing principal is reported below as MISSING
             else:
                 out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: econ (IMG_{e['img']}): {e['owners']}{hint}"))
             if ch and e['parts'] and ch not in e['parts']:

@@ -233,7 +233,8 @@ function showRestoreBanner() {
 // When the caller knows the часть we filter by it, falling back to number-only
 // if that leaves nothing (a feature with a missing//wrong chast still shows its
 // owners rather than silently going blank).
-// Co-owners are EQUAL shares — no major/minor; order is owners.json order.
+// Co-owners are EQUAL shares; order is owners.json order, except that a link marked `major`
+// (the economic notes' principal owner) is listed first.
 // Letter "numbers" mix scripts in the data (Cyrillic А/В/С/Р next to Latin S/d/f), and a
 // Latin A typed in the editor looks identical to a Cyrillic А — so every number lookup
 // folds Latin look-alikes to Cyrillic and trims spaces.
@@ -245,7 +246,8 @@ function ownersOfNum(num, uezd, chast) {
   const exact = (chast == null) ? entries : entries.filter(e => e.chast === chast);
   const use = exact.length ? exact : entries;
   const seen = new Set(), list = [];
-  use.forEach(e => { const k = uezd + ':' + e.id;
+  // the economic notes' principal owner («владение …», `major` on the link) comes first: it colours the parcel
+  [...use].sort((a, b) => b.major - a.major).forEach(e => { const k = uezd + ':' + e.id;
     if (OWNER_BY_ID[k] && !seen.has(k)) { seen.add(k); list.push(OWNER_BY_ID[k]); } });
   return list;
 }

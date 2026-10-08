@@ -3918,7 +3918,7 @@
    "properties": {
     "fid": "c1-С",
     "chast": 1,
-    "num": "С",
+    "num": "e",
     "owner_id": "cerkvi_bobr_grek",
     "status": "draft"
    },
@@ -3955,7 +3955,7 @@
    "properties": {
     "fid": "c1-S",
     "chast": 1,
-    "num": "S",
+    "num": "f",
     "owner_id": "cerkvi_bobr_grek",
     "status": "draft"
    },
@@ -5972,7 +5972,7 @@
     "chast": 5,
     "num": "51",
     "status": "draft",
-    "owner_id": "bytowski_stepan",
+    "owner_id": "bogan",
     "parts": [
      5,
      6

@@ -3300,7 +3300,7 @@
      5,
      4
     ],
-    "owner_id": "siwers"
+    "owner_id": "oskierka_florian"
    },
    "geometry": {
     "type": "Polygon",
@@ -4147,7 +4147,7 @@
     "fid": "p1790927620249",
     "num": "16",
     "status": "draft",
-    "chast": 1
+    "chast": 8
    },
    "geometry": {
     "type": "Polygon",
