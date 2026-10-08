@@ -41,9 +41,9 @@ TITLES = set('''князь княз княгиня граф графиня ге�
 иностранцы монастырь монастыри кляштор кляшторы плебания парафия церковь церкви церковная священно
 священника служителей церковнослужителей покосы сенные выгоне выгонная градская мужеский мужской женский
 часть части брат братьями братом детьми жена жены малолетний спорная земля пашенная пожизненном помещик
-помещица помещики польских российских войск губернии пинск пинский пинская пинскаго пинской речицкий
+помещица помещики польских российских российскаго российской росийских росийскаго грекороссийскаго греко войск городъ выгонною землею земли губернии пинск пинский пинская пинскаго пинской речицкий
 речицкая бобруйский бобруйская базилианский грекороссийский римскокатолический доминиканский'''.split())
-STOP5 = {t[:5] for t in TITLES}
+STOP5 = {re.sub(r'(.)\\1', r'\\1', t)[:5] for t in TITLES}
 # first names: two people of one family share a surname, so a match needs the first name too.
 # Seeded here, extended from the alphabet (its names are «Surname First [First…]»).
 NAMES = {w[:4] for w in '''николай васильевич михаил иван игнатий петр павел антоний франтишек федор тимофей
@@ -57,7 +57,9 @@ NAMES = {w[:4] for w in '''николай васильевич михаил ив
 SURNAME_END = re.compile(r'(ск|цк|ич|вич|ов|ев|ин)[а-я]*$')
 
 def words_of(text):
-    return re.findall(r'[а-яёіѣ]+', text.lower().replace('ё', 'е').replace('ѣ', 'е').replace('і', 'и'))
+    # doubled letters collapsed (Фаддей = Фадей, Аллопеус = Алопеус)
+    return [re.sub(r'(.)\1', r'\1', w) for w in
+            re.findall(r'[а-яёіѣ]+', text.lower().replace('ё', 'е').replace('ѣ', 'е').replace('і', 'и'))]
 
 def person(text):
     """(surname stems, first-name stems) of a name in any case: first 5 / 4 letters of each word"""
@@ -73,6 +75,7 @@ def alphabet_person(o):
     """alphabet names are «Surname First…»: the first word is the surname, the rest first names"""
     w = [x for x in words_of(o.get('name', '')) if x not in TITLES and x[:5] not in STOP5]
     if not w: return set(), set()
+    if len(w) > 1 and w[0][:4] in NAMES and w[-1][:4] not in NAMES: w = w[1:] + w[:1]   # «Павел Лежский»
     sur = {w[0][:5]}
     first = {('ян' if x == 'ян' else x[:4]) for x in w[1:] if len(x) >= 2 and x[:5] not in STOP5}
     NAMES.update(f for f in first if f != 'ян')
@@ -97,7 +100,11 @@ def same(a, b):
     fa, fb = a[1], b[1]
     if fa and fb and not (fa & fb): return False
     tol = 2 if (fa and fb) else 1
-    return any(_lev(_norm(x), _norm(y)) <= (0 if min(len(x), len(y)) < 5 else tol) for x in a[0] for y in b[0])
+    def close(x, y):
+        x, y = _norm(x), _norm(y)
+        if min(len(x), len(y)) < 5: return x.startswith(y) or y.startswith(x)   # short surnames: Волк/Волком
+        return _lev(x, y) <= tol
+    return any(close(x, y) for x in a[0] for y in b[0])
 
 def load_econ(path):
     rows = {}
@@ -119,7 +126,7 @@ for u in uezds:
     feats = json.load(open(pp))['features']
     traced = {nk(f['properties'].get('num')) for f in feats}
     # institutions and староства («Староство Речицкое (гр. Юдицкий)») are matched on every word
-    who = {o['id']: person(o.get('name', '')) if o.get('inst') or re.match(r'(староств|кляштор|плебан|монаст|церк|казен)', o.get('name', '').lower()) or '(' in o.get('name', '')
+    who = {o['id']: person(o.get('name', '') + ' ' + o.get('name_ru', '')) if o.get('inst') or re.match(r'(староств|кляштор|плебан|монаст|церк|казен)', o.get('name', '').lower()) or '(' in o.get('name', '')
            else alphabet_person(o) for o in owners}
     byn = defaultdict(list)
     for o in owners:
@@ -133,7 +140,13 @@ for u in uezds:
             w = who[o['id']]
             if not w[0]: continue
             if not any(same(w, p) for p in every):
-                out.append(('CRITICAL', num, f"{o['name']} → {num}/{ch}: not in the economic notes at all"))
+                kin = sorted({n for n, e2 in econ.items() for _, p in e2['principal'] + e2['minor'] if same((w[0], set()), p)},
+                             key=lambda n: n.zfill(4))
+                if kin:   # surname is there, first name differs
+                    out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: econ has the surname with another first name at "
+                                                 f"{', '.join(kin)}" + (f" (IMG_{e['img']}: {e['owners']})" if e else '')))
+                else:
+                    out.append(('CRITICAL', num, f"{o['name']} → {num}/{ch}: not in the economic notes at all"))
                 continue
             if not e:
                 out.append(('DISAGREE', num, f"{o['name']} → {num}/{ch}: no econ entry for {num}"))
