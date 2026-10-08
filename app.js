@@ -106,6 +106,7 @@ let armsGroup = L.layerGroup().addTo(map);
 let townGroup = L.layerGroup().addTo(map);   // gentry settlements — toggled
 let mestGroup = L.layerGroup().addTo(map);   // мястэчкі — toggled separately
 let cityGroup = L.layerGroup().addTo(map);   // города (Бобруйск, Речица) — always on
+let churchGroup = L.layerGroup().addTo(map); // каталіцкія касцёлы c. 1800 (data/churches.json) — toggled
 // Settlement tiers, from data/towns.json `kind`: "city" (городъ) and "mestechko"
 // (мѣстечко) as written on the plans; no kind = ordinary gentry settlement.
 const TIERS = {
@@ -129,10 +130,11 @@ const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
 
 Promise.all([
   fetchJson('data/towns.json', { towns: [] }),
+  fetchJson('data/churches.json', { churches: [] }),
   fetchJson('data/uezd_outlines.json', {}),
   Promise.all(UEZDS.map(u => fetchJson(u.owners, { owners: [] }))),
   Promise.all(UEZDS.map(u => fetchJson(u.parcels, emptyFC()))),
-]).then(([td, outl, ownerDocs, parcelDocs]) => {
+]).then(([td, cd, outl, ownerDocs, parcelDocs]) => {
   // close each ring (pointInRing expects last point == first)
   for (const [u, r] of Object.entries(outl)) UEZD_OUTLINES[u] = r.length ? [...r, r[0]] : r;
   const localT = loadLocalTowns();
@@ -164,6 +166,7 @@ Promise.all([
   else PARCELS = fileParcels;
   window._fileParcels = fileParcels;       // kept so "load from file" can discard local edits
   buildSidebar(); renderParcels(); updateStat();
+  CHURCHES = cd.churches || []; renderChurches();
   applyHash();
 });
 
@@ -833,4 +836,42 @@ document.getElementById('btn-towns-fromfile').addEventListener('click', () => {
   if (!confirm('Адкінуць лакальныя праўкі і загрузіць data/towns.json?')) return;
   TOWNS = JSON.parse(JSON.stringify(window._fileTowns || []));
   localStorage.removeItem(LS_KEY_T); renderTowns();
+});
+
+// ================= CHURCHES =================
+// Latin-rite churches and monasteries known to exist c. 1800 (data/churches.json): one
+// marker per settlement, sitting just above-left of its settlement dot; popup lists them.
+let CHURCHES = [];
+function churchPopup(c) {
+  const items = c.items.map(it => {
+    // `owner` is an id in the church's own uezd, or "uezd:id" for one listed elsewhere
+    const key = it.owner ? (it.owner.includes(':') ? it.owner : c.uezd + ':' + it.owner) : null;
+    const own = key && OWNER_BY_ID[key]
+      ? ` <a href="#" class="church-owner" data-key="${escapeHtml(key)}" title="зямля гэтага ўладальніка на карце">участак →</a>` : '';
+    return `<li><b>${escapeHtml(it.name)}</b>${it.since ? ` <span class="church-since">(${escapeHtml(it.since)})</span>` : ''}` +
+      (it.note ? `<div class="popup-meta">${escapeHtml(it.note)}${own}</div>` : own) + `</li>`;
+  }).join('');
+  const src = (c.src || []).map(s => `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${escapeHtml(s.label)}</a>`).join('<br>');
+  return `<div class="popup-head">✝ Каталіцкія касцёлы каля 1800 · ${escapeHtml(c.place)}</div>` +
+    `<ul class="church-list">${items}</ul>` +
+    (c.uncertain ? `<div class="popup-flag">Непацверджана: вядома толькі з алфавіта ўладальнікаў.</div>` : '') +
+    (src ? `<div class="popup-links church-src">${src}</div>` : '');
+}
+function renderChurches() {
+  churchGroup.clearLayers();
+  CHURCHES.forEach(c => {
+    const n = c.items.length;
+    const m = L.marker(px(c.x, c.y), { keyboard: false, title: `${c.place}: ${n} ${n === 1 ? 'касцёл' : 'касцёлы / кляштары'}`,
+      icon: L.divIcon({ className: 'church-marker' + (c.uncertain ? ' uncertain' : ''), iconSize: [18, 18], iconAnchor: [22, 22],
+        html: `<span class="church-cross">✝</span>${n > 1 ? `<span class="church-n">${n}</span>` : ''}` }) });
+    m.bindPopup(() => churchPopup(c), { maxWidth: Math.min(340, window.innerWidth - 60) });
+    m.addTo(churchGroup);
+  });
+}
+document.getElementById('map').addEventListener('click', e => {
+  const a = e.target.closest('.church-owner'); if (!a) return;
+  e.preventDefault(); map.closePopup(); focusOwner(a.dataset.key);
+});
+document.getElementById('toggle-churches').addEventListener('change', e => {
+  if (e.target.checked) churchGroup.addTo(map); else churchGroup.remove();
 });

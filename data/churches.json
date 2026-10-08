@@ -1,0 +1,458 @@
+{
+ "_note": "Rite-Latin (rzymskokatolickie) churches and monasteries known to exist c. 1800 in the four uezds. x,y = canvas pixels (placed on the settlement as drawn on the plan, or on its towns.json dot). Parish dates after J.B. Chodźko via pl.wiki 'Diecezja mińska (1798–1869)'. item.owner = owner id in the same uezd's owners.json (or 'uezd:id').",
+ "churches": [
+  {
+   "id": "bobruisk",
+   "place": "Бабруйск",
+   "uezd": "bobruisk",
+   "x": 32571,
+   "y": 5612,
+   "items": [
+    {
+     "name": "Фарны (парафіяльны) касцёл",
+     "note": "парафія з XVII ст.; у алфавіце ўладальнікаў — «Плебании католической бобруйской фары»",
+     "owner": "plebania_bobr_fara"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    }
+   ]
+  },
+  {
+   "id": "glusk",
+   "place": "Глуск",
+   "uezd": "bobruisk",
+   "x": 27926,
+   "y": 8039,
+   "items": [
+    {
+     "name": "Касцёл Беззаганнага Зачацця НДМ і кляштар бернардзінцаў",
+     "since": "1662",
+     "note": "бернардзінцы вялі парафію (з XVII ст.); кляштар скасаваны ў 1832"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Вікіпедыя: Касцёл і кляштар бернардзінцаў (Глуск)",
+     "url": "https://be.wikipedia.org/wiki/%D0%9A%D0%B0%D1%81%D1%86%D1%91%D0%BB_%D0%91%D0%B5%D0%B7%D0%B7%D0%B0%D0%B3%D0%B0%D0%BD%D0%BD%D0%B0%D0%B3%D0%B0_%D0%97%D0%B0%D1%87%D0%B0%D1%86%D1%86%D1%8F_%D0%9D%D0%B0%D0%B9%D1%81%D0%B2%D1%8F%D1%86%D0%B5%D0%B9%D1%88%D0%B0%D0%B9_%D0%94%D0%B7%D0%B5%D0%B2%D1%8B_%D0%9C%D0%B0%D1%80%D1%8B%D1%96_%D1%96_%D0%BA%D0%BB%D1%8F%D1%88%D1%82%D0%B0%D1%80_%D0%B1%D0%B5%D1%80%D0%BD%D0%B0%D1%80%D0%B4%D0%B7%D1%96%D0%BD%D1%86%D0%B0%D1%9E_%28%D0%93%D0%BB%D1%83%D1%81%D0%BA%29"
+    }
+   ]
+  },
+  {
+   "id": "svislach",
+   "place": "Свіслач",
+   "uezd": "bobruisk",
+   "x": 30838,
+   "y": 1876,
+   "items": [
+    {
+     "name": "Кляштар францысканцаў",
+     "since": "1705"
+    },
+    {
+     "name": "Парафіяльны касцёл Св. Яна Хрысціцеля",
+     "since": "1786",
+     "note": "драўляны; фундатарка Барбара з Завішаў Незабытоўская; парафія — 1772–1798"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Вікіпедыя: Касцёл Святога Яна Хрысціцеля (Свіслач)",
+     "url": "https://be.wikipedia.org/wiki/%D0%9A%D0%B0%D1%81%D1%86%D1%91%D0%BB_%D0%A1%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%B0_%D0%AF%D0%BD%D0%B0_%D0%A5%D1%80%D1%8B%D1%81%D1%86%D1%96%D1%86%D0%B5%D0%BB%D1%8F_%28%D0%A1%D0%B2%D1%96%D1%81%D0%BB%D0%B0%D1%87%2C_%D0%90%D1%81%D1%96%D0%BF%D0%BE%D0%B2%D1%96%D1%86%D0%BA%D1%96_%D1%80%D0%B0%D1%91%D0%BD%29"
+    }
+   ]
+  },
+  {
+   "id": "kharomtsy",
+   "place": "Харомцы",
+   "uezd": "bobruisk",
+   "x": 27616,
+   "y": 10620,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл",
+     "note": "парафія заснавана ў XVIII ст. (да 1772); тагачасны касцёл не захаваўся, новы драўляны — 1845"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Charomcy",
+     "url": "https://pl.wikipedia.org/wiki/Charomcy"
+    }
+   ]
+  },
+  {
+   "id": "rechitsa",
+   "place": "Рэчыца",
+   "uezd": "rechitsa",
+   "x": 40161,
+   "y": 16506,
+   "items": [
+    {
+     "name": "Касцёл і кляштар дамініканцаў",
+     "since": "1634",
+     "note": "фундацыя Аляксандра Слушкі; дамініканцы вялі парафію; кляштар скасаваны ў 1832",
+     "owner": "klasztor_rechitsa"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Вікіпедыя: Касцёл Найсвяцейшай Тройцы (Рэчыца)",
+     "url": "https://be.wikipedia.org/wiki/%D0%9A%D0%B0%D1%81%D1%86%D1%91%D0%BB_%D0%9D%D0%B0%D0%B9%D1%81%D0%B2%D1%8F%D1%86%D0%B5%D0%B9%D1%88%D0%B0%D0%B9_%D0%A2%D1%80%D0%BE%D0%B9%D1%86%D1%8B_%28%D0%A0%D1%8D%D1%87%D1%8B%D1%86%D0%B0%29"
+    }
+   ]
+  },
+  {
+   "id": "astrahlyady",
+   "place": "Астраглядавічы",
+   "uezd": "rechitsa",
+   "x": 36368,
+   "y": 24116,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл Унебаўзяцця НДМ",
+     "since": "да 1622",
+     "note": "найранейшая каталіцкая парафія ў рэгіёне; пры касцёле дамініканцы (з 1682)",
+     "owner": "klasztor_ostroglady"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Вікіпедыя: Астрагляды",
+     "url": "https://be.wikipedia.org/wiki/%D0%90%D1%81%D1%82%D1%80%D0%B0%D0%B3%D0%BB%D1%8F%D0%B4%D1%8B"
+    }
+   ]
+  },
+  {
+   "id": "yuravichy",
+   "place": "Юравічы",
+   "uezd": "rechitsa",
+   "x": 32360,
+   "y": 21026,
+   "items": [
+    {
+     "name": "Касцёл і кляштар (былы езуіцкі комплекс)",
+     "since": "1673",
+     "note": "мураваны касцёл — 1717–1745; цудатворны абраз Маці Божай; каля 1830 парафію вялі манахі (дамініканцы паводле Хадзькі). Участак 47/5 з сялом Юравічы — у «Кляштора ординскаго доминиканскаго»",
+     "owner": "klasztor_ordyn"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Вікіпедыя: Касцёл і калегіум езуітаў (Юравічы)",
+     "url": "https://be.wikipedia.org/wiki/%D0%9A%D0%B0%D1%81%D1%86%D1%91%D0%BB_%D1%96_%D0%BA%D0%B0%D0%BB%D0%B5%D0%B3%D1%96%D1%83%D0%BC_%D0%B5%D0%B7%D1%83%D1%96%D1%82%D0%B0%D1%9E_%28%D0%AE%D1%80%D0%B0%D0%B2%D1%96%D1%87%D1%8B%29"
+    }
+   ]
+  },
+  {
+   "id": "zaspa",
+   "place": "Заспа",
+   "uezd": "rechitsa",
+   "x": 40773,
+   "y": 18097,
+   "uncertain": true,
+   "items": [
+    {
+     "name": "Плябанія «застенская»",
+     "note": "вядома толькі з алфавіта ўладальнікаў (свяшчэннік Стэфан Хлябоўскі); на плане ў сяле Заспа на ўчастку 10/1 — знак храма. Каталіцкая яна ці ўніяцкая — патрабуе праверкі",
+     "owner": "plebania_zastenie"
+    }
+   ],
+   "src": []
+  },
+  {
+   "id": "mozyr",
+   "place": "Мазыр",
+   "uezd": "mozyr",
+   "x": 30664,
+   "y": 18888,
+   "items": [
+    {
+     "name": "Фарны (парафіяльны) касцёл",
+     "note": "парафія з XVII ст.; «Плебания мозырская римско-католическая» ў алфавіце Рэчыцкага павета",
+     "owner": "rechitsa:plebania_mozyr"
+    },
+    {
+     "name": "Касцёл Св. Міхала Арханёла і кляштар бернардзінцаў",
+     "since": "1645",
+     "note": "мураваны касцёл 1760–1765; кляштар скасаваны ў 1832"
+    },
+    {
+     "name": "Касцёл і кляштар цыстэрцыянак «Vallis Angelica»",
+     "since": "1743–1745"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Mozyrz",
+     "url": "https://pl.wikipedia.org/wiki/Mozyrz"
+    }
+   ]
+  },
+  {
+   "id": "kimbarauka",
+   "place": "Кімбараўка",
+   "uezd": "mozyr",
+   "x": 30520,
+   "y": 18980,
+   "items": [
+    {
+     "name": "Касцёл і кляштар цыстэрцыянцаў «Vallis Umbrosa»",
+     "since": "1711",
+     "note": "фундацыя Жыгімонта Шукшты"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Mozyrz",
+     "url": "https://pl.wikipedia.org/wiki/Mozyrz"
+    }
+   ]
+  },
+  {
+   "id": "pyatrykau",
+   "place": "Петрыкаў",
+   "uezd": "mozyr",
+   "x": 25304,
+   "y": 16804,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл",
+     "note": "парафія з XVII ст."
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    }
+   ]
+  },
+  {
+   "id": "kapatkevichy",
+   "place": "Капаткевічы",
+   "uezd": "mozyr",
+   "x": 28114,
+   "y": 15045,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл",
+     "note": "парафія заснавана ў 1772–1798; драўляны касцёл XVIII ст."
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Kapatkiewiczy",
+     "url": "https://pl.wikipedia.org/wiki/Kapatkiewiczy"
+    }
+   ]
+  },
+  {
+   "id": "davyd_haradok",
+   "place": "Давыд-Гарадок",
+   "uezd": "mozyr",
+   "x": 15272,
+   "y": 14840,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл",
+     "note": "парафія з XVII ст. (пробашч згадваецца ў 1782); новы касцёл — 1810"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Dawidgródek",
+     "url": "https://pl.wikipedia.org/wiki/Dawidgr%C3%B3dek"
+    }
+   ]
+  },
+  {
+   "id": "lakhva",
+   "place": "Лахва",
+   "uezd": "mozyr",
+   "x": 15232,
+   "y": 12840,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл",
+     "note": "парафія з XVI ст."
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    }
+   ]
+  },
+  {
+   "id": "pinsk",
+   "place": "Пінск",
+   "uezd": "pinsk",
+   "x": 7468,
+   "y": 11832,
+   "items": [
+    {
+     "name": "Касцёл Унебаўзяцця НДМ і кляштар францысканцаў",
+     "since": "XIV ст.",
+     "note": "францысканцы вялі парафію"
+    },
+    {
+     "name": "Касцёл Св. Станіслава (былы езуіцкі калегіум)",
+     "note": "калегіум 1638–1773"
+    },
+    {
+     "name": "Касцёл і кляштар дамініканцаў",
+     "since": "1667",
+     "note": "касцёл Св. Дамініка — 1787"
+    },
+    {
+     "name": "Кляштар бернардзінцаў",
+     "since": "1705–1717",
+     "note": "скасаваны ў 1832"
+    },
+    {
+     "name": "Кляштар кармелітаў",
+     "since": "1734",
+     "note": "скасаваны ў 1832"
+    },
+    {
+     "name": "Кляштар марыявітак",
+     "since": "1756"
+    },
+    {
+     "name": "Касцёл Св. Карла Барамея (камуністы)",
+     "since": "1770–1782"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Pińsk",
+     "url": "https://pl.wikipedia.org/wiki/Pi%C5%84sk"
+    },
+    {
+     "label": "Вікіпедыя: Касцёл Святога Карла Барамея (Пінск)",
+     "url": "https://be.wikipedia.org/wiki/%D0%9A%D0%B0%D1%81%D1%86%D1%91%D0%BB_%D0%A1%D0%B2%D1%8F%D1%82%D0%BE%D0%B3%D0%B0_%D0%9A%D0%B0%D1%80%D0%BB%D0%B0_%D0%91%D0%B0%D1%80%D0%B0%D0%BC%D0%B5%D1%8F_%28%D0%9F%D1%96%D0%BD%D1%81%D0%BA%29"
+    }
+   ]
+  },
+  {
+   "id": "lahishyn",
+   "place": "Лагішын",
+   "uezd": "pinsk",
+   "x": 7380,
+   "y": 9220,
+   "items": [
+    {
+     "name": "Парафіяльны касцёл",
+     "note": "парафія з XVII ст."
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    }
+   ]
+  },
+  {
+   "id": "haradzishcha",
+   "place": "Гарадзішча",
+   "uezd": "pinsk",
+   "x": 9100,
+   "y": 11800,
+   "items": [
+    {
+     "name": "Касцёл Св. Ганны і кляштар бенедыктынцаў",
+     "since": "1774–1776",
+     "note": "бенедыктынцы вялі парафію (з XVII ст.)"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Kościół św. Anny i klasztor Benedyktynów w Horodyszczu",
+     "url": "https://pl.wikipedia.org/wiki/Ko%C5%9Bci%C3%B3%C5%82_%C5%9Bw._Anny_i_klasztor_Benedyktyn%C3%B3w_w_Horodyszczu_%28nieistniej%C4%85ce%29"
+    }
+   ]
+  },
+  {
+   "id": "lyubeshau",
+   "place": "Любешаў",
+   "uezd": "pinsk",
+   "x": 2248,
+   "y": 14466,
+   "items": [
+    {
+     "name": "Касцёл і калегіум піяраў",
+     "since": "1684",
+     "note": "касцёл — 1742; піяры вялі парафію"
+    },
+    {
+     "name": "Касцёл Св. Кірылы і Мяфодзія і кляштар капуцынаў",
+     "since": "1768"
+    }
+   ],
+   "src": [
+    {
+     "label": "Diecezja mińska (1798–1869): парафіі паводле Я. Хадзькі (1998)",
+     "url": "https://pl.wikipedia.org/wiki/Diecezja_mi%C5%84ska_%281798%E2%80%931869%29"
+    },
+    {
+     "label": "Wikipedia: Lubieszów",
+     "url": "https://pl.wikipedia.org/wiki/Lubiesz%C3%B3w_%28Ukraina%29"
+    }
+   ]
+  }
+ ]
+}

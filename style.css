@@ -148,6 +148,18 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
   border-radius: 2px; transform: rotate(45deg); }
 .towns-toggle { flex-basis: 100%; }
 .town-edit .town-marker { cursor: move; }
+.church-marker { position: relative; cursor: pointer; }
+.church-cross { display: block; width: 18px; height: 18px; border-radius: 50%; box-sizing: border-box;
+  background: #fffaf0; border: 2px solid #6b1d1d; color: #6b1d1d; font-size: 13px; font-weight: 700;
+  line-height: 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+.church-marker.uncertain .church-cross { border-style: dashed; border-color: #9a7a5a; color: #9a7a5a; }
+.church-n { position: absolute; right: -7px; bottom: -2px; font-size: 9px; font-weight: 700; color: #fff;
+  background: #6b1d1d; border-radius: 7px; padding: 0 3px; line-height: 13px; border: 1px solid #fff; }
+.church-list { margin: 2px 0 6px; padding-left: 18px; }
+.church-list li { margin-bottom: 5px; }
+.church-since { color: #6a5f40; font-weight: 400; }
+.church-owner { white-space: nowrap; }
+.church-src { font-size: 13px; margin-top: 6px; line-height: 1.35; }
 #toast { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 1000;
   background: rgba(40,34,20,.92); color: #fbf3df; padding: 8px 16px; border-radius: 18px;
   font-size: 13px; transition: opacity .4s; pointer-events: none; max-width: 70vw; text-align: center; }
