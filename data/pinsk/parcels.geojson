@@ -1314,7 +1314,12 @@
    "properties": {
     "fid": "p1791456177234",
     "num": "54",
-    "status": "draft"
+    "status": "draft",
+    "chast": 2,
+    "parts": [
+     2,
+     3
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -1362,7 +1367,7 @@
     "fid": "p1791456212618",
     "num": "51",
     "status": "draft",
-    "chast": 1
+    "chast": 3
    },
    "geometry": {
     "type": "Polygon",
