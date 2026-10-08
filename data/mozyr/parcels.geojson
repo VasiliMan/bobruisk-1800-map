@@ -975,8 +975,7 @@
     "chast": 5,
     "owner_id": "norycki_michal",
     "owner_ids": [
-     "norycki_michal",
-     "polchowski_antoni"
+     "norycki_michal"
     ]
    },
    "geometry": {
@@ -1277,7 +1276,6 @@
     "owner_ids": [
      "radziwill_dominik",
      "radziwill_jozef",
-     "radziejowski_tomasz",
      "ramud",
      "kiniewicz_michal"
     ]
@@ -2007,7 +2005,13 @@
    "properties": {
     "fid": "p1791465032232",
     "num": "56",
-    "status": "draft"
+    "status": "draft",
+    "chast": 2,
+    "parts": [
+     2,
+     3,
+     4
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -2090,7 +2094,12 @@
    "properties": {
     "fid": "p1791465086173",
     "num": "41",
-    "status": "draft"
+    "status": "draft",
+    "chast": 2,
+    "parts": [
+     2,
+     3
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -2233,7 +2242,8 @@
    "properties": {
     "fid": "p1791465206165",
     "num": "71",
-    "status": "draft"
+    "status": "draft",
+    "chast": 6
    },
    "geometry": {
     "type": "Polygon",
@@ -2288,7 +2298,12 @@
    "properties": {
     "fid": "p1791465238200",
     "num": "54",
-    "status": "draft"
+    "status": "draft",
+    "chast": 8,
+    "parts": [
+     8,
+     9
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -2491,7 +2506,8 @@
    "properties": {
     "fid": "p1791465363430",
     "num": "55",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9
    },
    "geometry": {
     "type": "Polygon",
@@ -2526,7 +2542,8 @@
    "properties": {
     "fid": "p1791465386697",
     "num": "52",
-    "status": "draft"
+    "status": "draft",
+    "chast": 8
    },
    "geometry": {
     "type": "Polygon",
@@ -2569,7 +2586,8 @@
    "properties": {
     "fid": "p1791465407348",
     "num": "49",
-    "status": "draft"
+    "status": "draft",
+    "chast": 8
    },
    "geometry": {
     "type": "Polygon",
@@ -2620,7 +2638,8 @@
    "properties": {
     "fid": "p1791465436664",
     "num": "53",
-    "status": "draft"
+    "status": "draft",
+    "chast": 8
    },
    "geometry": {
     "type": "Polygon",
@@ -2667,7 +2686,8 @@
    "properties": {
     "fid": "p1791465479330",
     "num": "47",
-    "status": "draft"
+    "status": "draft",
+    "chast": 8
    },
    "geometry": {
     "type": "Polygon",
@@ -2730,7 +2750,8 @@
    "properties": {
     "fid": "p1791465517896",
     "num": "46",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9
    },
    "geometry": {
     "type": "Polygon",
@@ -2809,7 +2830,8 @@
    "properties": {
     "fid": "p1791465559463",
     "num": "45",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9
    },
    "geometry": {
     "type": "Polygon",
@@ -2884,7 +2906,8 @@
    "properties": {
     "fid": "p1791465614113",
     "num": "44",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9
    },
    "geometry": {
     "type": "Polygon",
@@ -2943,7 +2966,8 @@
    "properties": {
     "fid": "p1791465654296",
     "num": "26",
-    "status": "draft"
+    "status": "draft",
+    "chast": 1
    },
    "geometry": {
     "type": "Polygon",
@@ -2990,7 +3014,8 @@
    "properties": {
     "fid": "p1791465681529",
     "num": "42",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9
    },
    "geometry": {
     "type": "Polygon",
@@ -3077,7 +3102,8 @@
    "properties": {
     "fid": "p1791465728531",
     "num": "43",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9
    },
    "geometry": {
     "type": "Polygon",
@@ -3128,7 +3154,13 @@
    "properties": {
     "fid": "p1791465768746",
     "num": "27",
-    "status": "draft"
+    "status": "draft",
+    "chast": 9,
+    "parts": [
+     9,
+     3,
+     1
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -3347,7 +3379,8 @@
    "properties": {
     "fid": "p1791465929303",
     "num": "30",
-    "status": "draft"
+    "status": "draft",
+    "chast": 1
    },
    "geometry": {
     "type": "Polygon",
@@ -3390,7 +3423,8 @@
    "properties": {
     "fid": "p1791465950896",
     "num": "29",
-    "status": "draft"
+    "status": "draft",
+    "chast": 1
    },
    "geometry": {
     "type": "Polygon",
