@@ -307,6 +307,10 @@ function renderParcels() {
   const medianArea = areas[Math.floor(areas.length / 2)] || 1;
   // draw bigger (containing) parcels first so enclaves sit on top
   const ordered = [...active].sort((a, b) => b._area - a._area);
+  // an owner holding several ADJACENT parcels gets one coat of arms for the group (sized by
+  // the group's total area) instead of one per parcel; drawn after the loop below
+  const armGroups = showArms ? groupOwnerParcels(active) : [];
+  const grouped = new Set(armGroups.flatMap(g => g.feats.map(f => g.key + '|' + f.properties.fid)));
 
   ordered.forEach(f => {
     const pr = f.properties;
@@ -332,25 +336,86 @@ function renderParcels() {
     // show every co-owner's arms/cross, fanned out side by side at the parcel centre
     // (an institution may carry both, e.g. a monastery with its order's arms + its cross)
     // optional: scale by parcel size (sqrt of area relative to the median parcel, clamped)
-    const k = scaleArms ? Math.min(2.2, Math.max(0.5, Math.sqrt(f._area / medianArea))) : 1;
-    const syms = owners.flatMap(o => [
-      ...armsList(o).map(a => `<img class="map-arms" src="arms/${a.file}" alt=""` +
-        (k !== 1 ? ` style="width:${(40 * k).toFixed(0)}px;height:${(44 * k).toFixed(0)}px"` : '') + `>`),
-      ...(o.inst ? [`<span class="map-cross"` + (k !== 1 ? ` style="font-size:${(30 * k).toFixed(0)}px"` : '') +
-        `>${INST_SYM[o.inst] || '✟'}</span>`] : [])]);
-    if (showArms && syms.length) {
-      const html = syms.join('');
-      const w = syms.length * 42 * k, h = 46 * k;
-      L.marker(c, { interactive: false, icon: L.divIcon({
-        className: 'arms-marker', html, iconSize: [w, h], iconAnchor: [w / 2, h] }) }).addTo(armsGroup);
-    }
+    const k = scaleArms ? armScale(f._area, medianArea) : 1;
+    const syms = owners.filter(o => !grouped.has(o.key + '|' + pr.fid)).flatMap(o => ownerSyms(o, k));
+    if (showArms && syms.length) addArmsMarker(c, syms, k);
     if (showLabels) {
       L.marker(c, { interactive: false, icon: L.divIcon({
         className: 'parcel-label', html: `<span class="parcel-num">${pr.num}</span>`,
         iconSize: [24, 16], iconAnchor: [12, 0] }) }).addTo(labelGroup);
     }
   });
+  armGroups.forEach(g => {
+    const k = scaleArms ? armScale(g.area, medianArea) : 1;
+    addArmsMarker(px(g.x, g.y), ownerSyms(OWNER_BY_ID[g.key], k), k);
+  });
   if (selectedFid && layerByFid[selectedFid]) enableVertexEdit(layerByFid[selectedFid]);
+}
+
+// size factor for arms: sqrt of area relative to the median parcel, clamped
+const armScale = (area, median) => Math.min(2.2, Math.max(0.5, Math.sqrt(area / median)));
+// an owner's map symbols: arms (one or two) and/or an institution's cross
+function ownerSyms(o, k) {
+  return [
+    ...armsList(o).map(a => `<img class="map-arms" src="arms/${a.file}" alt=""` +
+      (k !== 1 ? ` style="width:${(40 * k).toFixed(0)}px;height:${(44 * k).toFixed(0)}px"` : '') + `>`),
+    ...(o.inst ? [`<span class="map-cross"` + (k !== 1 ? ` style="font-size:${(30 * k).toFixed(0)}px"` : '') +
+      `>${INST_SYM[o.inst] || '✟'}</span>`] : [])];
+}
+function addArmsMarker(latlng, syms, k) {
+  const w = syms.length * 42 * k, h = 46 * k;
+  L.marker(latlng, { interactive: false, icon: L.divIcon({
+    className: 'arms-marker', html: syms.join(''), iconSize: [w, h], iconAnchor: [w / 2, h] }) }).addTo(armsGroup);
+}
+const ringCentre = r => { let x = 0, y = 0; const n = r.length - 1;
+  for (let i = 0; i < n; i++) { x += r[i][0]; y += r[i][1]; } return [x / n, y / n]; };
+// two parcels touch when a vertex of one lies within TOUCH px of an edge of the other
+const TOUCH = 60;
+function segDist(p, a, b) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], l = dx * dx + dy * dy;
+  const t = l ? Math.max(0, Math.min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / l)) : 0;
+  return Math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy);
+}
+function bbox(r) { const xs = r.map(c => c[0]), ys = r.map(c => c[1]);
+  return [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)]; }
+function touching(a, b) {
+  const A = a._bb || (a._bb = bbox(a._ring)), B = b._bb || (b._bb = bbox(b._ring));
+  if (A[0] > B[2] + TOUCH || B[0] > A[2] + TOUCH || A[1] > B[3] + TOUCH || B[1] > A[3] + TOUCH) return false;
+  const near = (P, Q) => P.some(p => { for (let i = 0; i < Q.length - 1; i++) if (segDist(p, Q[i], Q[i + 1]) < TOUCH) return true; return false; });
+  return near(a._ring, b._ring) || near(b._ring, a._ring);
+}
+// per owner with arms or a cross: connected groups (2+ parcels) of touching parcels.
+// Placed at the area-weighted centre; if that falls outside the group (an L-shape), on
+// the shared border of the two largest parcels instead.
+function groupOwnerParcels(feats) {
+  const byOwner = {};
+  feats.forEach(f => ownersOfFeature(f).forEach(o => {
+    if (armsList(o).length || o.inst) (byOwner[o.key] = byOwner[o.key] || []).push(f);
+  }));
+  const out = [];
+  for (const [key, fs] of Object.entries(byOwner)) {
+    if (fs.length < 2) continue;
+    const seen = new Set();
+    fs.forEach(f0 => {
+      if (seen.has(f0)) return;
+      const comp = [f0]; seen.add(f0);
+      for (let i = 0; i < comp.length; i++)
+        fs.forEach(g => { if (!seen.has(g) && touching(comp[i], g)) { seen.add(g); comp.push(g); } });
+      if (comp.length < 2) return;
+      const area = comp.reduce((s, f) => s + f._area, 0);
+      let x = 0, y = 0;
+      comp.forEach(f => { const c = ringCentre(f._ring); x += c[0] * f._area; y += c[1] * f._area; });
+      x /= area; y /= area;
+      if (!comp.some(f => pointInRing([x, y], f._ring))) {
+        const [a, b] = [...comp].sort((p, q) => q._area - p._area);
+        let best = Infinity;
+        a._ring.forEach(p => b._ring.forEach(q => { const d = Math.hypot(p[0] - q[0], p[1] - q[1]);
+          if (d < best) { best = d; x = (p[0] + q[0]) / 2; y = (p[1] + q[1]) / 2; } }));
+      }
+      out.push({ key, feats: comp, area, x, y });
+    });
+  }
+  return out;
 }
 
 const INST_SYM = { orthodox: '☦', catholic: '✝', uniate: '✠', monastery: '✟' };
