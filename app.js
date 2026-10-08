@@ -862,8 +862,10 @@ function renderChurches() {
   CHURCHES.forEach(c => {
     const n = c.items.length;
     const m = L.marker(px(c.x, c.y), { keyboard: false, title: `${c.place}: ${n} ${n === 1 ? 'касцёл' : 'касцёлы / кляштары'}`,
-      icon: L.divIcon({ className: 'church-marker' + (c.uncertain ? ' uncertain' : ''), iconSize: [18, 18], iconAnchor: [22, 22],
-        html: `<span class="church-cross">✝</span>${n > 1 ? `<span class="church-n">${n}</span>` : ''}` }) });
+      zIndexOffset: 1000,          // above the arms, which otherwise hide the badge in towns
+      icon: L.divIcon({ className: 'church-marker' + (c.uncertain ? ' uncertain' : ''), iconSize: [24, 24], iconAnchor: [12, 30],
+        html: `<span class="church-cross">✝</span>${n > 1 ? `<span class="church-n">${n}</span>` : ''}` +
+              `<span class="church-name">${escapeHtml(c.place)}</span>` }) });
     m.bindPopup(() => churchPopup(c), { maxWidth: Math.min(340, window.innerWidth - 60) });
     m.addTo(churchGroup);
   });
