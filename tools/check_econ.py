@@ -31,34 +31,73 @@ for u in ('rechitsa', 'mozyr', 'pinsk'):
     PATHS[u] = (f'data/{u}/owners.json', f'data/{u}/parcels.geojson', f'data/{u}/econ.tsv')
 
 # words that say nothing about WHO: titles, offices, institutions, generic and place words
-TITLES = set('''князь княз княгиня граф генерал майор майорша подполковник подполковница полковница полковник
-капитан ротмистр судья судьи земский земскаго воевода каштелян регент шамбелян маршал стражник хорунжий
-подстолий подстароста староста старосты староство действительный статский советник кавалер шляхтич шляхта
-шляхты шляхетство околичные околичная околичное околичных чиншовые чиншовая чиншовых владение владения
-общаго город город мещане мещан иностранцы монастырь монастыри кляштор кляшторы плебания парафия мужеский
-мужской женский часть части брат братьями братом детьми малолетний спорная земля пашенная пинск пинский
-пинская пинскаго пинской базилианский грекороссийский римскокатолический'''.split())
-# first names: two people of one family share a surname, so a match needs the first name too
+TITLES = set('''князь княз княгиня граф графиня генерал майор майорша подполковник подполковница полковница
+полковник капитан ротмистр поручик судья судьи сендзина земский земскаго воевода каштелян каштеляничи регент
+шамбелян маршал стражник хорунжий хорунжина подстолий подстолина подстароста староста старостина старосты
+староство подкоморжий подкоморич подкоморша подкоморий чешник писарь писарева гродский мостовничий ловчий
+обозный комиссар асессор регистратор коллежский действительный статский тайный советник кавалер адмирал
+бригадир генеральша ротмистрша возный бывший отставной шляхтич шляхта шляхты шляхетство околичные околичная
+околичное околичных чиншовые чиншовая чиншовых владение владения общаго общем город город мещане мещан
+иностранцы монастырь монастыри кляштор кляшторы плебания парафия церковь церкви церковная священно
+священника служителей церковнослужителей покосы сенные выгоне выгонная градская мужеский мужской женский
+часть части брат братьями братом детьми жена жены малолетний спорная земля пашенная пожизненном помещик
+помещица помещики польских российских войск губернии пинск пинский пинская пинскаго пинской речицкий
+речицкая бобруйский бобруйская базилианский грекороссийский римскокатолический доминиканский'''.split())
+STOP5 = {t[:5] for t in TITLES}
+# first names: two people of one family share a surname, so a match needs the first name too.
+# Seeded here, extended from the alphabet (its names are «Surname First [First…]»).
 NAMES = {w[:4] for w in '''николай васильевич михаил иван игнатий петр павел антоний франтишек федор тимофей
-александр адам семен томаш иосиф осип казимир станислав викентий григорий лаврентий доминик матвей самуил
-леопольд агафья анна варвара мартин феликс харитон ксаверий богуслав леон король фома каэтан василий
-владислав владимир марианна клара розалия фелициана войтех аполинарий кунегунда богумила виктория героним
-христофор леонора бенедикт'''.split()}
+александр адам семен томаш иосиф осип казимир станислав викентий григорий лаврентий доминик доменик матвей
+самуил леопольд агафья анна варвара мартин феликс харитон ксаверий богуслав леон король фома каэтан василий
+владислав владимир марианна марьяна клара розалия фелициана войтех аполинарий кунегунда богумила виктория
+героним христофор христина леонора бенедикт флориан амброжий рафал ансельм пляцид людвик людвиг алоизий
+каролина елена елеонора троян дионисий дионизий куприян валериан карл кароль филип филипп максим яков
+гилярий гиполит фадей тадеуш онуфрий прасковья софья сергей степан лука андрей анатолий никодим гавриил
+фаддей иоанн'''.split()} | {'ян'}
 SURNAME_END = re.compile(r'(ск|цк|ич|вич|ов|ев|ин)[а-я]*$')
+
+def words_of(text):
+    return re.findall(r'[а-яёіѣ]+', text.lower().replace('ё', 'е').replace('ѣ', 'е').replace('і', 'и'))
 
 def person(text):
     """(surname stems, first-name stems) of a name in any case: first 5 / 4 letters of each word"""
-    words = re.findall(r'[а-яёіѣ]+', text.lower().replace('ё', 'е').replace('ѣ', 'е').replace('і', 'и'))
     sur, first = set(), set()
-    for w in words:
-        if len(w) < 4 or w in TITLES or w[:5] in {t[:5] for t in TITLES}: continue
+    for w in words_of(text):
+        if w == 'ян' or w == 'яна': first.add('ян'); continue
+        if len(w) < 4 or w in TITLES or w[:5] in STOP5: continue
         if w[:4] in NAMES and not SURNAME_END.search(w[4:]): first.add(w[:4])
         else: sur.add(w[:5])
     return sur, first
 
+def alphabet_person(o):
+    """alphabet names are «Surname First…»: the first word is the surname, the rest first names"""
+    w = [x for x in words_of(o.get('name', '')) if x not in TITLES and x[:5] not in STOP5]
+    if not w: return set(), set()
+    sur = {w[0][:5]}
+    first = {('ян' if x == 'ян' else x[:4]) for x in w[1:] if len(x) >= 2 and x[:5] not in STOP5}
+    NAMES.update(f for f in first if f != 'ян')
+    return sur, first
+
+def _norm(st):
+    """spelling-insensitive surname stem: doubled letters collapsed, unstressed а/о, е/и, т/ц merged"""
+    st = re.sub(r'(.)\1', r'\1', st)
+    return st.translate(str.maketrans('аиц', 'оет'))
+
+def _lev(a, b):
+    d = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        p, d[0] = d[0], i
+        for j, cb in enumerate(b, 1):
+            p, d[j] = d[j], min(d[j] + 1, d[j - 1] + 1, p + (ca != cb))
+    return d[-1]
+
 def same(a, b):
-    """same person: shared surname stem, and first names agree when both sides give one"""
-    return bool(a[0] & b[0]) and (not a[1] or not b[1] or bool(a[1] & b[1]))
+    """same person: a surname stem in common (up to one spelling slip, or two when both sides
+    give the same first name), and first names agree when both sides give one"""
+    fa, fb = a[1], b[1]
+    if fa and fb and not (fa & fb): return False
+    tol = 2 if (fa and fb) else 1
+    return any(_lev(_norm(x), _norm(y)) <= (0 if min(len(x), len(y)) < 5 else tol) for x in a[0] for y in b[0])
 
 def load_econ(path):
     rows = {}
@@ -79,7 +118,9 @@ for u in uezds:
     owners = json.load(open(op))['owners']
     feats = json.load(open(pp))['features']
     traced = {nk(f['properties'].get('num')) for f in feats}
-    who = {o['id']: person(' '.join(filter(None, [o.get('name_ru'), o.get('name'), o.get('alt')]))) for o in owners}
+    # institutions and староства («Староство Речицкое (гр. Юдицкий)») are matched on every word
+    who = {o['id']: person(o.get('name', '')) if o.get('inst') or re.match(r'(староств|кляштор|плебан|монаст|церк|казен)', o.get('name', '').lower()) or '(' in o.get('name', '')
+           else alphabet_person(o) for o in owners}
     byn = defaultdict(list)
     for o in owners:
         for p in o['parcels']: byn[nk(p['num'])].append((o, p.get('chast')))
