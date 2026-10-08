@@ -66,6 +66,11 @@ def words_of(text):
                        .replace('ь', '').replace('ъ', ''))]   # Пеньтковский = Пентковский
 
 NM = str.maketrans('йы', 'еи')     # case/spelling slips in first names: Фаддеем ~ Фадей, Мартын ~ Мартин
+ENDING = re.compile(r'(ого|аго|ему|ому|ими|ыми|ой|ий|ый|ая|ую|ою|ем|ом|им|ым|ов|ова|ей|ие|ые|их|ых|а|ы|и|у|е)$')
+def stem(w):
+    """surname without its case ending (Еленскаго/Еленский → еленск), at most 10 letters"""
+    return (ENDING.sub('', w) if len(w) > 5 else w)[:10]
+
 def is_name(w):
     """a first name in any case form; never a word that looks like a surname (-ский/-цкий/-вич)"""
     if len(w) < 4 or re.search(r'.{3}(ск|цк|вич)', w): return False
@@ -80,7 +85,7 @@ def person(text):
         if w == 'ян' or w == 'яна': first.add('ян'); continue
         if len(w) < 4 or w in TITLES or (w[:5] in STOP5 and not SURNAME_END.search(w[5:])): continue
         if is_name(w): first.add(w[:5].translate(NM))
-        else: sur.add(w[:5])
+        else: sur.add(stem(w))
     return sur, first
 
 def alphabet_person(o):
@@ -88,7 +93,7 @@ def alphabet_person(o):
     w = [x for x in words_of(o.get('name', '')) if x not in TITLES and (x[:5] not in STOP5 or SURNAME_END.search(x[5:]))]
     if not w: return set(), set()
     if len(w) > 1 and w[0][:5] in NAMES and w[-1][:5] not in NAMES: w = w[1:] + w[:1]   # «Павел Лежский»
-    sur = {w[0][:5]}
+    sur = {stem(w[0])}
     first = {('ян' if x == 'ян' else x[:5].translate(NM)) for x in w[1:] if len(x) >= 2 and x[:5] not in STOP5}
     NAMES.update(f for f in first if f != 'ян')
     NAMES_N.update(n.translate(NM) for n in NAMES)
@@ -111,8 +116,8 @@ def same(a, b):
     """same person: a surname stem in common (up to one spelling slip, or two when both sides
     give the same first name), and first names agree when both sides give one"""
     fa, fb = a[1], b[1]
-    if fa and fb and not ({x.translate(NM) for x in fa} & {y.translate(NM) for y in fb}): return False
-    tol = 2 if (fa and fb) else 1    # a matching first name allows a second spelling slip (Залеский/Зеленский)
+    if fa and fb and not ({x.translate(NM)[:4] for x in fa} & {y.translate(NM)[:4] for y in fb}): return False   # Павел/Павла
+    tol = 2 if (fa and fb) else 1    # one spelling slip; a matching first name allows a second (Залеский/Зеленский)
     def close(x, y):
         x, y = _norm(x), _norm(y)
         if min(len(x), len(y)) < 5: return x.startswith(y) or y.startswith(x)   # short surnames: Волк/Волком
@@ -184,9 +189,11 @@ for u in uezds:
                 out.append(('DISAGREE', num, f"{o['name']}: alphabet часть {ch}, econ {sorted(e['parts'])}"))
     for num, e in econ.items():
         linked = [who[o['id']] for o, _ in byn.get(num, [])]
+        linked_ids = {o['id'] for o, _ in byn.get(num, [])}
         for label, p in e['principal']:
             if not p[0] or any(same(p, l) for l in linked): continue
-            cand = [o for o in owners if same(who[o['id']], p)]
+            cand = [o for o in owners if same(who[o['id']], p) or any(n in label for n in econ_names(o))]
+            if any(n in label for o in owners for n in econ_names(o) if o['id'] in linked_ids): continue
             if cand:
                 out.append(('MISSING', num, f"econ (IMG_{e['img']}) «{label}» = {', '.join(o['name'] for o in cand)}, not linked to {num}"))
             elif num in traced:
