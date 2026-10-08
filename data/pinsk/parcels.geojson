@@ -746,7 +746,12 @@
    "properties": {
     "fid": "p1791455728385",
     "num": "55",
-    "status": "draft"
+    "status": "draft",
+    "chast": 2,
+    "parts": [
+     2,
+     3
+    ]
    },
    "geometry": {
     "type": "Polygon",
