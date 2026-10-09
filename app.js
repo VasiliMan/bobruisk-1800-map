@@ -131,10 +131,12 @@ const emptyFC = () => ({ type: 'FeatureCollection', features: [] });
 Promise.all([
   fetchJson('data/towns.json', { towns: [] }),
   fetchJson('data/churches.json', { churches: [] }),
+  fetchJson('data/econ_crops.json', {}),
   fetchJson('data/uezd_outlines.json', {}),
   Promise.all(UEZDS.map(u => fetchJson(u.owners, { owners: [] }))),
   Promise.all(UEZDS.map(u => fetchJson(u.parcels, emptyFC()))),
-]).then(([td, cd, outl, ownerDocs, parcelDocs]) => {
+]).then(([td, cd, ec, outl, ownerDocs, parcelDocs]) => {
+  ECON_CROPS = ec;
   // close each ring (pointInRing expects last point == first)
   for (const [u, r] of Object.entries(outl)) UEZD_OUTLINES[u] = r.length ? [...r, r[0]] : r;
   const localT = loadLocalTowns();
@@ -454,6 +456,18 @@ function cropBlock(owner) {
   return `<div class="popup-crop"><div class="popup-crop-cap">арыгінал запісу:</div>`
     + `<div class="popup-crop-img" style="${cropImgStyle(owner.crop, CROP_MAX_W, 156, PAGE_PREFIX[owner.uezd] || 'p')}"></div></div>`;
 }
+// the plan number's entry in the economic notes (the detailed tables): a second scan to check
+// the owner against, independent of the alphabet. data/econ_crops.json: { uezd: { num: {f, img} } }
+let ECON_CROPS = {}, inParcelPopup = false;   // a parcel popup shows its own notes entry once
+function econCrop(uezd, num) { return (ECON_CROPS[uezd] || {})[numKey(num)] || (ECON_CROPS[uezd] || {})[num]; }
+function econBlock(uezd, nums) {
+  const seen = new Set(), out = [];
+  nums.forEach(n => { const c = econCrop(uezd, n); if (c && !seen.has(c.f)) { seen.add(c.f); out.push([n, c]); } });
+  if (!out.length) return '';
+  return `<div class="popup-crop popup-econ"><div class="popup-crop-cap">эканамічныя прымечанні:</div>` +
+    out.map(([n, c]) => `<a href="${c.f}" target="_blank" rel="noopener" title="№ ${escapeHtml(n)} · IMG_${c.img}">` +
+      `<img class="popup-econ-img" src="${c.f}" alt="№ ${escapeHtml(n)}" loading="lazy"></a>`).join('') + `</div>`;
+}
 function linksBlock(owner) {
   if (!owner || !owner.links || !owner.links.length) return '';
   return `<div class="popup-links">` +
@@ -475,7 +489,7 @@ function cardBody(owner) {
   const flag = owner.flag ? `<div class="popup-flag">⚠ ${owner.flag}</div>` : '';
   return `${owner.name_ru ? `<div class="popup-orig">${owner.name_ru}</div>` : ''}
     ${owner.title ? `<div class="popup-meta">${owner.title}</div>` : ''}
-    ${cropBlock(owner)}${flag}${armsBlock(owner)}${refBlock(owner)}${linksBlock(owner)}`;
+    ${cropBlock(owner)}${owner.crop || inParcelPopup ? '' : econBlock(owner.uezd, owner.parcels.slice(0, 3).map(p => p.num))}${flag}${armsBlock(owner)}${refBlock(owner)}${linksBlock(owner)}`;
 }
 function nameHead(owner) {
   // "⚠ чтение требует проверки" badge hidden for now (uncertain flag kept in data)
@@ -496,12 +510,15 @@ function openPopup(poly, f) {
   const pr = f.properties;
   const owners = ownersOfFeature(f);
   let html = `<div class="popup-head">Участак № ${pr.num}</div>`;
+  inParcelPopup = true;
   if (owners.length > 1)
     html += `<div class="popup-coowners-h">Некалькі ўладальнікаў (${owners.length}):</div>` +
             owners.map(coItem).join('');
   else
     html += ownerCard(owners[0] || null);
+  inParcelPopup = false;
   if (pr.place) html += `<div class="popup-meta">${pr.place}</div>`;
+  html += econBlock(uezdOfFeature(f), [pr.num]);
   currentLink = parcelHash(f);
   html += popupButtons();
   currentPopupCtx = {

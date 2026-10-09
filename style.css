@@ -52,6 +52,8 @@ footer#stat { padding: 8px 14px; font-size: 11px; color: #9a8d6a; border-top: 1p
 .popup-crop { margin-top: 8px; }
 .popup-crop-cap { color: #8a7d5e; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
 .popup-crop-img { background-repeat: no-repeat; border: 1px solid #cdc6b0; border-radius: 4px; background-color: #fff; }
+.popup-econ-img { display: block; width: 100%; max-width: 300px; max-height: 190px; object-fit: cover; object-position: top;
+  border: 1px solid #cdc6b0; border-radius: 4px; margin-bottom: 4px; }
 .popup-alt { color: #2c6b8a; font-size: 14px; margin-top: 4px; }
 .popup-flag { color: #b5651d; font-size: 14px; margin-top: 4px; background: #fbf0d8; padding: 4px 7px; border-radius: 4px; }
 .popup-meta { color: #6a5f40; font-size: 16px; margin-top: 4px; }
