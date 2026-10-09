@@ -83,10 +83,12 @@ def person(text):
     sur, first = set(), set()
     for w in words_of(text):
         if w == 'ян' or w == 'яна': first.add('ян'); continue
-        if len(w) < 4 or w in TITLES or (w[:5] in STOP5 and not SURNAME_END.search(w[5:])): continue
+        if len(w) < 3 or w in TITLES or (w[:5] in STOP5 and not SURNAME_END.search(w[5:])): continue   # 3 letters: Щит
         if is_name(w): first.add(w[:5].translate(NM))
         else: sur.add(stem(w))
     return sur, first
+
+INSTITUTION = re.compile(r'(староств|кляштор|плебан|монаст|церк|казен)')
 
 def alphabet_person(o):
     """alphabet names are «Surname First…»: the first word is the surname, the rest first names"""
@@ -95,7 +97,8 @@ def alphabet_person(o):
     if len(w) > 1 and w[0][:5] in NAMES and w[-1][:5] not in NAMES: w = w[1:] + w[:1]   # «Павел Лежский»
     sur = {stem(w[0])}
     first = {('ян' if x == 'ян' else x[:5].translate(NM)) for x in w[1:] if len(x) >= 2 and x[:5] not in STOP5}
-    NAMES.update(f for f in first if f != 'ян')
+    if not INSTITUTION.match(o.get('name', '').lower().replace('ё', 'е')):   # «Казённое ведомство» teaches no names
+        NAMES.update(f for f in first if f != 'ян')
     NAMES_N.update(n.translate(NM) for n in NAMES)
     return sur, first
 
@@ -148,7 +151,7 @@ for u in uezds:
     feats = json.load(open(pp))['features']
     traced = {nk(f['properties'].get('num')) for f in feats}
     # institutions and староства («Староство Речицкое (гр. Юдицкий)») are matched on every word
-    who = {o['id']: person(' '.join(filter(None, [o.get('name'), o.get('name_ru'), *econ_names(o)]))) if o.get('inst') or re.match(r'(староств|кляштор|плебан|монаст|церк|казен)', o.get('name', '').lower()) or '(' in o.get('name', '')
+    who = {o['id']: person(' '.join(filter(None, [o.get('name'), o.get('name_ru'), *econ_names(o)]))) if o.get('inst') or INSTITUTION.match(o.get('name', '').lower().replace('ё', 'е')) or '(' in o.get('name', '')
            else alphabet_person(o) for o in owners}
     econ = load_econ(ep)          # after `who`: alphabet_person() extends NAMES
     byn = defaultdict(list)
