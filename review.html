@@ -45,6 +45,11 @@
   .fixwrap { margin-top: 3px; }
   .fixwrap input { width: 100%; margin-top: 3px; padding: 4px; border: 1px solid #cdc6b0; border-radius: 4px; font-size: 12px; }
   .q { color: #c0392b; font-weight: 700; }
+  .econwrap { margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .econwrap img.econ { width: 260px; max-height: 150px; object-fit: cover; object-position: top;
+    border: 1px solid #cdc6b0; border-radius: 4px; display: block; }
+  .econwrap:empty { display: none; }
+  .tabs button:disabled { opacity: .4; cursor: default; }
   #who { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   #who input { padding: 5px 7px; border: 1px solid #cdc6b0; border-radius: 6px; font-size: 13px; }
   #sendstatus { font-size: 12px; }
@@ -67,7 +72,8 @@
   <span id="progress"></span>
 </header>
 <div class="intro">
-  Звярыце маё прачытанне са сканам паказальніка злева. Дзе памылка — выберыце «выправіць» і ўпішыце
+  Звярыце маё прачытанне са сканам паказальніка злева і з выразкай з эканамічных прымечанняў (пад кожным
+  радком — запіс таго ж нумара ў падрабязных табліцах; клік — павялічыць). Дзе памылка — выберыце «выправіць» і ўпішыце
   правільны варыянт (па жаданні — крыніцу). Потым націсніце «Адправіць праўкі». Рэгістрацыя не патрэбная.
   <b>Асабліва важныя нумары ўчасткаў:</b> у паказальніку яны зведзеныя фігурнымі дужкамі адразу да некалькіх
   радкоў, таму нумар і частку лёгка аднесці не да таго ўладальніка — калі нумар няправільны, упішыце яго
@@ -108,7 +114,13 @@ const UEZDS = {
               pages: [[1,'Стар.1 · А–З'],[2,'Стар.2 · К–Р'],[3,'Стар.3 · С–Ю']] },
   rechitsa: { name: 'Рэчыцкі', owners: 'data/rechitsa/owners.json', img: p => `verify_img/r${p}.jpg`,
               pages: [[1,'Стар.1 · А–О'],[2,'Стар.2 · О–Т'],[3,'Стар.3 · Х–Я']] },
+  mozyr:    { name: 'Мазырскі', owners: 'data/mozyr/owners.json', img: p => `verify_img/m${p}.jpg`,
+              pages: [[1,'Стар.1'],[2,'Стар.2'],[3,'Стар.3']] },
+  pinsk:    { name: 'Пінскі', owners: 'data/pinsk/owners.json', img: p => `verify_img/n${p}.jpg`,
+              pages: [[2,'Стар.2'],[4,'Стар.4']] },
 };
+// owners read only from the economic notes (no alphabet page) get their own tab
+const NOTES = 'notes';
 // deep-link: review.html#rechitsa opens straight on that uezd
 let uezd = (location.hash.replace('#','') in UEZDS) ? location.hash.replace('#','') : 'bobruisk';
 // v2 keys decisions as "<uezd>:<ownerId>"; v1 was bare ids, all Бобруйский.
@@ -123,28 +135,43 @@ if (!decisions) {
 }
 
 const scan = document.getElementById('scan');
-function setImg() { scan.src = UEZDS[uezd].img(page); scan.style.width = imgW + 'px'; }
+function setImg() {
+  document.getElementById('imgpane').style.display = page === NOTES ? 'none' : '';
+  if (page !== NOTES) { scan.src = UEZDS[uezd].img(page); scan.style.width = imgW + 'px'; }
+}
+// which tab an owner belongs to: its alphabet page, or NOTES when it has none
+const onPage = (o, p) => p === NOTES ? !(typeof o.page === 'number') : o.page === p;
+// cuts of the plan numbers' entries in the economic notes (the detailed tables)
+let ECON = {};
+fetch('data/econ_crops.json', { cache: 'no-cache' }).then(r => r.json()).then(d => { ECON = d; render(); }).catch(() => {});
+function econCuts(o) {
+  const seen = new Set();
+  return o.parcels.map(p => [p.num, (ECON[uezd] || {})[p.num]]).filter(([n, c]) => c && !seen.has(c.f) && seen.add(c.f))
+    .map(([n, c]) => `<a href="${c.f}" target="_blank" rel="noopener" title="эканамічныя прымечанні, № ${n} · IMG_${c.img}">` +
+      `<img class="econ" src="${c.f}" alt="№ ${n}" loading="lazy"></a>`).join('');
+}
 document.getElementById('zoom-in').onclick = () => { imgW = Math.min(3000, imgW + 250); setImg(); };
 document.getElementById('zoom-out').onclick = () => { imgW = Math.max(500, imgW - 250); setImg(); };
 
 const uezdTabs = document.getElementById('uezd-tabs');
 Object.entries(UEZDS).forEach(([id, u]) => {
   const b = document.createElement('button'); b.textContent = u.name;
-  b.onclick = () => { uezd = id; page = 1; location.hash = id; load(); };
+  b.onclick = () => { uezd = id; location.hash = id; load(); };
   b.dataset.uezd = id; uezdTabs.appendChild(b);
 });
 
 const tabs = document.getElementById('tabs');
 function buildPageTabs() {
   tabs.innerHTML = '';
-  UEZDS[uezd].pages.forEach(([p, label]) => {
+  [...UEZDS[uezd].pages, [NOTES, 'толькі з эк. прымечанняў']].forEach(([p, label]) => {
     const b = document.createElement('button'); b.textContent = label;
     b.onclick = () => { page = p; setImg(); render(); updateTabs(); };
+    b.dataset.n = OWNERS.filter(o => onPage(o, p)).length; if (b.dataset.n === '0') b.disabled = true;
     b.dataset.page = p; tabs.appendChild(b);
   });
 }
 function updateTabs() {
-  [...tabs.children].forEach(b => b.classList.toggle('active', +b.dataset.page === page));
+  [...tabs.children].forEach(b => b.classList.toggle('active', String(b.dataset.page) === String(page)));
   [...uezdTabs.children].forEach(b => b.classList.toggle('active', b.dataset.uezd === uezd));
 }
 document.getElementById('only-prob').addEventListener('change', render);
@@ -154,7 +181,7 @@ const key = o => `${uezd}:${o.id}`;
 
 function load() {
   fetch(UEZDS[uezd].owners, { cache: 'no-cache' }).then(r => r.json()).then(d => {
-    OWNERS = d.owners || []; buildPageTabs(); setImg(); updateTabs(); render();
+    OWNERS = d.owners || []; page = UEZDS[uezd].pages[0][0]; buildPageTabs(); setImg(); updateTabs(); render();
   });
 }
 load();
@@ -162,7 +189,7 @@ load();
 function render() {
   const tb = document.getElementById('rows'); tb.innerHTML = '';
   const onlyProb = document.getElementById('only-prob').checked;
-  const list = OWNERS.filter(o => o.page === page && (!onlyProb || o.uncertain || o.flag));
+  const list = OWNERS.filter(o => onPage(o, page) && (!onlyProb || o.uncertain || o.flag));
   list.forEach(o => {
     const k = key(o);
     const dec = decisions[k] || {};
@@ -180,7 +207,8 @@ function render() {
     const ver = o.verified ? `<span class="vernote">✓ ${o.fix || 'нумар звераны са сканам'}</span>` : '';
     tr.innerHTML = `
       <td class="pc">${pcs}<div class="title">${o.title || ''}</div></td>
-      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}${flag}${ver}</td>
+      <td><span class="mine">${o.name_ru || o.name}</span>${q}<div class="title">→ ${o.name}</div>${alt}${flag}${ver}
+        <div class="econwrap">${econCuts(o)}</div></td>
       <td class="choices">
         <label><input type="radio" name="r-${o.id}" value="ok" ${dec.choice==='ok'?'checked':''}> ✓ правільна</label>
         <label><input type="radio" name="r-${o.id}" value="fix" ${dec.choice==='fix'?'checked':''}> ✏ выправіць:</label>
