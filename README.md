@@ -36,11 +36,11 @@
 |---|---:|---:|---:|
 | Бабруйскі | 90 | 78 | — |
 | Рэчыцкі | 86 | 85 | 4 |
-| Мазырскі | 63 | 47 | 30 |
-| Пінскі | 50 | 26 | 44 |
+| Мазырскі | 103 | 47 | 7 |
+| Пінскі | 163 | 26 | 1 |
 
-Алфавіты Мазырскага і Пінскага паветаў транскрыбаваны часткова; уладальнікаў, якіх
-у транскрыбаванай частцы няма, узята з эканамічных прымечанняў (у запісе — пазнака ⚠).
+Алфавіты ўсіх чатырох паветаў транскрыбаваны цалкам; некалькі ўладальнікаў, якіх у
+алфавіце няма, узята з эканамічных прымечанняў (у запісе — пазнака ⚠).
 Эканамічныя прымечанні (падрабязныя табліцы да плана) транскрыбаваны для ўсіх чатырох
 паветаў: для кожнага нумара — уладальнік, частка плана і доля іншых уладальнікаў.
 
@@ -96,8 +96,7 @@ Interactive map of the Russian General Land Survey (c. 1800) for the Babruysk, R
 Mazyr and Pinsk uyezds of Minsk Governorate: every parcel is coloured by owner, with
 search, coats of arms, a layer of Catholic churches c. 1800, and scan cuts from both the
 owners' index and the economic notes. All four economic-notes tables are transcribed and
-every owner link is checked against them; the Mazyr and Pinsk indexes are partly
-transcribed. Corrections welcome — no account needed.
+every owner link is checked against them; all four owners' indexes are transcribed. Corrections welcome — no account needed.
 
 ### Polski
 
@@ -106,7 +105,7 @@ rzeczyckiego, mozyrskiego i pińskiego guberni mińskiej: każda działka pokolo
 właściciela, z wyszukiwarką, herbami, warstwą kościołów katolickich ok. 1800 i wycinkami
 skanów — ze spisu właścicieli i z uwag ekonomicznych. Uwagi ekonomiczne wszystkich
 czterech powiatów są przepisane, a każde powiązanie właściciela z działką sprawdzone
-z nimi; spisy mozyrski i piński przepisane częściowo. Poprawki mile widziane — bez rejestracji.
+z nimi; spisy właścicieli wszystkich czterech powiatów są przepisane. Poprawki mile widziane — bez rejestracji.
 
 ### Русский
 
@@ -115,7 +114,7 @@ z nimi; spisy mozyrski i piński przepisane częściowo. Poprawki mile widziane 
 гербами, слоем католических костёлов ок. 1800 и вырезками сканов — из алфавита владельцев
 и из экономических примечаний. Экономические примечания всех четырёх уездов
 транскрибированы, и каждая привязка владельца к участку сверена с ними; алфавиты
-Мозырского и Пинского уездов транскрибированы частично. Уточнения приветствуются —
+владельцев всех четырёх уездов транскрибированы. Уточнения приветствуются —
 регистрация не нужна.
 
 ## Зборка карты (для распрацоўкі)

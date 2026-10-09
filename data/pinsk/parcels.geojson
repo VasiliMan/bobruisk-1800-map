@@ -1071,7 +1071,11 @@
     "fid": "p1791456010851",
     "num": "88",
     "status": "draft",
-    "chast": 4
+    "chast": 4,
+    "parts": [
+     4,
+     5
+    ]
    },
    "geometry": {
     "type": "Polygon",
@@ -1403,7 +1407,11 @@
     "fid": "p1791456232217",
     "num": "50",
     "status": "draft",
-    "chast": 1
+    "chast": 1,
+    "parts": [
+     1,
+     2
+    ]
    },
    "geometry": {
     "type": "Polygon",
