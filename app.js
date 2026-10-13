@@ -315,6 +315,15 @@ function renderParcels() {
   // the group's total area) instead of one per parcel; drawn after the loop below
   const armGroups = showArms ? groupOwnerParcels(active) : [];
   const grouped = new Set(armGroups.flatMap(g => g.feats.map(f => g.key + '|' + f.properties.fid)));
+  // a group whose marker point falls inside one of its parcels that also shows other owners'
+  // symbols (or other groups' markers) is merged into that parcel's marker; drawn separately,
+  // they would overlap — e.g. a big parcel that dominates its group (Мозырь 59)
+  const groupsAt = {};
+  armGroups.forEach(g => {
+    const host = g.feats.find(f => pointInRing([g.x, g.y], f._ring));
+    if (host) (groupsAt[host.properties.fid] = groupsAt[host.properties.fid] || []).push(g);
+  });
+  const merged = new Set();
 
   ordered.forEach(f => {
     const pr = f.properties;
@@ -342,16 +351,24 @@ function renderParcels() {
     // optional: scale by parcel size (cube root of area relative to the median parcel, clamped)
     const k = scaleArms ? armScale(f._area, medianArea) : 1;
     const syms = owners.filter(o => !grouped.has(o.key + '|' + pr.fid)).flatMap(o => ownerSyms(o, k));
-    if (showArms && syms.length) addArmsMarker(c, syms, k);
+    if (showArms && (syms.length || (groupsAt[pr.fid] || []).length > 1)) {
+      const parts = syms.length ? [{ syms, k }] : [];
+      (groupsAt[pr.fid] || []).forEach(g => {
+        const gk = scaleArms ? armScale(g.area, medianArea) : 1;
+        parts.unshift({ syms: ownerSyms(OWNER_BY_ID[g.key], gk), k: gk });
+        merged.add(g);
+      });
+      addArmsMarker(c, parts);
+    }
     if (showLabels) {
       L.marker(c, { interactive: false, icon: L.divIcon({
         className: 'parcel-label', html: `<span class="parcel-num">${pr.num}</span>`,
         iconSize: [24, 16], iconAnchor: [12, 0] }) }).addTo(labelGroup);
     }
   });
-  armGroups.forEach(g => {
+  armGroups.filter(g => !merged.has(g)).forEach(g => {
     const k = scaleArms ? armScale(g.area, medianArea) : 1;
-    addArmsMarker(px(g.x, g.y), ownerSyms(OWNER_BY_ID[g.key], k), k);
+    addArmsMarker(px(g.x, g.y), [{ syms: ownerSyms(OWNER_BY_ID[g.key], k), k }]);
   });
   if (selectedFid && layerByFid[selectedFid]) enableVertexEdit(layerByFid[selectedFid]);
 }
@@ -368,10 +385,12 @@ function ownerSyms(o, k) {
     ...(o.inst ? [`<span class="map-cross"` + (k !== 1 ? ` style="font-size:${(30 * k).toFixed(0)}px"` : '') +
       `>${INST_SYM[o.inst] || '✟'}</span>`] : [])];
 }
-function addArmsMarker(latlng, syms, k) {
-  const w = syms.length * 42 * k, h = 46 * k;
+// parts: [{ syms, k }] — symbol groups drawn side by side, each at its own size factor
+function addArmsMarker(latlng, parts) {
+  const w = parts.reduce((s, p) => s + p.syms.length * 42 * p.k, 0);
+  const h = Math.max(...parts.map(p => 46 * p.k));
   L.marker(latlng, { interactive: false, icon: L.divIcon({
-    className: 'arms-marker', html: syms.join(''), iconSize: [w, h], iconAnchor: [w / 2, h] }) }).addTo(armsGroup);
+    className: 'arms-marker', html: parts.flatMap(p => p.syms).join(''), iconSize: [w, h], iconAnchor: [w / 2, h] }) }).addTo(armsGroup);
 }
 const ringCentre = r => { let x = 0, y = 0; const n = r.length - 1;
   for (let i = 0; i < n; i++) { x += r[i][0]; y += r[i][1]; } return [x / n, y / n]; };
