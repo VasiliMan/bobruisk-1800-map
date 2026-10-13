@@ -339,7 +339,7 @@ function renderParcels() {
 
     // show every co-owner's arms/cross, fanned out side by side at the parcel centre
     // (an institution may carry both, e.g. a monastery with its order's arms + its cross)
-    // optional: scale by parcel size (sqrt of area relative to the median parcel, clamped)
+    // optional: scale by parcel size (cube root of area relative to the median parcel, clamped)
     const k = scaleArms ? armScale(f._area, medianArea) : 1;
     const syms = owners.filter(o => !grouped.has(o.key + '|' + pr.fid)).flatMap(o => ownerSyms(o, k));
     if (showArms && syms.length) addArmsMarker(c, syms, k);
@@ -356,8 +356,10 @@ function renderParcels() {
   if (selectedFid && layerByFid[selectedFid]) enableVertexEdit(layerByFid[selectedFid]);
 }
 
-// size factor for arms: sqrt of area relative to the median parcel, clamped
-const armScale = (area, median) => Math.min(2.2, Math.max(0.5, Math.sqrt(area / median)));
+// size factor for arms: cube root of area relative to the median parcel, clamped. Parcel areas
+// span five orders of magnitude (town plots to whole estates), so sqrt pinned ~40% of parcels to
+// one of the clamps; the cube root keeps mid-size parcels apart and only ~4% hit the ceiling
+const armScale = (area, median) => Math.min(2.6, Math.max(0.4, Math.cbrt(area / median)));
 // an owner's map symbols: arms (one or two) and/or an institution's cross
 function ownerSyms(o, k) {
   return [
